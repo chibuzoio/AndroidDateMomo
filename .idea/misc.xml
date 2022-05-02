@@ -4,12 +4,18 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/blue_button.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/focused_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/hollow_blue_button.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/light_grey_button.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/normal_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.10597826086956522" />
+        <entry key="app/src/main/res/layout/generic_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_blue_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_hollow_blue_button.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/include_input_field.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/include_left_icon_input.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_light_grey_button.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/include_right_icon_input.xml" value="0.1796875" />
       </map>
     </option>
   </component>

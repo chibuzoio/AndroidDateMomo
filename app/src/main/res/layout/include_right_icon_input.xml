@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/normal_edit_text"
+    android:id="@+id/rightIconInputLayout"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:background="@drawable/normal_edit_text"
+            android:id="@+id/rightIconInputField"
+            android:paddingVertical="11dp"
+            android:paddingStart="11dp"
+            android:paddingEnd="5dp"
+            android:inputType="text"
+            android:maxLines="1"
+            android:hint="Hello"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ImageView
+        android:src="@drawable/icon_person"
+        android:id="@+id/rightIconInputImage"
+        android:layout_marginTop="-1dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"/>
+
+    <View
+        android:layout_width="11dp"
+        android:layout_height="match_parent"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+
