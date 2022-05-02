@@ -8,38 +8,62 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/nameInput"
-        layout="@layout/include_left_icon_input"
-        android:layout_marginHorizontal="15dp"
-        app:layout_constraintBottom_toTopOf="@id/dateInput"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/dateInput"
-        layout="@layout/include_right_icon_input"
-        android:layout_marginHorizontal="15dp"
-        app:layout_constraintBottom_toTopOf="@id/sexInput"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameInput"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/sexInput"
-        layout="@layout/include_input_field"
-        android:layout_marginHorizontal="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dateInput"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="vertical"
+                android:paddingVertical="77dp"
+                android:paddingHorizontal="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/createAccountHeader"
+                    android:text="Create Your \nAccount"
+                    android:textSize="40sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <include
+                    android:layout_marginTop="77dp"
+                    android:id="@+id/userNameInput"
+                    layout="@layout/include_left_icon_input"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+                <include
+                    android:layout_marginTop="25dp"
+                    android:id="@+id/passwordInput"
+                    layout="@layout/include_left_icon_input"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+                <include
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="25dp"
+                    android:id="@+id/createAccountSubmit"
+                    layout="@layout/include_blue_button"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

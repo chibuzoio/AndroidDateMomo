@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
@@ -22,23 +23,33 @@ class MainActivity : AppCompatActivity() {
         window.setStatusBarDarkIcons(true)
         window.setNavigationBarDarkIcons(true)
 
-//        View.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        binding.createAccountSubmit.blueButtonText.text = "Sign Up"
+        binding.userNameInput.leftIconInputField.genericInputField.hint = "User Name"
+        binding.passwordInput.leftIconInputField.genericInputField.hint = "Password"
+        binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
+        binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
+        binding.passwordInput.leftIconInputField.genericInputField.transformationMethod =
+            PasswordTransformationMethod.getInstance()
 
-/*        binding.nameInput.genericInputField.setOnFocusChangeListener {view, focused ->
+        binding.userNameInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
             if (focused) {
-                view.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_blue))
             } else {
-                view.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
             }
         }
 
-        binding.sexInput.genericInputField.setOnFocusChangeListener {view, focused ->
+        binding.passwordInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
             if (focused) {
-                view.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_blue))
             } else {
-                view.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
             }
-        }*/
+        }
     }
 
     @Suppress("DEPRECATION")

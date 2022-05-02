@@ -13,13 +13,16 @@
         android:id="@+id/leftIconInputImage"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="-5dp"
-        android:layout_marginTop="-1dp"
         android:translationZ="1dp"
         android:layout_width="20dp"
         android:layout_height="20dp"/>
 
     <include
-        layout="@layout/include_input_field"/>
+        android:id="@+id/leftIconInputField"
+        android:layout_margin="1dp"
+        layout="@layout/include_input_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
 

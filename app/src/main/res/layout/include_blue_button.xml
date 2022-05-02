@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@drawable/blue_button"
     android:paddingHorizontal="11dp"
-    android:paddingVertical="11dp"
+    android:paddingVertical="13dp"
     android:elevation="11dp"
     android:gravity="center"
     android:layout_width="match_parent"

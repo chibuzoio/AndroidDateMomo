@@ -16,6 +16,7 @@
         <EditText
             android:background="@drawable/normal_edit_text"
             android:id="@+id/rightIconInputField"
+            android:textColor="@color/edit_text"
             android:paddingVertical="11dp"
             android:paddingStart="11dp"
             android:paddingEnd="5dp"
@@ -30,7 +31,6 @@
     <ImageView
         android:src="@drawable/icon_person"
         android:id="@+id/rightIconInputImage"
-        android:layout_marginTop="-1dp"
         android:layout_width="20dp"
         android:layout_height="20dp"/>
 
