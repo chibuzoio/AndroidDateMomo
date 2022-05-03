@@ -2,6 +2,7 @@ package com.example.datemomo
 
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
@@ -70,12 +71,14 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
+                Log.e(TAG, "Call to the server failed with the following message ${e.message}")
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 userNameArray = mapper.readValue(myResponse)
+                Log.e(TAG, "Value of response from server is $myResponse")
             }
         })
     }
@@ -121,6 +124,10 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
     }
 }
 
