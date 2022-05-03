@@ -44,12 +44,26 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"/>
 
+                <TextView
+                    android:id="@+id/userNameInputError"
+                    android:visibility="gone"
+                    android:textColor="@color/red"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <include
                     android:layout_marginTop="25dp"
                     android:id="@+id/passwordInput"
                     layout="@layout/include_left_icon_input"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"/>
+
+                <TextView
+                    android:id="@+id/passwordInputError"
+                    android:visibility="gone"
+                    android:textColor="@color/red"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
                 <include
                     android:layout_marginTop="25dp"
