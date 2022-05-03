@@ -7,9 +7,17 @@ import androidx.core.content.ContextCompat
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.databinding.ActivityMainBinding
+import com.example.datemomo.model.DateMomoModel
+import com.example.datemomo.model.UserNameModel
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import okhttp3.*
+import java.io.IOException
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var userNameArray: Array<UserNameModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +27,8 @@ class MainActivity : AppCompatActivity() {
 
         window.setStatusBarDarkIcons(true)
         window.setNavigationBarDarkIcons(true)
+
+        fetchUserNames()
 
         binding.createAccountSubmit.blueButtonText.text = "Sign Up"
         binding.userNameInput.leftIconInputField.genericInputField.hint = "User Name"
@@ -47,6 +57,70 @@ class MainActivity : AppCompatActivity() {
                 binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
             }
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserNames() {
+        val client = OkHttpClient()
+        val mapper = jacksonObjectMapper()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + "service/usernamecomposite.php")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                userNameArray = mapper.readValue(myResponse)
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    fun registerUser() {
+        val mapper = jacksonObjectMapper()
+        var userModel = DateMomoModel(
+            0,
+            "",
+            "",
+            "userName",
+            "",
+            "",
+            "",
+            "",
+            "password",
+            "",
+            "",
+            ""
+        )
+
+        var jsonObjectString = mapper.writeValueAsString(userModel)
+
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"), jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+            }
+        })
     }
 }
 
