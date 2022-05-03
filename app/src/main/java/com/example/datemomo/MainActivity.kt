@@ -230,6 +230,19 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 var dateMomoModel = mapper.readValue<DateMomoModel>(myResponse)
+
+                Log.e(TAG, "Values of mapped data are "
+                        + dateMomoModel.registrationDate + ", "
+                        + dateMomoModel.userName + ", "
+                        + dateMomoModel.userRole + " and "
+                        + dateMomoModel.memberId
+                )
+
+                if (dateMomoModel.memberId > 0) {
+                    Log.e(TAG,"Registration passed through")
+                }
+
+                fetchUserNames()
             }
         })
     }
