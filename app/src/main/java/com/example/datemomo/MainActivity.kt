@@ -33,6 +33,7 @@ import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.DateMomoModel
 import com.example.datemomo.model.UserNameModel
 import com.example.datemomo.model.request.PictureUploadRequest
+import com.example.datemomo.model.response.PictureUploadResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -345,20 +346,16 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val dateMomoModel = mapper.readValue<DateMomoModel>(myResponse)
+                val pictureUploadResponse = mapper.readValue<PictureUploadResponse>(myResponse)
 
-                Log.e(TAG, "Values of mapped data are "
-                        + dateMomoModel.registrationDate + ", "
-                        + dateMomoModel.userName + ", "
-                        + dateMomoModel.userRole + " and "
-                        + dateMomoModel.memberId
-                )
+                if (pictureUploadResponse.pictureId > 0) {
+                    sharedPreferencesEditor.putString(
+                        "profilePicture",
+                        pictureUploadResponse.profilePicture
+                    ).apply()
 
-                if (dateMomoModel.memberId > 0) {
-                    Log.e(TAG,"Registration passed through")
+                    Log.e(TAG, "profilePicture value gotten from the server is ${pictureUploadResponse.profilePicture}")
                 }
-
-                fetchUserNames()
             }
         })
     }
