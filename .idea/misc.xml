@@ -13,10 +13,12 @@
         <entry key="app/src/main/res/layout/generic_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_blue_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_hollow_blue_button.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/include_icon_hollow_blue_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_left_icon_input.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_light_grey_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_right_icon_input.xml" value="0.1796875" />
+        <entry key="app/src/main/res/xml/file_paths.xml" value="0.1796875" />
       </map>
     </option>
   </component>

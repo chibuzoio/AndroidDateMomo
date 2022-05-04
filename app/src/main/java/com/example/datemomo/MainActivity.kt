@@ -1,6 +1,16 @@
 package com.example.datemomo
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
@@ -8,8 +18,12 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
+import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.FitCenter
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.databinding.ActivityMainBinding
@@ -18,14 +32,22 @@ import com.example.datemomo.model.UserNameModel
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
+import java.io.File
 import java.io.IOException
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var userNameValid = false
     private var passwordValid = false
+    private val PERMISSION_CODE = 1001
+    private var photoFile: File? = null
+    private val PICK_IMAGE_REQUEST = 200
+    private var theBitmap: Bitmap? = null
     private lateinit var password: String
     private lateinit var userName: String
+    private val CAPTURE_IMAGE_REQUEST = 100
+    private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private var userNameArray: Array<UserNameModel> = emptyArray()
@@ -42,6 +64,42 @@ class MainActivity : AppCompatActivity() {
         buttonClickEffect = AlphaAnimation(1f, 0f)
 
         fetchUserNames()
+
+        binding.pictureUploadNext.blueButtonText.text = "Next"
+        binding.takePictureButton.iconHollowButtonText.text = "Take Picture"
+        binding.uploadPictureButton.iconHollowButtonText.text = "Upload Picture"
+        binding.takePictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_camera_blue))
+        binding.uploadPictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
+
+        binding.takePictureButton.iconHollowButtonLayout.setOnClickListener {
+            binding.takePictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+            captureCameraImage()
+        }
+
+        binding.uploadPictureButton.iconHollowButtonLayout.setOnClickListener {
+            binding.uploadPictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    requestPermissions(permissions, PERMISSION_CODE)
+                } else {
+                    pickImageFromGallery()
+                }
+            } else {
+                pickImageFromGallery()
+            }
+        }
+
+        Glide.with(this)
+            .load(
+                ContextCompat.getDrawable(
+                    this,
+                    R.drawable.placeholder
+                )
+            )
+            .transform(FitCenter(), RoundedCorners(33))
+            .into(binding.pictureUploadImage)
 
         binding.createAccountSubmit.blueButtonText.text = "Sign Up"
         binding.userNameInput.leftIconInputField.genericInputField.hint = "User Name"
@@ -117,6 +175,74 @@ class MainActivity : AppCompatActivity() {
                 binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CAPTURE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            theBitmap = BitmapFactory.decodeFile(photoFile!!.absolutePath)
+
+            Glide.with(this)
+                .load(theBitmap)
+                .transform(FitCenter(), RoundedCorners(33))
+                .into(binding.pictureUploadImage)
+        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            Glide.with(this)
+                .load(data?.data)
+                .transform(FitCenter(), RoundedCorners(33))
+                .into(binding.pictureUploadImage)
+
+            theBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+                val source = ImageDecoder.createSource(contentResolver, data?.data!!)
+                ImageDecoder.decodeBitmap(source)
+            } else{
+                MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
+            }
+        }
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+
+    private fun captureCameraImage() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+        } else {
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+            if (takePictureIntent.resolveActivity(packageManager) != null) {
+                try {
+                    photoFile = createImageFile()
+
+                    if (photoFile != null) {
+                        val photoURI = FileProvider.getUriForFile(this, "com.example.datemomo.fileprovider", photoFile!!)
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        startActivityForResult(takePictureIntent, CAPTURE_IMAGE_REQUEST)
+                    }
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
+                }
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val image = File.createTempFile(
+            imageFileName, /* prefix */
+            ".jpg", /* suffix */
+            storageDir      /* directory */
+        )
+
+        mCurrentPhotoPath = image.absolutePath
+        return image
     }
 
     private fun validatePassword(password: String) {

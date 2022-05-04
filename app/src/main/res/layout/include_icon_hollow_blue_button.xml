@@ -2,18 +2,28 @@
 <androidx.appcompat.widget.LinearLayoutCompat
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@drawable/hollow_blue_button"
+    android:id="@+id/iconHollowButtonLayout"
     android:paddingHorizontal="11dp"
+    android:orientation="horizontal"
     android:paddingVertical="11dp"
     android:elevation="11dp"
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/iconHollowButtonIcon"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="0dp"
+        android:src="@drawable/icon_person_blue"
+        android:layout_width="20dp"
+        android:layout_height="20dp"/>
+
     <TextView
         android:text="Submit"
         android:textStyle="bold"
         android:gravity="center"
-        android:id="@+id/hollowButtonText"
+        android:id="@+id/iconHollowButtonText"
         android:textColor="@color/blue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
