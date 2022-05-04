@@ -2,7 +2,9 @@ package com.example.datemomo
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,6 +19,7 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,13 +32,16 @@ import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.DateMomoModel
 import com.example.datemomo.model.UserNameModel
+import com.example.datemomo.model.request.PictureUploadRequest
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Base64.getEncoder
 
 class MainActivity : AppCompatActivity() {
     private var userNameValid = false
@@ -50,7 +56,9 @@ class MainActivity : AppCompatActivity() {
     private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var sharedPreferences: SharedPreferences
     private var userNameArray: Array<UserNameModel> = emptyArray()
+    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +70,9 @@ class MainActivity : AppCompatActivity() {
         window.setNavigationBarDarkIcons(true)
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
+        sharedPreferences =
+            getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
+        sharedPreferencesEditor = sharedPreferences.edit()
 
         fetchUserNames()
 
@@ -70,6 +81,11 @@ class MainActivity : AppCompatActivity() {
         binding.uploadPictureButton.iconHollowButtonText.text = "Upload Picture"
         binding.takePictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_camera_blue))
         binding.uploadPictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
+
+        binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
+            binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
+            postUserPicture()
+        }
 
         binding.takePictureButton.iconHollowButtonLayout.setOnClickListener {
             binding.takePictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
@@ -177,6 +193,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -193,7 +210,7 @@ class MainActivity : AppCompatActivity() {
                 .transform(FitCenter(), RoundedCorners(33))
                 .into(binding.pictureUploadImage)
 
-            theBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            theBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val source = ImageDecoder.createSource(contentResolver, data?.data!!)
                 ImageDecoder.decodeBitmap(source)
             } else{
@@ -295,6 +312,58 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Throws(IOException::class)
+    fun postUserPicture() {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        val base64Picture =
+            android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+
+        val mapper = jacksonObjectMapper()
+        val pictureUploadRequest = PictureUploadRequest(
+            sharedPreferences.getInt("memberId", 0),
+            base64Picture
+        )
+
+        val jsonObjectString = mapper.writeValueAsString(pictureUploadRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + "service/postpicture.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val dateMomoModel = mapper.readValue<DateMomoModel>(myResponse)
+
+                Log.e(TAG, "Values of mapped data are "
+                        + dateMomoModel.registrationDate + ", "
+                        + dateMomoModel.userName + ", "
+                        + dateMomoModel.userRole + " and "
+                        + dateMomoModel.memberId
+                )
+
+                if (dateMomoModel.memberId > 0) {
+                    Log.e(TAG,"Registration passed through")
+                }
+
+                fetchUserNames()
+            }
+        })
+    }
+
+    @Throws(IOException::class)
     fun fetchUserNames() {
         val client = OkHttpClient()
         val mapper = jacksonObjectMapper()
@@ -320,7 +389,7 @@ class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun registerUser() {
         val mapper = jacksonObjectMapper()
-        var userModel = DateMomoModel(
+        val userModel = DateMomoModel(
             0,
             "",
             "",
@@ -335,10 +404,10 @@ class MainActivity : AppCompatActivity() {
             ""
         )
 
-        var jsonObjectString = mapper.writeValueAsString(userModel)
-
+        val jsonObjectString = mapper.writeValueAsString(userModel)
         val requestBody: RequestBody = RequestBody.create(
-            MediaType.parse("application/json"), jsonObjectString
+            MediaType.parse("application/json"),
+            jsonObjectString
         )
 
         val client = OkHttpClient()
@@ -355,17 +424,14 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                var dateMomoModel = mapper.readValue<DateMomoModel>(myResponse)
-
-                Log.e(TAG, "Values of mapped data are "
-                        + dateMomoModel.registrationDate + ", "
-                        + dateMomoModel.userName + ", "
-                        + dateMomoModel.userRole + " and "
-                        + dateMomoModel.memberId
-                )
+                val dateMomoModel = mapper.readValue<DateMomoModel>(myResponse)
 
                 if (dateMomoModel.memberId > 0) {
-                    Log.e(TAG,"Registration passed through")
+                    sharedPreferencesEditor.putInt("memberId", dateMomoModel.memberId)
+                    sharedPreferencesEditor.putString("userName", dateMomoModel.userName)
+                    sharedPreferencesEditor.putString("userRole", dateMomoModel.userRole)
+                    sharedPreferencesEditor.putString("registrationDate", dateMomoModel.registrationDate)
+                    sharedPreferencesEditor.apply()
                 }
 
                 fetchUserNames()
