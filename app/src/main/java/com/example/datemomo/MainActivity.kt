@@ -320,6 +320,8 @@ class MainActivity : AppCompatActivity() {
         val base64Picture =
             android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
 
+        Log.e(TAG, "memberId value in shared preferences here is ${sharedPreferences.getInt("memberId", 0)}")
+
         val mapper = jacksonObjectMapper()
         val pictureUploadRequest = PictureUploadRequest(
             sharedPreferences.getInt("memberId", 0),
@@ -429,6 +431,11 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString("userRole", dateMomoModel.userRole)
                     sharedPreferencesEditor.putString("registrationDate", dateMomoModel.registrationDate)
                     sharedPreferencesEditor.apply()
+
+                    runOnUiThread {
+                        binding.registrationLayout.visibility = View.GONE
+                        binding.pictureUploadLayout.visibility = View.VISIBLE
+                    }
                 }
 
                 fetchUserNames()
