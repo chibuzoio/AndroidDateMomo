@@ -68,6 +68,10 @@ class UserBioActivity : AppCompatActivity() {
             videoSexExperience = false
         )
 
+        binding.userKYCSkipButton.greyButtonLayout.setOnClickListener {
+            
+        }
+
         binding.maleGay.hollowButtonText.text = "Gay"
         binding.maleToyBoy.hollowButtonText.text = "Toy Boy"
         binding.maleBisexual.hollowButtonText.text = "Bisexual"
@@ -103,7 +107,7 @@ class UserBioActivity : AppCompatActivity() {
         binding.cameraSex.hollowButtonText.text = "Sexed With Camera"
         binding.oneNightStand.hollowButtonText.text = "One-night Stand"
 
-        binding.userKYCSkipButton.hollowButtonText.text = "Skip"
+        binding.userKYCSkipButton.greyButtonText.text = "Skip"
 
         if (sharedPreferences.getString("sex", "") == "Male") {
             binding.maleSexualityOptions.visibility = View.VISIBLE
