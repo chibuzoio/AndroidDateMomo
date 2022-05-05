@@ -105,7 +105,7 @@ class UserBioActivity : AppCompatActivity() {
 
         binding.userKYCSkipButton.hollowButtonText.text = "Skip"
 
-        if (sharedPreferences.getString("sex", "") != "Male") {
+        if (sharedPreferences.getString("sex", "") == "Male") {
             binding.maleSexualityOptions.visibility = View.VISIBLE
             binding.femaleSexualityOptions.visibility = View.GONE
         } else {
@@ -262,16 +262,6 @@ class UserBioActivity : AppCompatActivity() {
                 userBioRequest.sugarMommyCategory = false
             }
         }
-
-
-
-
-
-
-
-
-
-
 
         binding.gay.hollowButtonLayout.setOnClickListener {
             binding.gay.hollowButtonLayout.startAnimation(buttonClickEffect)
