@@ -2,6 +2,7 @@
     <string name="app_name">DateMomo</string>
     <string name="date_momo_api">http://192.168.43.154/</string>
     <string name="shared_preferences">DateMomoPreferences</string>
+    <string name="user_bio_header">Meet The Right People You Seek!</string>
 </resources>
 
 

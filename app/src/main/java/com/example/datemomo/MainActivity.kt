@@ -78,14 +78,32 @@ class MainActivity : AppCompatActivity() {
         fetchUserNames()
 
         binding.pictureUploadNext.blueButtonText.text = "Next"
+        binding.maleGenderSelect.hollowButtonText.text = "Male"
+        binding.femaleGenderSelect.hollowButtonText.text = "Female"
         binding.takePictureButton.iconHollowButtonText.text = "Take Picture"
         binding.uploadPictureButton.iconHollowButtonText.text = "Upload Picture"
         binding.takePictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_camera_blue))
         binding.uploadPictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
 
+        binding.pictureUploadImage.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    requestPermissions(permissions, PERMISSION_CODE)
+                } else {
+                    pickImageFromGallery()
+                }
+            } else {
+                pickImageFromGallery()
+            }
+        }
+
         binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
             binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
-            postUserPicture()
+
+            if (theBitmap != null) {
+                postUserPicture()
+            }
         }
 
         binding.takePictureButton.iconHollowButtonLayout.setOnClickListener {
@@ -118,6 +136,8 @@ class MainActivity : AppCompatActivity() {
             .transform(FitCenter(), RoundedCorners(33))
             .into(binding.pictureUploadImage)
 
+        binding.passwordInput.leftIconInputLabel.text = "Password"
+        binding.userNameInput.leftIconInputLabel.text = "User Name"
         binding.createAccountSubmit.blueButtonText.text = "Sign Up"
         binding.userNameInput.leftIconInputField.genericInputField.hint = "User Name"
         binding.passwordInput.leftIconInputField.genericInputField.hint = "Password"
@@ -320,8 +340,6 @@ class MainActivity : AppCompatActivity() {
         val base64Picture =
             android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
 
-        Log.e(TAG, "memberId value in shared preferences here is ${sharedPreferences.getInt("memberId", 0)}")
-
         val mapper = jacksonObjectMapper()
         val pictureUploadRequest = PictureUploadRequest(
             sharedPreferences.getInt("memberId", 0),
@@ -356,7 +374,8 @@ class MainActivity : AppCompatActivity() {
                         pictureUploadResponse.profilePicture
                     ).apply()
 
-                    Log.e(TAG, "profilePicture value gotten from the server is ${pictureUploadResponse.profilePicture}")
+                    // Proceed to UserBioActivity activity
+
                 }
             }
         })

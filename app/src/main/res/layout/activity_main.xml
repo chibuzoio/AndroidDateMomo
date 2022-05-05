@@ -9,6 +9,7 @@
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:visibility="gone"
         android:orientation="vertical"
         android:id="@+id/registrationLayout"
         app:layout_constraintBottom_toTopOf="parent"
@@ -53,7 +54,7 @@
                     android:layout_height="wrap_content"/>
 
                 <include
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="15dp"
                     android:id="@+id/passwordInput"
                     layout="@layout/include_left_icon_input"
                     android:layout_height="wrap_content"
@@ -81,32 +82,34 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:visibility="gone"
         android:orientation="vertical"
+        android:gravity="center_vertical"
         android:id="@+id/pictureUploadLayout"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ScrollView
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:orientation="vertical"
-                android:paddingVertical="55dp"
+                android:paddingVertical="15dp"
                 android:paddingHorizontal="15dp"
+                android:gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:text="Upload Your \nProfile Picture"
                     android:textSize="35sp"
                     android:textStyle="bold"
                     android:textColor="@color/edit_text"
+                    android:text="Upload Your \nProfile Picture"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
@@ -124,8 +127,9 @@
 
                     <include
                         android:layout_marginEnd="3dp"
+                        android:layout_marginTop="7dp"
                         android:layout_marginStart="0dp"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="20dp"
                         android:id="@+id/takePictureButton"
                         android:layout_weight="1"
                         layout="@layout/include_icon_hollow_blue_button"
@@ -134,11 +138,48 @@
 
                     <include
                         android:layout_marginEnd="0dp"
+                        android:layout_marginTop="7dp"
                         android:layout_marginStart="3dp"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="20dp"
                         android:id="@+id/uploadPictureButton"
                         android:layout_weight="1"
                         layout="@layout/include_icon_hollow_blue_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <TextView
+                    android:text="Sex"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <include
+                        android:id="@+id/maleGenderSelect"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="3dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginBottom="25dp"
+                        layout="@layout/include_hollow_blue_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                    <include
+                        android:id="@+id/femaleGenderSelect"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginBottom="25dp"
+                        layout="@layout/include_hollow_blue_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"/>
 

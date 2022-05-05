@@ -43,6 +43,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.UserBioActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
+
+        </activity>
+
     </application>
 
 </manifest>
