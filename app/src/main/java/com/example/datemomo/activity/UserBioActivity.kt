@@ -3,15 +3,19 @@ package com.example.datemomo.activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
+import com.example.datemomo.model.request.UserBioRequest
 
 class UserBioActivity : AppCompatActivity() {
+    private lateinit var userBioRequest: UserBioRequest
     private lateinit var binding: ActivityUserBioBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
@@ -30,6 +34,39 @@ class UserBioActivity : AppCompatActivity() {
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        userBioRequest = UserBioRequest(
+            sharedPreferences.getInt("memberId", 0),
+            bisexualCategory = false,
+            gayCategory = false,
+            lesbianCategory = false,
+            straightCategory = false,
+            sugarDaddyCategory = false,
+            sugarMommyCategory = false,
+            toyBoyCategory = false,
+            toyGirlCategory = false,
+            bisexualInterest = false,
+            gayInterest = false,
+            lesbianInterest = false,
+            straightInterest = false,
+            sugarDaddyInterest = false,
+            sugarMommyInterest = false,
+            toyBoyInterest = false,
+            toyGirlInterest = false,
+            sixtyNineExperience = false,
+            analSexExperience = false,
+            givenHeadExperience = false,
+            oneNightStandExperience = false,
+            orgySexExperience = false,
+            poolSexExperience = false,
+            receivedHeadExperience = false,
+            carSexExperience = false,
+            publicSexExperience = false,
+            cameraSexExperience = false,
+            threesomeExperience = false,
+            sexToyExperience = false,
+            videoSexExperience = false
+        )
 
         binding.maleGay.hollowButtonText.text = "Gay"
         binding.maleToyBoy.hollowButtonText.text = "Toy Boy"
@@ -68,10 +105,65 @@ class UserBioActivity : AppCompatActivity() {
 
         binding.userKYCSkipButton.hollowButtonText.text = "Skip"
 
-        binding.femaleSexualityOptions.visibility = View.GONE
+        if (sharedPreferences.getString("sex", "") != "Male") {
+            binding.maleSexualityOptions.visibility = View.VISIBLE
+            binding.femaleSexualityOptions.visibility = View.GONE
+        } else {
+            binding.femaleSexualityOptions.visibility = View.VISIBLE
+            binding.maleSexualityOptions.visibility = View.GONE
+        }
 
+        binding.maleGay.hollowButtonLayout.setOnClickListener {
+            binding.maleGay.hollowButtonLayout.startAnimation(buttonClickEffect)
 
+            if (binding.maleGay.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
 
+            } else {
+
+            }
+        }
+
+        binding.maleToyBoy.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.maleBisexual.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.maleStraight.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.maleSugarDaddy.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.femaleLesbian.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.femaleToyGirl.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.femaleBisexual.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.femaleStraight.hollowButtonLayout.setOnClickListener {
+
+        }
+
+        binding.femaleSugarMommy.hollowButtonLayout.setOnClickListener {
+
+        }
+
+    }
+
+    companion object {
+        const val TAG = "UserBioActivity"
     }
 }
 
