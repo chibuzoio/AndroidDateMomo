@@ -45,6 +45,7 @@ import java.util.*
 import java.util.Base64.getEncoder
 
 class MainActivity : AppCompatActivity() {
+    private var userSex: String = ""
     private var userNameValid = false
     private var passwordValid = false
     private val PERMISSION_CODE = 1001
@@ -85,6 +86,24 @@ class MainActivity : AppCompatActivity() {
         binding.takePictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_camera_blue))
         binding.uploadPictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
 
+        binding.femaleGenderSelect.hollowButtonLayout.setOnClickListener {
+            binding.femaleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
+            binding.femaleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.maleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+            binding.femaleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+            binding.maleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            userSex = "Female"
+        }
+
+        binding.maleGenderSelect.hollowButtonLayout.setOnClickListener {
+            binding.maleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
+            binding.maleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.femaleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+            binding.femaleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.maleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+            userSex = "Male"
+        }
+
         binding.pictureUploadImage.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
@@ -101,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
             binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
 
-            if (theBitmap != null) {
+            if (theBitmap != null && userSex.isNotEmpty()) {
                 postUserPicture()
             }
         }
@@ -342,6 +361,7 @@ class MainActivity : AppCompatActivity() {
 
         val mapper = jacksonObjectMapper()
         val pictureUploadRequest = PictureUploadRequest(
+            userSex,
             sharedPreferences.getInt("memberId", 0),
             base64Picture
         )
@@ -369,10 +389,10 @@ class MainActivity : AppCompatActivity() {
                 val pictureUploadResponse = mapper.readValue<PictureUploadResponse>(myResponse)
 
                 if (pictureUploadResponse.pictureId > 0) {
-                    sharedPreferencesEditor.putString(
-                        "profilePicture",
-                        pictureUploadResponse.profilePicture
-                    ).apply()
+                    sharedPreferencesEditor.putString("profilePicture",
+                        pictureUploadResponse.profilePicture)
+                    sharedPreferencesEditor.putString("sex", userSex)
+                    sharedPreferencesEditor.apply()
 
                     // Proceed to UserBioActivity activity
 
