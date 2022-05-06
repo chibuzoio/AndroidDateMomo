@@ -1,7 +1,9 @@
 package com.example.datemomo.activity
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,7 +14,15 @@ import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
+import com.example.datemomo.model.request.PictureUploadRequest
 import com.example.datemomo.model.request.UserBioRequest
+import com.example.datemomo.model.response.CommittedResponse
+import com.example.datemomo.model.response.PictureUploadResponse
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import okhttp3.*
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 class UserBioActivity : AppCompatActivity() {
     private lateinit var userBioRequest: UserBioRequest
@@ -68,8 +78,49 @@ class UserBioActivity : AppCompatActivity() {
             videoSexExperience = false
         )
 
+        binding.userKYCSubmitButton.blueButtonLayout.setOnClickListener {
+            binding.userKYCSubmitButton.blueButtonLayout.startAnimation(buttonClickEffect)
+
+            var isCategoryFilled = false
+            var isInterestFilled = false
+
+            if (!userBioRequest.bisexualCategory &&
+                !userBioRequest.gayCategory &&
+                !userBioRequest.lesbianCategory &&
+                !userBioRequest.straightCategory &&
+                !userBioRequest.sugarDaddyCategory &&
+                !userBioRequest.sugarMommyCategory &&
+                !userBioRequest.toyBoyCategory &&
+                !userBioRequest.toyGirlCategory) {
+                binding.userCategoryError.visibility = View.VISIBLE
+            } else {
+                binding.userCategoryError.visibility = View.GONE
+                isCategoryFilled = true
+            }
+
+            if (!userBioRequest.bisexualInterest &&
+                !userBioRequest.gayInterest &&
+                !userBioRequest.lesbianInterest &&
+                !userBioRequest.straightInterest &&
+                !userBioRequest.sugarDaddyInterest &&
+                !userBioRequest.sugarMommyInterest &&
+                !userBioRequest.toyBoyInterest &&
+                !userBioRequest.toyGirlInterest) {
+                binding.userInterestError.visibility = View.VISIBLE
+            } else {
+                binding.userInterestError.visibility = View.GONE
+                isInterestFilled = true
+            }
+
+        }
+
         binding.userKYCSkipButton.greyButtonLayout.setOnClickListener {
-            
+            binding.userKYCSkipButton.greyButtonLayout.startAnimation(buttonClickEffect)
+
+            userBioRequest.straightCategory = true
+            userBioRequest.straightInterest = true
+
+            commitUserBiometrics()
         }
 
         binding.maleGay.hollowButtonText.text = "Gay"
@@ -581,7 +632,39 @@ class UserBioActivity : AppCompatActivity() {
                 userBioRequest.oneNightStandExperience = false
             }
         }
+    }
 
+    @Throws(IOException::class)
+    fun commitUserBiometrics() {
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(userBioRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + "service/userbiometrics.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse = mapper.readValue<CommittedResponse>(myResponse)
+
+                if (committedResponse.committed) {
+//                    val intent = Intent(baseContext, HomeActivity::class.java)
+//                    startActivity(intent)
+                }
+            }
+        })
     }
 
     companion object {

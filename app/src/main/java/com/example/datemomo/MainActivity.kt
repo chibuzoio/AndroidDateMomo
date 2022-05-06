@@ -19,7 +19,6 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,6 +28,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
+import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.DateMomoModel
 import com.example.datemomo.model.UserNameModel
@@ -42,7 +42,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Base64.getEncoder
 
 class MainActivity : AppCompatActivity() {
     private var userSex: String = ""
@@ -394,8 +393,8 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString("sex", userSex)
                     sharedPreferencesEditor.apply()
 
-                    // Proceed to UserBioActivity activity
-
+                    val intent = Intent(baseContext, UserBioActivity::class.java)
+                    startActivity(intent)
                 }
             }
         })

@@ -6,6 +6,7 @@
     <string name="shared_preferences">DateMomoPreferences</string>
     <string name="user_bio_header">Meet The Right People You Seek!</string>
     <string name="experience_level">Things you have tried or can do in sex</string>
+    <string name="user_category_error">Choose at least one of the options in the categories</string>
 </resources>
 
 
