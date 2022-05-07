@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
@@ -44,6 +45,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+    private var userAge = 0
+    private var userAgeValid = false
     private var userSex: String = ""
     private var userNameValid = false
     private var passwordValid = false
@@ -76,6 +79,9 @@ class MainActivity : AppCompatActivity() {
         sharedPreferencesEditor = sharedPreferences.edit()
 
         fetchUserNames()
+
+        binding.userAgeInput.genericInputField.hint = "Age"
+        binding.userAgeInput.genericInputField.inputType = InputType.TYPE_CLASS_NUMBER
 
         binding.pictureUploadNext.blueButtonText.text = "Next"
         binding.maleGenderSelect.hollowButtonText.text = "Male"
@@ -119,7 +125,12 @@ class MainActivity : AppCompatActivity() {
         binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
             binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
 
-            if (theBitmap != null && userSex.isNotEmpty()) {
+            userAge = if (binding.userAgeInput.genericInputField.text.toString().trim().isEmpty()) 0
+            else binding.userAgeInput.genericInputField.text.toString().trim().toInt()
+
+            validateUserAge(userAge)
+
+            if (theBitmap != null && userSex.isNotEmpty() && userAgeValid) {
                 postUserPicture()
             }
         }
@@ -301,6 +312,35 @@ class MainActivity : AppCompatActivity() {
         return image
     }
 
+    private fun validateUserAge(age: Int) {
+        var errorType = ""
+
+        when {
+            age in 1..17 -> {
+                errorType = "You must be at least 18 years old"
+                userAgeValid = false
+            }
+            age <= 0 -> {
+                errorType = "Your age is required"
+                userAgeValid = false
+            }
+            age > 80 -> {
+                errorType = "Sorry, 80 years is the maximum age limit"
+                userAgeValid = false
+            }
+            else -> {
+                userAgeValid = true
+            }
+        }
+
+        if (userAgeValid) {
+            binding.userAgeInputError.visibility = View.GONE
+        } else {
+            binding.userAgeInputError.visibility = View.VISIBLE
+            binding.userAgeInputError.text = errorType
+        }
+    }
+
     private fun validatePassword(password: String) {
         var errorType = "Password is too short"
 
@@ -362,6 +402,7 @@ class MainActivity : AppCompatActivity() {
         val pictureUploadRequest = PictureUploadRequest(
             userSex,
             sharedPreferences.getInt("memberId", 0),
+            userAge,
             base64Picture
         )
 
@@ -391,6 +432,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString("profilePicture",
                         pictureUploadResponse.profilePicture)
                     sharedPreferencesEditor.putString("sex", userSex)
+                    sharedPreferencesEditor.putInt("age", pictureUploadResponse.age)
                     sharedPreferencesEditor.apply()
 
                     val intent = Intent(baseContext, UserBioActivity::class.java)
@@ -430,6 +472,7 @@ class MainActivity : AppCompatActivity() {
             0,
             "",
             "",
+            0,
             userName,
             "",
             "",

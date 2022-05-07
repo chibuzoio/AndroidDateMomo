@@ -112,6 +112,9 @@ class UserBioActivity : AppCompatActivity() {
                 isInterestFilled = true
             }
 
+            if (isCategoryFilled && isInterestFilled) {
+                commitUserBiometrics()
+            }
         }
 
         binding.userKYCSkipButton.greyButtonLayout.setOnClickListener {

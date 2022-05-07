@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class DateMomoModel(var memberId: Int,
                          var fullName: String,
                          var sex: String,
+                         var age: Int,
                          var userName: String,
                          var emailAddress: String,
                          var phoneNumber: String,
