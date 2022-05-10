@@ -663,8 +663,8 @@ class UserBioActivity : AppCompatActivity() {
                 val committedResponse = mapper.readValue<CommittedResponse>(myResponse)
 
                 if (committedResponse.committed) {
-//                    val intent = Intent(baseContext, HomeActivity::class.java)
-//                    startActivity(intent)
+                    val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+                    startActivity(intent)
                 }
             }
         })
