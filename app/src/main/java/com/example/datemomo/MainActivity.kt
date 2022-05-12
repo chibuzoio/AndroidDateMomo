@@ -392,6 +392,8 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun postUserPicture() {
+        val imageWidth = theBitmap!!.width
+        val imageHeight = theBitmap!!.height
         val byteArrayOutputStream = ByteArrayOutputStream()
         theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
@@ -403,6 +405,8 @@ class MainActivity : AppCompatActivity() {
             userSex,
             sharedPreferences.getInt("memberId", 0),
             userAge,
+            imageWidth,
+            imageHeight,
             base64Picture
         )
 

@@ -6,6 +6,8 @@ import kotlinx.serialization.Serializable
 data class PictureUploadRequest(var sex: String,
                                 var memberId: Int,
                                 var userAge: Int,
+                                var imageWidth: Int,
+                                var imageHeight: Int,
                                 var base64Picture: String)
 
 
