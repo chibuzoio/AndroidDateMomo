@@ -3,6 +3,7 @@
 <!--    <style name="Theme.DateMomo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">-->
     <style name="Theme.DateMomo" parent="Theme.AppCompat.NoActionBar">
         <!-- Primary brand color. -->
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:navigationBarColor">@color/white</item>
         <item name="android:textColorHint">@color/edit_text_hint</item>

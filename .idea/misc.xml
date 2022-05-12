@@ -14,7 +14,7 @@
         <entry key="app/src/main/res/drawable/light_grey_button.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/normal_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.1796875" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.10597826086956522" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_bio.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/generic_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_blue_button.xml" value="0.1796875" />
@@ -26,6 +26,7 @@
         <entry key="app/src/main/res/layout/include_light_grey_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_right_icon_input.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/recycler_home_display.xml" value="0.10597826086956522" />
+        <entry key="app/src/main/res/layout/splash_screen.xml" value="0.1796875" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.1796875" />
       </map>
     </option>

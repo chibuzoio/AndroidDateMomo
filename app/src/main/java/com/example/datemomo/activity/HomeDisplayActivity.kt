@@ -84,7 +84,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         binding.homeDisplayRecyclerView.layoutManager = layoutManager
         binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-        val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayImages, deviceWidth)
+        val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayImages)
         binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
     }
 }

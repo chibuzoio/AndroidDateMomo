@@ -9,9 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.InputType
@@ -67,8 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.splash_screen)
 
         window.setStatusBarDarkIcons(true)
         window.setNavigationBarDarkIcons(true)
@@ -80,167 +77,184 @@ class MainActivity : AppCompatActivity() {
 
         fetchUserNames()
 
-        binding.userAgeInput.genericInputField.hint = "Age"
-        binding.userAgeInput.genericInputField.inputType = InputType.TYPE_CLASS_NUMBER
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding = ActivityMainBinding.inflate(layoutInflater)
+            setContentView(binding.root)
 
-        binding.pictureUploadNext.blueButtonText.text = "Next"
-        binding.maleGenderSelect.hollowButtonText.text = "Male"
-        binding.femaleGenderSelect.hollowButtonText.text = "Female"
-        binding.takePictureButton.iconHollowButtonText.text = "Take Picture"
-        binding.uploadPictureButton.iconHollowButtonText.text = "Upload Picture"
-        binding.takePictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_camera_blue))
-        binding.uploadPictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
+            binding.userAgeInput.genericInputField.hint = "Age"
+            binding.userAgeInput.genericInputField.inputType = InputType.TYPE_CLASS_NUMBER
 
-        binding.femaleGenderSelect.hollowButtonLayout.setOnClickListener {
-            binding.femaleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
-            binding.femaleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-            binding.maleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-            binding.femaleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
-            binding.maleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
-            userSex = "Female"
-        }
+            binding.pictureUploadNext.blueButtonText.text = "Next"
+            binding.maleGenderSelect.hollowButtonText.text = "Male"
+            binding.femaleGenderSelect.hollowButtonText.text = "Female"
+            binding.takePictureButton.iconHollowButtonText.text = "Take Picture"
+            binding.uploadPictureButton.iconHollowButtonText.text = "Upload Picture"
+            binding.takePictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_camera_blue))
+            binding.uploadPictureButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
 
-        binding.maleGenderSelect.hollowButtonLayout.setOnClickListener {
-            binding.maleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
-            binding.maleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-            binding.femaleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-            binding.femaleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
-            binding.maleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
-            userSex = "Male"
-        }
+            binding.femaleGenderSelect.hollowButtonLayout.setOnClickListener {
+                binding.femaleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
+                binding.femaleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                binding.maleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                binding.femaleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.maleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                userSex = "Female"
+            }
 
-        binding.pictureUploadImage.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    requestPermissions(permissions, PERMISSION_CODE)
+            binding.maleGenderSelect.hollowButtonLayout.setOnClickListener {
+                binding.maleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
+                binding.maleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                binding.femaleGenderSelect.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                binding.femaleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.maleGenderSelect.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                userSex = "Male"
+            }
+
+            binding.pictureUploadImage.setOnClickListener {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        requestPermissions(permissions, PERMISSION_CODE)
+                    } else {
+                        pickImageFromGallery()
+                    }
                 } else {
                     pickImageFromGallery()
                 }
-            } else {
-                pickImageFromGallery()
             }
-        }
 
-        binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
-            binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
+            binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
+                binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
 
-            userAge = if (binding.userAgeInput.genericInputField.text.toString().trim().isEmpty()) 0
-            else binding.userAgeInput.genericInputField.text.toString().trim().toInt()
+                userAge = if (binding.userAgeInput.genericInputField.text.toString().trim().isEmpty()) 0
+                else binding.userAgeInput.genericInputField.text.toString().trim().toInt()
 
-            validateUserAge(userAge)
+                validateUserAge(userAge)
 
-            if (theBitmap != null && userSex.isNotEmpty() && userAgeValid) {
-                postUserPicture()
+                if (theBitmap != null && userSex.isNotEmpty() && userAgeValid) {
+                    postUserPicture()
+                }
             }
-        }
 
-        binding.takePictureButton.iconHollowButtonLayout.setOnClickListener {
-            binding.takePictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
-            captureCameraImage()
-        }
+            binding.takePictureButton.iconHollowButtonLayout.setOnClickListener {
+                binding.takePictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+                captureCameraImage()
+            }
 
-        binding.uploadPictureButton.iconHollowButtonLayout.setOnClickListener {
-            binding.uploadPictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+            binding.uploadPictureButton.iconHollowButtonLayout.setOnClickListener {
+                binding.uploadPictureButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    requestPermissions(permissions, PERMISSION_CODE)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+                        val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        requestPermissions(permissions, PERMISSION_CODE)
+                    } else {
+                        pickImageFromGallery()
+                    }
                 } else {
                     pickImageFromGallery()
                 }
-            } else {
-                pickImageFromGallery()
             }
-        }
 
-        Glide.with(this)
-            .load(
-                ContextCompat.getDrawable(
-                    this,
-                    R.drawable.placeholder
+            Glide.with(this)
+                .load(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.placeholder
+                    )
                 )
-            )
-            .transform(FitCenter(), RoundedCorners(33))
-            .into(binding.pictureUploadImage)
+                .transform(FitCenter(), RoundedCorners(33))
+                .into(binding.pictureUploadImage)
 
-        binding.passwordInput.leftIconInputLabel.text = "Password"
-        binding.userNameInput.leftIconInputLabel.text = "User Name"
-        binding.createAccountSubmit.blueButtonText.text = "Sign Up"
-        binding.userNameInput.leftIconInputField.genericInputField.hint = "User Name"
-        binding.passwordInput.leftIconInputField.genericInputField.hint = "Password"
-        binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
-        binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
-        binding.passwordInput.leftIconInputField.genericInputField.transformationMethod =
-            PasswordTransformationMethod.getInstance()
+            binding.loginAccountSubmit.blueButtonText.text = "Log In"
+            binding.loginPassword.leftIconInputLabel.text = "Password"
+            binding.loginUserName.leftIconInputLabel.text = "User Name"
+            binding.loginPassword.leftIconInputField.genericInputField.hint = "Password"
+            binding.loginUserName.leftIconInputField.genericInputField.hint = "User Name"
+            binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
+            binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
+            binding.loginPassword.leftIconInputField.genericInputField.transformationMethod =
+                PasswordTransformationMethod.getInstance()
 
-        binding.createAccountSubmit.blueButtonLayout.setOnClickListener {
-            binding.createAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
+            /*All the listener implementations follow below*/
 
-            password = binding.passwordInput.leftIconInputField.genericInputField.text.toString().trim()
-            userName = binding.userNameInput.leftIconInputField.genericInputField.text.toString().trim()
-            validatePassword(password)
-            validateUserName(userName)
+            binding.passwordInput.leftIconInputLabel.text = "Password"
+            binding.userNameInput.leftIconInputLabel.text = "User Name"
+            binding.createAccountSubmit.blueButtonText.text = "Sign Up"
+            binding.userNameInput.leftIconInputField.genericInputField.hint = "User Name"
+            binding.passwordInput.leftIconInputField.genericInputField.hint = "Password"
+            binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
+            binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
+            binding.passwordInput.leftIconInputField.genericInputField.transformationMethod =
+                PasswordTransformationMethod.getInstance()
 
-            if (passwordValid && userNameValid) {
-                registerUser()
-            }
-        }
+            binding.createAccountSubmit.blueButtonLayout.setOnClickListener {
+                binding.createAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
 
-        binding.userNameInput.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                password = binding.passwordInput.leftIconInputField.genericInputField.text.toString().trim()
+                userName = binding.userNameInput.leftIconInputField.genericInputField.text.toString().trim()
+                validatePassword(password)
+                validateUserName(userName)
 
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-                binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
-                binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_person_blue))
-                binding.userNameInputError.visibility = View.GONE
-            }
-        })
-
-        binding.passwordInput.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
+                if (passwordValid && userNameValid) {
+                    registerUser()
+                }
             }
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            binding.userNameInput.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                    binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
+                    binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_person_blue))
+                    binding.userNameInputError.visibility = View.GONE
+                }
+            })
+
+            binding.passwordInput.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                    binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
+                    binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_password_blue))
+                    binding.passwordInputError.visibility = View.GONE
+                }
+            })
+
+            binding.userNameInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                if (focused) {
+                    binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                    binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_blue))
+                    binding.userNameInputError.visibility = View.GONE
+                } else {
+                    binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                    binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
+                }
             }
 
-            override fun afterTextChanged(p0: Editable?) {
-                binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
-                binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_password_blue))
-                binding.passwordInputError.visibility = View.GONE
+            binding.passwordInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                if (focused) {
+                    binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                    binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_blue))
+                    binding.passwordInputError.visibility = View.GONE
+                } else {
+                    binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                    binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
+                }
             }
-        })
-
-        binding.userNameInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
-            if (focused) {
-                binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
-                binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_blue))
-                binding.userNameInputError.visibility = View.GONE
-            } else {
-                binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
-                binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
-            }
-        }
-
-        binding.passwordInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
-            if (focused) {
-                binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
-                binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_blue))
-                binding.passwordInputError.visibility = View.GONE
-            } else {
-                binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
-                binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
-            }
-        }
+        }, 2000)
     }
 
     @Deprecated("Deprecated in Java")
@@ -367,7 +381,7 @@ class MainActivity : AppCompatActivity() {
             userNameValid = true
 
             for (userNameModel in userNameArray) {
-                if (userNameModel.userName.lowercase() == userName.lowercase()) {
+                if (userNameModel.userName.equals(userName, ignoreCase = true)) {
                     errorType = "User name is already taken"
                     userNameValid = false
                     break
