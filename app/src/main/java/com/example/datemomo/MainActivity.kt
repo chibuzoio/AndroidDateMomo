@@ -169,6 +169,7 @@ class MainActivity : AppCompatActivity() {
             binding.loginAccountSubmit.blueButtonText.text = "Log In"
             binding.loginPassword.leftIconInputLabel.text = "Password"
             binding.loginUserName.leftIconInputLabel.text = "User Name"
+            binding.registrationButton.hollowButtonText.text = "Sign Up"
             binding.loginPassword.leftIconInputField.genericInputField.hint = "Password"
             binding.loginUserName.leftIconInputField.genericInputField.hint = "User Name"
             binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
@@ -176,7 +177,22 @@ class MainActivity : AppCompatActivity() {
             binding.loginPassword.leftIconInputField.genericInputField.transformationMethod =
                 PasswordTransformationMethod.getInstance()
 
-            /*All the listener implementations follow below*/
+            binding.loginAccountSubmit.blueButtonLayout.setOnClickListener {
+                binding.loginAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
+
+                password = binding.passwordInput.leftIconInputField.genericInputField.text.toString().trim()
+                userName = binding.userNameInput.leftIconInputField.genericInputField.text.toString().trim()
+                validateLoginPassword(password)
+                validateLoginUserName(userName)
+
+                if (passwordValid && userNameValid) {
+                    authenticateUser()
+                }
+            }
+
+            binding.registrationButton.hollowButtonLayout.setOnClickListener {
+                binding.registrationButton.hollowButtonLayout.startAnimation(buttonClickEffect)
+            }
 
             binding.passwordInput.leftIconInputLabel.text = "Password"
             binding.userNameInput.leftIconInputLabel.text = "User Name"
@@ -201,6 +217,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            binding.loginUserName.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                    binding.loginUserName.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
+                    binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_person_blue))
+                    binding.loginUserNameError.visibility = View.GONE
+                }
+            })
+
             binding.userNameInput.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -214,6 +246,22 @@ class MainActivity : AppCompatActivity() {
                     binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
                     binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_person_blue))
                     binding.userNameInputError.visibility = View.GONE
+                }
+            })
+
+            binding.loginPassword.leftIconInputField.genericInputField.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                    binding.loginPassword.leftIconInputLayout.background = ContextCompat.getDrawable(baseContext, R.drawable.focused_edit_text)
+                    binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(baseContext, R.drawable.icon_password_blue))
+                    binding.loginPasswordError.visibility = View.GONE
                 }
             })
 
@@ -233,6 +281,17 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+            binding.loginUserName.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                if (focused) {
+                    binding.loginUserName.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                    binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_blue))
+                    binding.loginUserNameError.visibility = View.GONE
+                } else {
+                    binding.loginUserName.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                    binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
+                }
+            }
+
             binding.userNameInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
                 if (focused) {
                     binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -241,6 +300,17 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
                     binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person))
+                }
+            }
+
+            binding.loginPassword.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                if (focused) {
+                    binding.loginPassword.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
+                    binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_blue))
+                    binding.loginPasswordError.visibility = View.GONE
+                } else {
+                    binding.loginPassword.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
+                    binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password))
                 }
             }
 
@@ -355,6 +425,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun validateLoginPassword(password: String) {
+        val errorType = "Password field is empty"
+
+        if (password.isEmpty()) {
+            binding.loginPassword.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
+            binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_red))
+            binding.loginPasswordError.visibility = View.VISIBLE
+            binding.loginPasswordError.text = errorType
+            passwordValid = false
+        } else {
+            passwordValid = true
+        }
+    }
+
     private fun validatePassword(password: String) {
         var errorType = "Password is too short"
 
@@ -371,6 +455,20 @@ class MainActivity : AppCompatActivity() {
 
             binding.passwordInputError.text = errorType
             passwordValid = false
+        }
+    }
+
+    private fun validateLoginUserName(userName: String) {
+        val errorType = "User name field is empty"
+
+        if (userName.isEmpty()) {
+            binding.loginUserName.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
+            binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_red))
+            binding.loginUserNameError.visibility = View.VISIBLE
+            binding.loginUserNameError.text = errorType
+            userAgeValid = false
+        } else {
+            userNameValid = true
         }
     }
 
@@ -481,6 +579,11 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "Value of response from server is $myResponse")
             }
         })
+    }
+
+    @Throws(IOException::class)
+    private fun authenticateUser() {
+
     }
 
     @Throws(IOException::class)

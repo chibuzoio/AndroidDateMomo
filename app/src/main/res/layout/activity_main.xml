@@ -67,8 +67,15 @@
                 <include
                     android:id="@+id/loginAccountSubmit"
                     android:layout_marginTop="25dp"
-                    android:layout_marginBottom="25dp"
+                    android:layout_marginBottom="20dp"
                     layout="@layout/include_blue_button"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+                <include
+                    android:id="@+id/registrationButton"
+                    android:layout_marginBottom="25dp"
+                    layout="@layout/include_hollow_blue_button"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"/>
 
