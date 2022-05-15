@@ -35,6 +35,7 @@ import com.example.datemomo.model.request.PictureUploadRequest
 import com.example.datemomo.model.request.RegistrationRequest
 import com.example.datemomo.model.response.PictureUploadResponse
 import com.example.datemomo.model.response.RegistrationResponse
+import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -200,9 +201,6 @@ class MainActivity : AppCompatActivity() {
             binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
                 binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
 
-                binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
-                binding.uploadProgressIcon.visibility = View.VISIBLE
-
                 userAge = if (binding.userAgeInput.genericInputField.text.toString().trim()
                         .isEmpty()
                 ) 0
@@ -211,6 +209,9 @@ class MainActivity : AppCompatActivity() {
                 validateUserAge(userAge)
 
                 if (theBitmap != null && userSex.isNotEmpty() && userAgeValid) {
+                    binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
+                    binding.uploadProgressIcon.visibility = View.VISIBLE
+
                     postUserPicture()
                 }
             }
@@ -273,9 +274,6 @@ class MainActivity : AppCompatActivity() {
             binding.loginAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.loginAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
 
-                binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
-                binding.loginProgressIcon.visibility = View.VISIBLE
-
                 password =
                     binding.passwordInput.leftIconInputField.genericInputField.text.toString()
                         .trim()
@@ -286,6 +284,9 @@ class MainActivity : AppCompatActivity() {
                 validateLoginUserName(userName)
 
                 if (passwordValid && userNameValid) {
+                    binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
+                    binding.loginProgressIcon.visibility = View.VISIBLE
+
                     authenticateUser()
                 }
             }
@@ -320,9 +321,6 @@ class MainActivity : AppCompatActivity() {
             binding.createAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.createAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
 
-                binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
-                binding.registerProgressIcon.visibility = View.VISIBLE
-
                 password =
                     binding.passwordInput.leftIconInputField.genericInputField.text.toString()
                         .trim()
@@ -333,6 +331,9 @@ class MainActivity : AppCompatActivity() {
                 validateUserName(userName)
 
                 if (passwordValid && userNameValid) {
+                    binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
+                    binding.registerProgressIcon.visibility = View.VISIBLE
+
                     registerUser()
                 }
             }
@@ -552,8 +553,11 @@ class MainActivity : AppCompatActivity() {
 
             }
             binding.registrationLayout.isVisible -> {
-                // go back to login page
+                binding.userNameInput.leftIconInputField.genericInputField.setText("")
+                binding.passwordInput.leftIconInputField.genericInputField.setText("")
+                binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
                 binding.authenticationLayout.visibility = View.VISIBLE
+                binding.registerProgressIcon.visibility = View.GONE
                 binding.pictureUploadLayout.visibility = View.GONE
                 binding.registrationLayout.visibility = View.GONE
             }
@@ -857,6 +861,14 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
+                Log.e(TAG, "The error message from sign up attempt is ${e.message}")
+
+                if (!Utility.isConnected(baseContext)) {
+                    Log.e(TAG, "There's no internet connection on line 867")
+                } else if (e.message!!.contains("after")) {
+                    // There's poor internet connection, maybe due to insufficient data
+                    Log.e(TAG, "There's poor internet connection on line 870")
+                }
             }
 
             @Throws(IOException::class)
