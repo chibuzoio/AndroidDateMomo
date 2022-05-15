@@ -10,6 +10,7 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
@@ -44,6 +45,16 @@ class UserBioActivity : AppCompatActivity() {
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.loading_puzzle)
+            .into(binding.kycSubmitProgressIcon)
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.loading_puzzle)
+            .into(binding.kycSkipProgressIcon)
 
         userBioRequest = UserBioRequest(
             sharedPreferences.getInt("memberId", 0),
@@ -80,6 +91,11 @@ class UserBioActivity : AppCompatActivity() {
 
         binding.userKYCSubmitButton.blueButtonLayout.setOnClickListener {
             binding.userKYCSubmitButton.blueButtonLayout.startAnimation(buttonClickEffect)
+
+            binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+            binding.userKYCSubmitButton.blueButtonLayout.visibility = View.GONE
+            binding.kycSubmitProgressIcon.visibility = View.VISIBLE
+            binding.kycSkipProgressIcon.visibility = View.GONE
 
             var isCategoryFilled = false
             var isInterestFilled = false
@@ -119,6 +135,11 @@ class UserBioActivity : AppCompatActivity() {
 
         binding.userKYCSkipButton.greyButtonLayout.setOnClickListener {
             binding.userKYCSkipButton.greyButtonLayout.startAnimation(buttonClickEffect)
+
+            binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+            binding.userKYCSkipButton.greyButtonLayout.visibility = View.GONE
+            binding.kycSkipProgressIcon.visibility = View.VISIBLE
+            binding.kycSubmitProgressIcon.visibility = View.GONE
 
             userBioRequest.straightCategory = true
             userBioRequest.straightInterest = true
@@ -663,6 +684,13 @@ class UserBioActivity : AppCompatActivity() {
                 val committedResponse = mapper.readValue<CommittedResponse>(myResponse)
 
                 if (committedResponse.committed) {
+                    runOnUiThread {
+                        binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                        binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                        binding.kycSubmitProgressIcon.visibility = View.GONE
+                        binding.kycSkipProgressIcon.visibility = View.GONE
+                    }
+
                     val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                     startActivity(intent)
                 }

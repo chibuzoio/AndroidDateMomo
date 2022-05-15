@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
-import android.opengl.Visibility
 import android.os.*
 import android.provider.MediaStore
 import android.text.Editable
@@ -31,7 +30,6 @@ import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
-import com.example.datemomo.model.DateMomoModel
 import com.example.datemomo.model.UserNameModel
 import com.example.datemomo.model.request.PictureUploadRequest
 import com.example.datemomo.model.request.RegistrationRequest
@@ -107,6 +105,21 @@ class MainActivity : AppCompatActivity() {
                 binding.pictureUploadLayout.visibility = View.GONE
                 binding.registrationLayout.visibility = View.GONE
             }
+
+            Glide.with(this)
+                .asGif()
+                .load(R.drawable.loading_puzzle)
+                .into(binding.loginProgressIcon)
+
+            Glide.with(this)
+                .asGif()
+                .load(R.drawable.loading_puzzle)
+                .into(binding.registerProgressIcon)
+
+            Glide.with(this)
+                .asGif()
+                .load(R.drawable.loading_puzzle)
+                .into(binding.uploadProgressIcon)
 
             binding.userAgeInput.genericInputField.hint = "Age"
             binding.userAgeInput.genericInputField.inputType = InputType.TYPE_CLASS_NUMBER
@@ -187,6 +200,9 @@ class MainActivity : AppCompatActivity() {
             binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
                 binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
 
+                binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
+                binding.uploadProgressIcon.visibility = View.VISIBLE
+
                 userAge = if (binding.userAgeInput.genericInputField.text.toString().trim()
                         .isEmpty()
                 ) 0
@@ -257,6 +273,9 @@ class MainActivity : AppCompatActivity() {
             binding.loginAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.loginAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
 
+                binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
+                binding.loginProgressIcon.visibility = View.VISIBLE
+
                 password =
                     binding.passwordInput.leftIconInputField.genericInputField.text.toString()
                         .trim()
@@ -300,6 +319,9 @@ class MainActivity : AppCompatActivity() {
 
             binding.createAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.createAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
+
+                binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
+                binding.registerProgressIcon.visibility = View.VISIBLE
 
                 password =
                     binding.passwordInput.leftIconInputField.genericInputField.text.toString()
@@ -766,6 +788,11 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString("userLevel", pictureUploadResponse.userLevel)
                     sharedPreferencesEditor.apply()
 
+                    runOnUiThread {
+                        binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
+                        binding.uploadProgressIcon.visibility = View.GONE
+                    }
+
                     val intent = Intent(baseContext, UserBioActivity::class.java)
                     startActivity(intent)
                 }
@@ -797,6 +824,13 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun authenticateUser() {
+
+
+        // inside onResponse do this:
+        runOnUiThread {
+            binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+            binding.loginProgressIcon.visibility = View.GONE
+        }
 
     }
 
@@ -840,9 +874,11 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
 
                     runOnUiThread {
-                        binding.registrationLayout.visibility = View.GONE
-                        binding.authenticationLayout.visibility = View.GONE
+                        binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
                         binding.pictureUploadLayout.visibility = View.VISIBLE
+                        binding.registerProgressIcon.visibility = View.GONE
+                        binding.authenticationLayout.visibility = View.GONE
+                        binding.registrationLayout.visibility = View.GONE
                     }
                 }
 

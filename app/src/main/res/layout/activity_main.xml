@@ -67,6 +67,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
+                <ImageView
+                    android:id="@+id/loginProgressIcon"
+                    android:visibility="gone"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"/>
+
                 <include
                     android:id="@+id/loginAccountSubmit"
                     android:layout_marginTop="25dp"
@@ -152,6 +162,16 @@
                     android:layout_marginHorizontal="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:id="@+id/registerProgressIcon"
+                    android:visibility="gone"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"/>
 
                 <include
                     android:id="@+id/createAccountSubmit"
@@ -307,6 +327,16 @@
                     android:layout_marginHorizontal="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:id="@+id/uploadProgressIcon"
+                    android:visibility="gone"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="33dp"/>
 
                 <include
                     android:id="@+id/pictureUploadNext"

@@ -360,6 +360,15 @@
 
             </com.google.android.flexbox.FlexboxLayout>
 
+            <ImageView
+                android:id="@+id/kycSubmitProgressIcon"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"/>
+
             <include
                 android:id="@+id/userKYCSubmitButton"
                 android:layout_marginTop="10dp"
@@ -367,6 +376,14 @@
                 layout="@layout/include_blue_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/kycSkipProgressIcon"
+                android:visibility="gone"
+                android:layout_marginBottom="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="33dp"/>
 
             <include
                 android:id="@+id/userKYCSkipButton"
