@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.opengl.Visibility
 import android.os.*
 import android.provider.MediaStore
 import android.text.Editable
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -32,7 +34,9 @@ import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.DateMomoModel
 import com.example.datemomo.model.UserNameModel
 import com.example.datemomo.model.request.PictureUploadRequest
+import com.example.datemomo.model.request.RegistrationRequest
 import com.example.datemomo.model.response.PictureUploadResponse
+import com.example.datemomo.model.response.RegistrationResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -192,6 +196,9 @@ class MainActivity : AppCompatActivity() {
 
             binding.registrationButton.hollowButtonLayout.setOnClickListener {
                 binding.registrationButton.hollowButtonLayout.startAnimation(buttonClickEffect)
+                binding.registrationLayout.visibility = View.VISIBLE
+                binding.authenticationLayout.visibility = View.GONE
+                binding.pictureUploadLayout.visibility = View.GONE
             }
 
             binding.passwordInput.leftIconInputLabel.text = "Password"
@@ -325,6 +332,38 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }, 2000)
+    }
+
+    /*
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+*/
+
+    override fun onBackPressed() {
+        when {
+            binding.pictureUploadLayout.isVisible -> {
+                // you must not go back to registration page
+                // Just display a beautiful exit dialogue asking the user if he wants to exit
+                // and continue the registration process later
+
+            }
+            binding.registrationLayout.isVisible -> {
+                // go back to login page
+                binding.authenticationLayout.visibility = View.VISIBLE
+                binding.pictureUploadLayout.visibility = View.GONE
+                binding.registrationLayout.visibility = View.GONE
+            }
+            else -> {
+                super.onBackPressed()
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -576,7 +615,6 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 userNameArray = mapper.readValue(myResponse)
-                Log.e(TAG, "Value of response from server is $myResponse")
             }
         })
     }
@@ -589,23 +627,12 @@ class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun registerUser() {
         val mapper = jacksonObjectMapper()
-        val userModel = DateMomoModel(
-            0,
-            "",
-            "",
-            0,
+        val registrationRequest = RegistrationRequest(
             userName,
-            "",
-            "",
-            "",
-            "",
-            password,
-            "",
-            "",
-            ""
+            password
         )
 
-        val jsonObjectString = mapper.writeValueAsString(userModel)
+        val jsonObjectString = mapper.writeValueAsString(registrationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
             jsonObjectString
@@ -625,17 +652,18 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val dateMomoModel = mapper.readValue<DateMomoModel>(myResponse)
+                val registrationResponse = mapper.readValue<RegistrationResponse>(myResponse)
 
-                if (dateMomoModel.memberId > 0) {
-                    sharedPreferencesEditor.putInt("memberId", dateMomoModel.memberId)
-                    sharedPreferencesEditor.putString("userName", dateMomoModel.userName)
-                    sharedPreferencesEditor.putString("userRole", dateMomoModel.userRole)
-                    sharedPreferencesEditor.putString("registrationDate", dateMomoModel.registrationDate)
+                if (registrationResponse.memberId > 0) {
+                    sharedPreferencesEditor.putInt("memberId", registrationResponse.memberId)
+                    sharedPreferencesEditor.putString("userName", registrationResponse.userName)
+                    sharedPreferencesEditor.putString("userRole", registrationResponse.userRole)
+                    sharedPreferencesEditor.putString("registrationDate", registrationResponse.registrationDate)
                     sharedPreferencesEditor.apply()
 
                     runOnUiThread {
                         binding.registrationLayout.visibility = View.GONE
+                        binding.authenticationLayout.visibility = View.GONE
                         binding.pictureUploadLayout.visibility = View.VISIBLE
                     }
                 }
