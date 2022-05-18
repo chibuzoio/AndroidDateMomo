@@ -777,6 +777,14 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
             }
 
             @Throws(IOException::class)
@@ -861,13 +869,13 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
-                Log.e(TAG, "The error message from sign up attempt is ${e.message}")
 
                 if (!Utility.isConnected(baseContext)) {
-                    Log.e(TAG, "There's no internet connection on line 867")
+                    displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
-                    // There's poor internet connection, maybe due to insufficient data
-                    Log.e(TAG, "There's poor internet connection on line 870")
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
             }
 
@@ -897,6 +905,22 @@ class MainActivity : AppCompatActivity() {
                 fetchUserNames()
             }
         })
+    }
+
+    fun displayDoubleButtonDialog() {
+        runOnUiThread {
+            binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
+            binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun displaySingleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.singleButtonDialog.singleButtonTitle.text = title
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+        }
     }
 
     companion object {
