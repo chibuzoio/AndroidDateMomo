@@ -49,15 +49,20 @@ class MainActivity : AppCompatActivity() {
     private var userAge = 0
     private var userAgeValid = false
     private var userSex: String = ""
-    private var userNameValid = false
-    private var passwordValid = false
     private val PERMISSION_CODE = 1001
     private var photoFile: File? = null
     private val PICK_IMAGE_REQUEST = 200
     private var theBitmap: Bitmap? = null
-    private lateinit var password: String
-    private lateinit var userName: String
+    private var loginPasswordValid = false
+    private var loginUserNameValid = false
     private val CAPTURE_IMAGE_REQUEST = 100
+    private var registerPasswordValid = false
+    private var registerUserNameValid = false
+    private lateinit var loginPassword: String
+    private lateinit var loginUserName: String
+    private lateinit var requestProcess: String
+    private lateinit var registerPassword: String
+    private lateinit var registerUserName: String
     private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -142,6 +147,33 @@ class MainActivity : AppCompatActivity() {
                     R.drawable.icon_gallery_blue
                 )
             )
+
+            binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+                triggerRequestProcess()
+            }
+
+            binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            }
+
+            binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+                triggerRequestProcess()
+            }
+
+            binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            }
+
+            binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            }
 
             binding.femaleGenderSelect.hollowButtonLayout.setOnClickListener {
                 binding.femaleGenderSelect.hollowButtonLayout.startAnimation(buttonClickEffect)
@@ -274,16 +306,16 @@ class MainActivity : AppCompatActivity() {
             binding.loginAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.loginAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
 
-                password =
-                    binding.passwordInput.leftIconInputField.genericInputField.text.toString()
+                loginPassword =
+                    binding.loginPassword.leftIconInputField.genericInputField.text.toString()
                         .trim()
-                userName =
-                    binding.userNameInput.leftIconInputField.genericInputField.text.toString()
+                loginUserName =
+                    binding.loginUserName.leftIconInputField.genericInputField.text.toString()
                         .trim()
-                validateLoginPassword(password)
-                validateLoginUserName(userName)
+                validateLoginPassword(loginPassword)
+                validateLoginUserName(loginUserName)
 
-                if (passwordValid && userNameValid) {
+                if (loginPasswordValid && loginUserNameValid) {
                     binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
                     binding.loginProgressIcon.visibility = View.VISIBLE
 
@@ -293,6 +325,8 @@ class MainActivity : AppCompatActivity() {
 
             binding.registrationButton.hollowButtonLayout.setOnClickListener {
                 binding.registrationButton.hollowButtonLayout.startAnimation(buttonClickEffect)
+                binding.loginUserName.leftIconInputField.genericInputField.setText("")
+                binding.loginPassword.leftIconInputField.genericInputField.setText("")
                 binding.registrationLayout.visibility = View.VISIBLE
                 binding.authenticationLayout.visibility = View.GONE
                 binding.pictureUploadLayout.visibility = View.GONE
@@ -321,16 +355,16 @@ class MainActivity : AppCompatActivity() {
             binding.createAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.createAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
 
-                password =
+                registerPassword =
                     binding.passwordInput.leftIconInputField.genericInputField.text.toString()
                         .trim()
-                userName =
+                registerUserName =
                     binding.userNameInput.leftIconInputField.genericInputField.text.toString()
                         .trim()
-                validatePassword(password)
-                validateUserName(userName)
+                validateRegisterPassword(registerPassword)
+                validateRegisterUserName(registerUserName)
 
-                if (passwordValid && userNameValid) {
+                if (registerPasswordValid && registerUserNameValid) {
                     binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
                     binding.registerProgressIcon.visibility = View.VISIBLE
 
@@ -567,6 +601,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun triggerRequestProcess() {
+        when (requestProcess) {
+            getString(R.string.request_register_user) -> registerUser()
+            getString(R.string.request_authenticate_user) -> authenticateUser()
+            getString(R.string.request_post_user_picture) -> postUserPicture()
+        }
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -673,17 +715,17 @@ class MainActivity : AppCompatActivity() {
             binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_red))
             binding.loginPasswordError.visibility = View.VISIBLE
             binding.loginPasswordError.text = errorType
-            passwordValid = false
+            loginPasswordValid = false
         } else {
-            passwordValid = true
+            loginPasswordValid = true
         }
     }
 
-    private fun validatePassword(password: String) {
+    private fun validateRegisterPassword(password: String) {
         var errorType = "Password is too short"
 
         if (password.length > 4) {
-            passwordValid = true
+            registerPasswordValid = true
         } else {
             binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
             binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_red))
@@ -694,7 +736,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.passwordInputError.text = errorType
-            passwordValid = false
+            registerPasswordValid = false
         }
     }
 
@@ -708,28 +750,33 @@ class MainActivity : AppCompatActivity() {
             binding.loginUserNameError.text = errorType
             userAgeValid = false
         } else {
-            userNameValid = true
+            loginUserNameValid = true
         }
     }
 
-    private fun validateUserName(userName: String) {
+    private fun validateRegisterUserName(userName: String) {
         var errorType = "User name is too short"
 
         if (userName.length > 3) {
-            userNameValid = true
+            registerUserNameValid = true
 
-            for (userNameModel in userNameArray) {
-                if (userNameModel.userName.equals(userName, ignoreCase = true)) {
-                    errorType = "User name is already taken"
-                    userNameValid = false
-                    break
+            if (registerUserName.contains(" ")) {
+                errorType = "User name must not contain space"
+                registerUserNameValid = false
+            } else {
+                for (userNameModel in userNameArray) {
+                    if (userNameModel.userName.equals(userName, ignoreCase = true)) {
+                        errorType = "User name is already taken"
+                        registerUserNameValid = false
+                        break
+                    }
                 }
             }
         } else {
-            userNameValid = false
+            registerUserNameValid = false
         }
 
-        if (!userNameValid) {
+        if (!registerUserNameValid) {
             binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
             binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_red))
             binding.userNameInputError.visibility = View.VISIBLE
@@ -746,6 +793,8 @@ class MainActivity : AppCompatActivity() {
     fun postUserPicture() {
         val imageWidth = theBitmap!!.width
         val imageHeight = theBitmap!!.height
+        requestProcess = getString(R.string.request_post_user_picture)
+
         val byteArrayOutputStream = ByteArrayOutputStream()
         theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         val byteArray = byteArrayOutputStream.toByteArray()
@@ -777,6 +826,11 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
+
+                runOnUiThread {
+                    binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
+                    binding.uploadProgressIcon.visibility = View.GONE
+                }
 
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
@@ -836,22 +890,23 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun authenticateUser() {
+        requestProcess = getString(R.string.request_authenticate_user)
 
-
-        // inside onResponse do this:
-        runOnUiThread {
-            binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-            binding.loginProgressIcon.visibility = View.GONE
-        }
+        // inside onFailure or onResponse methods do this:
+//        runOnUiThread {
+//            binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+//            binding.loginProgressIcon.visibility = View.GONE
+//        }
 
     }
 
     @Throws(IOException::class)
     fun registerUser() {
+        requestProcess = getString(R.string.request_register_user)
         val mapper = jacksonObjectMapper()
         val registrationRequest = RegistrationRequest(
-            userName,
-            password
+            registerUserName,
+            registerPassword
         )
 
         val jsonObjectString = mapper.writeValueAsString(registrationRequest)
@@ -869,6 +924,11 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
+
+                runOnUiThread {
+                    binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                    binding.registerProgressIcon.visibility = View.GONE
+                }
 
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()

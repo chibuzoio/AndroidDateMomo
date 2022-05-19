@@ -13,6 +13,9 @@
     <string name="network_error_message">Check your internet connection or connect your device to a WiFi network</string>
     <string name="server_error_title">Server Error</string>
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
+    <string name="request_register_user">registerUser</string>
+    <string name="request_authenticate_user">authenticateUser</string>
+    <string name="request_post_user_picture">postUserPicture</string>
 </resources>
 
 
