@@ -808,7 +808,8 @@ class MainActivity : AppCompatActivity() {
             userAge,
             imageWidth,
             imageHeight,
-            base64Picture
+            base64Picture,
+            getString(R.string.level_select_sexuality_interest)
         )
 
         val jsonObjectString = mapper.writeValueAsString(pictureUploadRequest)
@@ -906,7 +907,8 @@ class MainActivity : AppCompatActivity() {
         val mapper = jacksonObjectMapper()
         val registrationRequest = RegistrationRequest(
             registerUserName,
-            registerPassword
+            registerPassword,
+            getString(R.string.level_upload_profile_picture)
         )
 
         val jsonObjectString = mapper.writeValueAsString(registrationRequest)

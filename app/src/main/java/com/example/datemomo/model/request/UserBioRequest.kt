@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UserBioRequest(var memberId: Int,
+                          var userLevel: String,
                           var bisexualCategory: Boolean,
                           var gayCategory: Boolean,
                           var lesbianCategory: Boolean,

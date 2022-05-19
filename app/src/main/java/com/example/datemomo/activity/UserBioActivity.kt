@@ -3,9 +3,7 @@ package com.example.datemomo.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -15,14 +13,11 @@ import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
-import com.example.datemomo.model.request.PictureUploadRequest
 import com.example.datemomo.model.request.UserBioRequest
-import com.example.datemomo.model.response.CommittedResponse
-import com.example.datemomo.model.response.PictureUploadResponse
+import com.example.datemomo.model.response.UserBioResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 class UserBioActivity : AppCompatActivity() {
@@ -58,6 +53,7 @@ class UserBioActivity : AppCompatActivity() {
 
         userBioRequest = UserBioRequest(
             sharedPreferences.getInt("memberId", 0),
+            userLevel = getString(R.string.level_display_matched_users),
             bisexualCategory = false,
             gayCategory = false,
             lesbianCategory = false,
@@ -681,9 +677,11 @@ class UserBioActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val committedResponse = mapper.readValue<CommittedResponse>(myResponse)
+                val userBioResponse = mapper.readValue<UserBioResponse>(myResponse)
 
-                if (committedResponse.committed) {
+                if (userBioResponse.committed) {
+                    sharedPreferencesEditor.putString("userLevel", userBioResponse.userLevel).apply()
+
                     runOnUiThread {
                         binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
                         binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE

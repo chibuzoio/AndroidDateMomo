@@ -16,6 +16,9 @@
     <string name="request_register_user">registerUser</string>
     <string name="request_authenticate_user">authenticateUser</string>
     <string name="request_post_user_picture">postUserPicture</string>
+    <string name="level_upload_profile_picture">uploadProfilePicture</string>
+    <string name="level_select_sexuality_interest">selectSexualityInterest</string>
+    <string name="level_display_matched_users">displayMatchedUsers</string>
 </resources>
 
 
