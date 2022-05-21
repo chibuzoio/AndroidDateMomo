@@ -134,7 +134,11 @@ class UserBioActivity : AppCompatActivity() {
                 userBioRequest.sugarMommyCategory == 0 &&
                 userBioRequest.toyBoyCategory == 0 &&
                 userBioRequest.toyGirlCategory == 0) {
+                binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                binding.kycSubmitProgressIcon.visibility = View.GONE
                 binding.userCategoryError.visibility = View.VISIBLE
+                binding.kycSkipProgressIcon.visibility = View.GONE
             } else {
                 binding.userCategoryError.visibility = View.GONE
                 isCategoryFilled = true
@@ -148,7 +152,11 @@ class UserBioActivity : AppCompatActivity() {
                 userBioRequest.sugarMommyInterest == 0 &&
                 userBioRequest.toyBoyInterest == 0 &&
                 userBioRequest.toyGirlInterest == 0) {
+                binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                binding.kycSubmitProgressIcon.visibility = View.GONE
                 binding.userInterestError.visibility = View.VISIBLE
+                binding.kycSkipProgressIcon.visibility = View.GONE
             } else {
                 binding.userInterestError.visibility = View.GONE
                 isInterestFilled = true
@@ -738,7 +746,6 @@ class UserBioActivity : AppCompatActivity() {
                 try {
                     userBioResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
-                    Log.e(TAG, "Exception from userBioResponse read value here is ${exception.message}")
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
 

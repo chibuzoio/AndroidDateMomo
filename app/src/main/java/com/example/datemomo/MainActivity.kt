@@ -31,8 +31,10 @@ import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.UserNameModel
+import com.example.datemomo.model.request.AuthenticationRequest
 import com.example.datemomo.model.request.PictureUploadRequest
 import com.example.datemomo.model.request.RegistrationRequest
+import com.example.datemomo.model.response.AuthenticationResponse
 import com.example.datemomo.model.response.PictureUploadResponse
 import com.example.datemomo.model.response.RegistrationResponse
 import com.example.datemomo.utility.Utility
@@ -232,6 +234,8 @@ class MainActivity : AppCompatActivity() {
 
             binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
                 binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
+                binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
+                binding.uploadProgressIcon.visibility = View.VISIBLE
 
                 userAge = if (binding.userAgeInput.genericInputField.text.toString().trim()
                         .isEmpty()
@@ -241,9 +245,6 @@ class MainActivity : AppCompatActivity() {
                 validateUserAge(userAge)
 
                 if (theBitmap != null && userSex.isNotEmpty() && userAgeValid) {
-                    binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
-                    binding.uploadProgressIcon.visibility = View.VISIBLE
-
                     requestProcess = getString(R.string.request_post_user_picture)
 
                     postUserPicture()
@@ -307,6 +308,8 @@ class MainActivity : AppCompatActivity() {
 
             binding.loginAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.loginAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
+                binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
+                binding.loginProgressIcon.visibility = View.VISIBLE
 
                 loginPassword =
                     binding.loginPassword.leftIconInputField.genericInputField.text.toString()
@@ -318,9 +321,6 @@ class MainActivity : AppCompatActivity() {
                 validateLoginUserName(loginUserName)
 
                 if (loginPasswordValid && loginUserNameValid) {
-                    binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
-                    binding.loginProgressIcon.visibility = View.VISIBLE
-
                     requestProcess = getString(R.string.request_authenticate_user)
 
                     authenticateUser()
@@ -358,6 +358,8 @@ class MainActivity : AppCompatActivity() {
 
             binding.createAccountSubmit.blueButtonLayout.setOnClickListener {
                 binding.createAccountSubmit.blueButtonLayout.startAnimation(buttonClickEffect)
+                binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
+                binding.registerProgressIcon.visibility = View.VISIBLE
 
                 registerPassword =
                     binding.passwordInput.leftIconInputField.genericInputField.text.toString()
@@ -369,9 +371,6 @@ class MainActivity : AppCompatActivity() {
                 validateRegisterUserName(registerUserName)
 
                 if (registerPasswordValid && registerUserNameValid) {
-                    binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
-                    binding.registerProgressIcon.visibility = View.VISIBLE
-
                     requestProcess = getString(R.string.request_register_user)
 
                     registerUser()
@@ -708,7 +707,9 @@ class MainActivity : AppCompatActivity() {
         if (userAgeValid) {
             binding.userAgeInputError.visibility = View.GONE
         } else {
+            binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
             binding.userAgeInputError.visibility = View.VISIBLE
+            binding.uploadProgressIcon.visibility = View.GONE
             binding.userAgeInputError.text = errorType
         }
     }
@@ -719,7 +720,9 @@ class MainActivity : AppCompatActivity() {
         if (password.isEmpty()) {
             binding.loginPassword.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
             binding.loginPassword.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_red))
+            binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
             binding.loginPasswordError.visibility = View.VISIBLE
+            binding.loginProgressIcon.visibility = View.GONE
             binding.loginPasswordError.text = errorType
             loginPasswordValid = false
         } else {
@@ -735,7 +738,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             binding.passwordInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
             binding.passwordInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_password_red))
+            binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
             binding.passwordInputError.visibility = View.VISIBLE
+            binding.registerProgressIcon.visibility = View.GONE
 
             if (password.isEmpty()) {
                 errorType = "Password field is empty"
@@ -752,7 +757,9 @@ class MainActivity : AppCompatActivity() {
         if (userName.isEmpty()) {
             binding.loginUserName.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
             binding.loginUserName.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_red))
+            binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
             binding.loginUserNameError.visibility = View.VISIBLE
+            binding.loginProgressIcon.visibility = View.GONE
             binding.loginUserNameError.text = errorType
             userAgeValid = false
         } else {
@@ -785,7 +792,9 @@ class MainActivity : AppCompatActivity() {
         if (!registerUserNameValid) {
             binding.userNameInput.leftIconInputLayout.background = ContextCompat.getDrawable(this, R.drawable.error_edit_text)
             binding.userNameInput.leftIconInputImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_person_red))
+            binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
             binding.userNameInputError.visibility = View.VISIBLE
+            binding.registerProgressIcon.visibility = View.GONE
 
             if (userName.isEmpty()) {
                 errorType = "User name field is empty"
@@ -903,13 +912,124 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun authenticateUser() {
+        val mapper = jacksonObjectMapper()
+        val authenticationRequest = AuthenticationRequest(
+            loginUserName,
+            loginPassword
+        )
 
-        // inside onFailure or onResponse methods do this:
-//        runOnUiThread {
-//            binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-//            binding.loginProgressIcon.visibility = View.GONE
-//        }
+        val jsonObjectString = mapper.writeValueAsString(authenticationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
 
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + "service/loginmember.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+                    binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                    binding.loginProgressIcon.visibility = View.GONE
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                var authenticationResponse = AuthenticationResponse(0, 0, "",
+                    "", "", "", "", "", "",
+                    "", "", false, "",
+                    "", 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0)
+
+                try {
+                    authenticationResponse = mapper.readValue(myResponse)
+                } catch (exception: IOException) {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+
+                if (authenticationResponse.authenticated) {
+                    sharedPreferencesEditor.putInt("age", authenticationResponse.age)
+                    sharedPreferencesEditor.putString("sex", authenticationResponse.sex)
+                    sharedPreferencesEditor.putString("state", authenticationResponse.state)
+                    sharedPreferencesEditor.putInt("memberId", authenticationResponse.memberId)
+                    sharedPreferencesEditor.putString("country", authenticationResponse.country)
+                    sharedPreferencesEditor.putString("fullName", authenticationResponse.fullName)
+                    sharedPreferencesEditor.putString("userName", authenticationResponse.userName)
+                    sharedPreferencesEditor.putString("userRole", authenticationResponse.userRole)
+                    sharedPreferencesEditor.putString("userLevel", authenticationResponse.userLevel)
+                    sharedPreferencesEditor.putString("phoneNumber", authenticationResponse.phoneNumber)
+                    sharedPreferencesEditor.putString("emailAddress", authenticationResponse.emailAddress)
+                    sharedPreferencesEditor.putBoolean("authenticated", authenticationResponse.authenticated)
+                    sharedPreferencesEditor.putString("registrationDate", authenticationResponse.registrationDate)
+
+                    sharedPreferencesEditor.putInt("bisexualCategory", authenticationResponse.bisexualCategory)
+                    sharedPreferencesEditor.putInt("gayCategory", authenticationResponse.gayCategory)
+                    sharedPreferencesEditor.putInt("lesbianCategory", authenticationResponse.lesbianCategory)
+                    sharedPreferencesEditor.putInt("straightCategory", authenticationResponse.straightCategory)
+                    sharedPreferencesEditor.putInt("sugarDaddyCategory", authenticationResponse.sugarDaddyCategory)
+                    sharedPreferencesEditor.putInt("sugarMommyCategory", authenticationResponse.sugarMommyCategory)
+                    sharedPreferencesEditor.putInt("toyBoyCategory", authenticationResponse.toyBoyCategory)
+                    sharedPreferencesEditor.putInt("toyGirlCategory", authenticationResponse.toyGirlCategory)
+                    sharedPreferencesEditor.putInt("bisexualInterest", authenticationResponse.bisexualInterest)
+                    sharedPreferencesEditor.putInt("gayInterest", authenticationResponse.gayInterest)
+                    sharedPreferencesEditor.putInt("lesbianInterest", authenticationResponse.lesbianInterest)
+                    sharedPreferencesEditor.putInt("straightInterest", authenticationResponse.straightInterest)
+                    sharedPreferencesEditor.putInt("sugarDaddyInterest", authenticationResponse.sugarDaddyInterest)
+                    sharedPreferencesEditor.putInt("sugarMommyInterest", authenticationResponse.sugarMommyInterest)
+                    sharedPreferencesEditor.putInt("toyBoyInterest", authenticationResponse.toyBoyInterest)
+                    sharedPreferencesEditor.putInt("toyGirlInterest", authenticationResponse.toyGirlInterest)
+                    sharedPreferencesEditor.putInt("sixtyNineExperience", authenticationResponse.sixtyNineExperience)
+                    sharedPreferencesEditor.putInt("analSexExperience", authenticationResponse.analSexExperience)
+                    sharedPreferencesEditor.putInt("givenHeadExperience", authenticationResponse.givenHeadExperience)
+                    sharedPreferencesEditor.putInt("oneNightStandExperience", authenticationResponse.oneNightStandExperience)
+                    sharedPreferencesEditor.putInt("orgySexExperience", authenticationResponse.orgySexExperience)
+                    sharedPreferencesEditor.putInt("poolSexExperience", authenticationResponse.poolSexExperience)
+                    sharedPreferencesEditor.putInt("receivedHeadExperience", authenticationResponse.receivedHeadExperience)
+                    sharedPreferencesEditor.putInt("carSexExperience", authenticationResponse.carSexExperience)
+                    sharedPreferencesEditor.putInt("publicSexExperience", authenticationResponse.publicSexExperience)
+                    sharedPreferencesEditor.putInt("cameraSexExperience", authenticationResponse.cameraSexExperience)
+                    sharedPreferencesEditor.putInt("threesomeExperience", authenticationResponse.threesomeExperience)
+                    sharedPreferencesEditor.putInt("sexToyExperience", authenticationResponse.sexToyExperience)
+                    sharedPreferencesEditor.putInt("videoSexExperience", authenticationResponse.videoSexExperience)
+
+                    sharedPreferencesEditor.apply()
+
+                    runOnUiThread {
+                        binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                        binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                        binding.authenticationLayout.visibility = View.VISIBLE
+                        binding.registerProgressIcon.visibility = View.GONE
+                        binding.pictureUploadLayout.visibility = View.GONE
+                        binding.registrationLayout.visibility = View.GONE
+                        binding.loginProgressIcon.visibility = View.GONE
+                    }
+
+                    // call the process that will navigate to the next activity after fetching the required data
+
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -963,7 +1083,7 @@ class MainActivity : AppCompatActivity() {
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
 
-                if (registrationResponse.memberId > 0) {
+                if (registrationResponse.authenticated) {
                     sharedPreferencesEditor.putInt("memberId", registrationResponse.memberId)
                     sharedPreferencesEditor.putString("userName", registrationResponse.userName)
                     sharedPreferencesEditor.putString("userRole", registrationResponse.userRole)
@@ -974,10 +1094,12 @@ class MainActivity : AppCompatActivity() {
 
                     runOnUiThread {
                         binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                        binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
                         binding.pictureUploadLayout.visibility = View.VISIBLE
                         binding.registerProgressIcon.visibility = View.GONE
                         binding.authenticationLayout.visibility = View.GONE
                         binding.registrationLayout.visibility = View.GONE
+                        binding.loginProgressIcon.visibility = View.GONE
                     }
                 }
 
