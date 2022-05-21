@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -15,12 +16,14 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
 import com.example.datemomo.model.request.UserBioRequest
 import com.example.datemomo.model.response.UserBioResponse
+import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 
 class UserBioActivity : AppCompatActivity() {
+    private lateinit var requestProcess: String
     private lateinit var userBioRequest: UserBioRequest
     private lateinit var binding: ActivityUserBioBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -41,6 +44,33 @@ class UserBioActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            triggerRequestProcess()
+        }
+
+        binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            triggerRequestProcess()
+        }
+
+        binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
         Glide.with(this)
             .asGif()
             .load(R.drawable.loading_puzzle)
@@ -54,35 +84,35 @@ class UserBioActivity : AppCompatActivity() {
         userBioRequest = UserBioRequest(
             sharedPreferences.getInt("memberId", 0),
             userLevel = getString(R.string.level_display_matched_users),
-            bisexualCategory = false,
-            gayCategory = false,
-            lesbianCategory = false,
-            straightCategory = false,
-            sugarDaddyCategory = false,
-            sugarMommyCategory = false,
-            toyBoyCategory = false,
-            toyGirlCategory = false,
-            bisexualInterest = false,
-            gayInterest = false,
-            lesbianInterest = false,
-            straightInterest = false,
-            sugarDaddyInterest = false,
-            sugarMommyInterest = false,
-            toyBoyInterest = false,
-            toyGirlInterest = false,
-            sixtyNineExperience = false,
-            analSexExperience = false,
-            givenHeadExperience = false,
-            oneNightStandExperience = false,
-            orgySexExperience = false,
-            poolSexExperience = false,
-            receivedHeadExperience = false,
-            carSexExperience = false,
-            publicSexExperience = false,
-            cameraSexExperience = false,
-            threesomeExperience = false,
-            sexToyExperience = false,
-            videoSexExperience = false
+            bisexualCategory = 0,
+            gayCategory = 0,
+            lesbianCategory = 0,
+            straightCategory = 0,
+            sugarDaddyCategory = 0,
+            sugarMommyCategory = 0,
+            toyBoyCategory = 0,
+            toyGirlCategory = 0,
+            bisexualInterest = 0,
+            gayInterest = 0,
+            lesbianInterest = 0,
+            straightInterest = 0,
+            sugarDaddyInterest = 0,
+            sugarMommyInterest = 0,
+            toyBoyInterest = 0,
+            toyGirlInterest = 0,
+            sixtyNineExperience = 0,
+            analSexExperience = 0,
+            givenHeadExperience = 0,
+            oneNightStandExperience = 0,
+            orgySexExperience = 0,
+            poolSexExperience = 0,
+            receivedHeadExperience = 0,
+            carSexExperience = 0,
+            publicSexExperience = 0,
+            cameraSexExperience = 0,
+            threesomeExperience = 0,
+            sexToyExperience = 0,
+            videoSexExperience = 0
         )
 
         binding.userKYCSubmitButton.blueButtonLayout.setOnClickListener {
@@ -96,28 +126,28 @@ class UserBioActivity : AppCompatActivity() {
             var isCategoryFilled = false
             var isInterestFilled = false
 
-            if (!userBioRequest.bisexualCategory &&
-                !userBioRequest.gayCategory &&
-                !userBioRequest.lesbianCategory &&
-                !userBioRequest.straightCategory &&
-                !userBioRequest.sugarDaddyCategory &&
-                !userBioRequest.sugarMommyCategory &&
-                !userBioRequest.toyBoyCategory &&
-                !userBioRequest.toyGirlCategory) {
+            if (userBioRequest.bisexualCategory == 0 &&
+                userBioRequest.gayCategory == 0 &&
+                userBioRequest.lesbianCategory == 0 &&
+                userBioRequest.straightCategory == 0 &&
+                userBioRequest.sugarDaddyCategory == 0 &&
+                userBioRequest.sugarMommyCategory == 0 &&
+                userBioRequest.toyBoyCategory == 0 &&
+                userBioRequest.toyGirlCategory == 0) {
                 binding.userCategoryError.visibility = View.VISIBLE
             } else {
                 binding.userCategoryError.visibility = View.GONE
                 isCategoryFilled = true
             }
 
-            if (!userBioRequest.bisexualInterest &&
-                !userBioRequest.gayInterest &&
-                !userBioRequest.lesbianInterest &&
-                !userBioRequest.straightInterest &&
-                !userBioRequest.sugarDaddyInterest &&
-                !userBioRequest.sugarMommyInterest &&
-                !userBioRequest.toyBoyInterest &&
-                !userBioRequest.toyGirlInterest) {
+            if (userBioRequest.bisexualInterest == 0 &&
+                userBioRequest.gayInterest == 0 &&
+                userBioRequest.lesbianInterest == 0 &&
+                userBioRequest.straightInterest == 0 &&
+                userBioRequest.sugarDaddyInterest == 0 &&
+                userBioRequest.sugarMommyInterest == 0 &&
+                userBioRequest.toyBoyInterest == 0 &&
+                userBioRequest.toyGirlInterest == 0) {
                 binding.userInterestError.visibility = View.VISIBLE
             } else {
                 binding.userInterestError.visibility = View.GONE
@@ -125,6 +155,8 @@ class UserBioActivity : AppCompatActivity() {
             }
 
             if (isCategoryFilled && isInterestFilled) {
+                requestProcess = getString(R.string.request_submit_sexuality_interest)
+
                 commitUserBiometrics()
             }
         }
@@ -137,8 +169,10 @@ class UserBioActivity : AppCompatActivity() {
             binding.kycSkipProgressIcon.visibility = View.VISIBLE
             binding.kycSubmitProgressIcon.visibility = View.GONE
 
-            userBioRequest.straightCategory = true
-            userBioRequest.straightInterest = true
+            requestProcess = getString(R.string.request_skip_sexuality_interest)
+
+            userBioRequest.straightCategory = 1
+            userBioRequest.straightInterest = 1
 
             commitUserBiometrics()
         }
@@ -195,11 +229,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.maleGay.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.maleGay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.gayCategory = true
+                userBioRequest.gayCategory = 1
             } else {
                 binding.maleGay.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.maleGay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.gayCategory = false
+                userBioRequest.gayCategory = 0
             }
         }
 
@@ -210,11 +244,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.maleToyBoy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.maleToyBoy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.toyBoyCategory = true
+                userBioRequest.toyBoyCategory = 1
             } else {
                 binding.maleToyBoy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.maleToyBoy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.gayCategory = false
+                userBioRequest.toyBoyCategory = 0
             }
         }
 
@@ -225,11 +259,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.maleBisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.maleBisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.bisexualCategory = true
+                userBioRequest.bisexualCategory = 1
             } else {
                 binding.maleBisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.maleBisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.bisexualCategory = false
+                userBioRequest.bisexualCategory = 0
             }
         }
 
@@ -240,11 +274,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.maleStraight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.maleStraight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.straightCategory = true
+                userBioRequest.straightCategory = 1
             } else {
                 binding.maleStraight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.maleStraight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.straightCategory = false
+                userBioRequest.straightCategory = 0
             }
         }
 
@@ -255,11 +289,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.maleSugarDaddy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.maleSugarDaddy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.sugarDaddyCategory = true
+                userBioRequest.sugarDaddyCategory = 1
             } else {
                 binding.maleSugarDaddy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.maleSugarDaddy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.sugarDaddyCategory = false
+                userBioRequest.sugarDaddyCategory = 0
             }
         }
 
@@ -270,11 +304,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.femaleLesbian.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.femaleLesbian.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.lesbianCategory = true
+                userBioRequest.lesbianCategory = 1
             } else {
                 binding.femaleLesbian.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.femaleLesbian.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.lesbianCategory = false
+                userBioRequest.lesbianCategory = 0
             }
         }
 
@@ -285,11 +319,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.femaleToyGirl.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.femaleToyGirl.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.toyGirlCategory = true
+                userBioRequest.toyGirlCategory = 1
             } else {
                 binding.femaleToyGirl.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.femaleToyGirl.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.toyGirlCategory = false
+                userBioRequest.toyGirlCategory = 0
             }
         }
 
@@ -300,11 +334,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.femaleBisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.femaleBisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.bisexualCategory = true
+                userBioRequest.bisexualCategory = 1
             } else {
                 binding.femaleBisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.femaleBisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.bisexualCategory = false
+                userBioRequest.bisexualCategory = 0
             }
         }
 
@@ -315,11 +349,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.femaleStraight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.femaleStraight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.straightCategory = true
+                userBioRequest.straightCategory = 1
             } else {
                 binding.femaleStraight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.femaleStraight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.straightCategory = false
+                userBioRequest.straightCategory = 0
             }
         }
 
@@ -330,11 +364,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.femaleSugarMommy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.femaleSugarMommy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.sugarMommyCategory = true
+                userBioRequest.sugarMommyCategory = 1
             } else {
                 binding.femaleSugarMommy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.femaleSugarMommy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.sugarMommyCategory = false
+                userBioRequest.sugarMommyCategory = 0
             }
         }
 
@@ -345,11 +379,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.gay.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.gay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.gayInterest = true
+                userBioRequest.gayInterest = 1
             } else {
                 binding.gay.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.gay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.gayInterest = false
+                userBioRequest.gayInterest = 0
             }
         }
 
@@ -360,11 +394,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.toyBoy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.toyBoy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.toyBoyInterest = true
+                userBioRequest.toyBoyInterest = 1
             } else {
                 binding.toyBoy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.toyBoy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.toyBoyInterest = false
+                userBioRequest.toyBoyInterest = 0
             }
         }
 
@@ -375,11 +409,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.lesbian.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.lesbian.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.lesbianInterest = true
+                userBioRequest.lesbianInterest = 1
             } else {
                 binding.lesbian.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.lesbian.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.lesbianInterest = false
+                userBioRequest.lesbianInterest = 0
             }
         }
 
@@ -390,11 +424,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.toyGirl.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.toyGirl.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.toyGirlInterest = true
+                userBioRequest.toyGirlInterest = 1
             } else {
                 binding.toyGirl.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.toyGirl.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.toyGirlInterest = false
+                userBioRequest.toyGirlInterest = 0
             }
         }
 
@@ -405,11 +439,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.bisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.bisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.bisexualInterest = true
+                userBioRequest.bisexualInterest = 1
             } else {
                 binding.bisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.bisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.bisexualInterest = false
+                userBioRequest.bisexualInterest = 0
             }
         }
 
@@ -420,11 +454,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.straight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.straight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.straightInterest = true
+                userBioRequest.straightInterest = 1
             } else {
                 binding.straight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.straight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.straightInterest = false
+                userBioRequest.straightInterest = 0
             }
         }
 
@@ -435,11 +469,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.sugarDaddy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.sugarDaddy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.sugarDaddyInterest = true
+                userBioRequest.sugarDaddyInterest = 1
             } else {
                 binding.sugarDaddy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.sugarDaddy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.sugarDaddyInterest = false
+                userBioRequest.sugarDaddyInterest = 0
             }
         }
 
@@ -450,11 +484,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.sugarMommy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.sugarMommy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.sugarMommyInterest = true
+                userBioRequest.sugarMommyInterest = 1
             } else {
                 binding.sugarMommy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.sugarMommy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.sugarMommyInterest = false
+                userBioRequest.sugarMommyInterest = 0
             }
         }
 
@@ -465,11 +499,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.sixtyNine.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.sixtyNine.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.sixtyNineExperience = true
+                userBioRequest.sixtyNineExperience = 1
             } else {
                 binding.sixtyNine.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.sixtyNine.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.sixtyNineExperience = false
+                userBioRequest.sixtyNineExperience = 0
             }
         }
 
@@ -480,11 +514,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.analSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.analSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.analSexExperience = true
+                userBioRequest.analSexExperience = 1
             } else {
                 binding.analSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.analSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.analSexExperience = false
+                userBioRequest.analSexExperience = 0
             }
         }
 
@@ -495,11 +529,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.orgySex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.orgySex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.orgySexExperience = true
+                userBioRequest.orgySexExperience = 1
             } else {
                 binding.orgySex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.orgySex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.orgySexExperience = false
+                userBioRequest.orgySexExperience = 0
             }
         }
 
@@ -510,11 +544,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.poolSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.poolSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.poolSexExperience = true
+                userBioRequest.poolSexExperience = 1
             } else {
                 binding.poolSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.poolSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.poolSexExperience = false
+                userBioRequest.poolSexExperience = 0
             }
         }
 
@@ -525,11 +559,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.carSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.carSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.carSexExperience = true
+                userBioRequest.carSexExperience = 1
             } else {
                 binding.carSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.carSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.carSexExperience = false
+                userBioRequest.carSexExperience = 0
             }
         }
 
@@ -540,11 +574,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.threesome.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.threesome.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.threesomeExperience = true
+                userBioRequest.threesomeExperience = 1
             } else {
                 binding.threesome.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.threesome.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.threesomeExperience = false
+                userBioRequest.threesomeExperience = 0
             }
         }
 
@@ -555,11 +589,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.givenHead.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.givenHead.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.givenHeadExperience = true
+                userBioRequest.givenHeadExperience = 1
             } else {
                 binding.givenHead.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.givenHead.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.givenHeadExperience = false
+                userBioRequest.givenHeadExperience = 0
             }
         }
 
@@ -570,11 +604,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.sexToys.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.sexToys.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.sexToyExperience = true
+                userBioRequest.sexToyExperience = 1
             } else {
                 binding.sexToys.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.sexToys.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.sexToyExperience = false
+                userBioRequest.sexToyExperience = 0
             }
         }
 
@@ -585,11 +619,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.videoSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.videoSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.videoSexExperience = true
+                userBioRequest.videoSexExperience = 1
             } else {
                 binding.videoSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.videoSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.videoSexExperience = false
+                userBioRequest.videoSexExperience = 0
             }
         }
 
@@ -600,11 +634,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.publicSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.publicSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.publicSexExperience = true
+                userBioRequest.publicSexExperience = 1
             } else {
                 binding.publicSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.publicSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.publicSexExperience = false
+                userBioRequest.publicSexExperience = 0
             }
         }
 
@@ -615,11 +649,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.receivedHead.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.receivedHead.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.receivedHeadExperience = true
+                userBioRequest.receivedHeadExperience = 1
             } else {
                 binding.receivedHead.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.receivedHead.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.receivedHeadExperience = false
+                userBioRequest.receivedHeadExperience = 0
             }
         }
 
@@ -630,11 +664,11 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.cameraSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.cameraSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.cameraSexExperience = true
+                userBioRequest.cameraSexExperience = 1
             } else {
                 binding.cameraSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.cameraSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.cameraSexExperience = false
+                userBioRequest.cameraSexExperience = 0
             }
         }
 
@@ -645,12 +679,19 @@ class UserBioActivity : AppCompatActivity() {
                 ContextCompat.getColor(this, R.color.blue)) {
                 binding.oneNightStand.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
                 binding.oneNightStand.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
-                userBioRequest.oneNightStandExperience = true
+                userBioRequest.oneNightStandExperience = 1
             } else {
                 binding.oneNightStand.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.oneNightStand.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
-                userBioRequest.oneNightStandExperience = false
+                userBioRequest.oneNightStandExperience = 0
             }
+        }
+    }
+
+    private fun triggerRequestProcess() {
+        when (requestProcess) {
+            getString(R.string.request_submit_sexuality_interest) -> binding.userKYCSubmitButton.blueButtonLayout.performClick()
+            getString(R.string.request_skip_sexuality_interest) -> binding.userKYCSkipButton.greyButtonLayout.performClick()
         }
     }
 
@@ -672,28 +713,68 @@ class UserBioActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
+
+                runOnUiThread {
+                    binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                    binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                    binding.kycSubmitProgressIcon.visibility = View.GONE
+                    binding.kycSkipProgressIcon.visibility = View.GONE
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
+                var userBioResponse = UserBioResponse(false, "")
                 val myResponse: String = response.body()!!.string()
-                val userBioResponse = mapper.readValue<UserBioResponse>(myResponse)
+
+                try {
+                    userBioResponse = mapper.readValue(myResponse)
+                } catch (exception: IOException) {
+                    Log.e(TAG, "Exception from userBioResponse read value here is ${exception.message}")
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+
+                runOnUiThread {
+                    binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                    binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                    binding.kycSubmitProgressIcon.visibility = View.GONE
+                    binding.kycSkipProgressIcon.visibility = View.GONE
+                }
 
                 if (userBioResponse.committed) {
                     sharedPreferencesEditor.putString("userLevel", userBioResponse.userLevel).apply()
 
-                    runOnUiThread {
-                        binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
-                        binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
-                        binding.kycSubmitProgressIcon.visibility = View.GONE
-                        binding.kycSkipProgressIcon.visibility = View.GONE
-                    }
-
                     val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                     startActivity(intent)
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
             }
         })
+    }
+
+    fun displayDoubleButtonDialog() {
+        runOnUiThread {
+            binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
+            binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun displaySingleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.singleButtonDialog.singleButtonTitle.text = title
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+        }
     }
 
     companion object {

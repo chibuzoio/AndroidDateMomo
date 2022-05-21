@@ -1,21 +1,28 @@
 <resources>
     <string name="app_name">DateMomo</string>
-    <string name="sexuality">Your Sexual Category</string>
+
     <string name="date_momo_api">http://192.168.43.154/</string>
-    <string name="sexual_interest">You are interested in</string>
     <string name="shared_preferences">DateMomoPreferences</string>
+
+    <string name="sexuality">Your Sexual Category</string>
+    <string name="sexual_interest">You are interested in</string>
     <string name="user_bio_header">Meet The Right People You Seek!</string>
     <string name="experience_level">Things you have tried or can do in sex</string>
-    <string name="user_category_error">Choose at least one of the options in the categories</string>
+
     <string name="poor_internet_title">Poor Connectivity</string>
+    <string name="user_category_error">Choose at least one of the options in the categories</string>
     <string name="poor_internet_message">Your device is experiencing poor internet connection. Check your network or connect to a WiFi network</string>
     <string name="network_error_title">Network Error</string>
     <string name="network_error_message">Check your internet connection or connect your device to a WiFi network</string>
     <string name="server_error_title">Server Error</string>
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
+
     <string name="request_register_user">registerUser</string>
     <string name="request_authenticate_user">authenticateUser</string>
     <string name="request_post_user_picture">postUserPicture</string>
+    <string name="request_skip_sexuality_interest">skipSexualityInterest</string>
+    <string name="request_submit_sexuality_interest">submitSexualityInterest</string>
+
     <string name="level_upload_profile_picture">uploadProfilePicture</string>
     <string name="level_select_sexuality_interest">selectSexualityInterest</string>
     <string name="level_display_matched_users">displayMatchedUsers</string>

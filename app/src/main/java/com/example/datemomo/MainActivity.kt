@@ -244,6 +244,8 @@ class MainActivity : AppCompatActivity() {
                     binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
                     binding.uploadProgressIcon.visibility = View.VISIBLE
 
+                    requestProcess = getString(R.string.request_post_user_picture)
+
                     postUserPicture()
                 }
             }
@@ -319,6 +321,8 @@ class MainActivity : AppCompatActivity() {
                     binding.loginAccountSubmit.blueButtonLayout.visibility = View.GONE
                     binding.loginProgressIcon.visibility = View.VISIBLE
 
+                    requestProcess = getString(R.string.request_authenticate_user)
+
                     authenticateUser()
                 }
             }
@@ -367,6 +371,8 @@ class MainActivity : AppCompatActivity() {
                 if (registerPasswordValid && registerUserNameValid) {
                     binding.createAccountSubmit.blueButtonLayout.visibility = View.GONE
                     binding.registerProgressIcon.visibility = View.VISIBLE
+
+                    requestProcess = getString(R.string.request_register_user)
 
                     registerUser()
                 }
@@ -603,9 +609,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
-            getString(R.string.request_register_user) -> registerUser()
-            getString(R.string.request_authenticate_user) -> authenticateUser()
-            getString(R.string.request_post_user_picture) -> postUserPicture()
+            getString(R.string.request_register_user) -> binding.createAccountSubmit.blueButtonLayout.performClick()
+            getString(R.string.request_authenticate_user) -> binding.loginAccountSubmit.blueButtonLayout.performClick()
+            getString(R.string.request_post_user_picture) -> binding.pictureUploadNext.blueButtonLayout.performClick()
         }
     }
 
@@ -793,7 +799,6 @@ class MainActivity : AppCompatActivity() {
     fun postUserPicture() {
         val imageWidth = theBitmap!!.width
         val imageHeight = theBitmap!!.height
-        requestProcess = getString(R.string.request_post_user_picture)
 
         val byteArrayOutputStream = ByteArrayOutputStream()
         theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
@@ -845,7 +850,14 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val pictureUploadResponse = mapper.readValue<PictureUploadResponse>(myResponse)
+                var pictureUploadResponse = PictureUploadResponse(
+                    0, 0, "", "")
+
+                try {
+                    pictureUploadResponse = mapper.readValue(myResponse)
+                } catch (exception: IOException) {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
 
                 if (pictureUploadResponse.pictureId > 0) {
                     sharedPreferencesEditor.putString("profilePicture",
@@ -891,7 +903,6 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     private fun authenticateUser() {
-        requestProcess = getString(R.string.request_authenticate_user)
 
         // inside onFailure or onResponse methods do this:
 //        runOnUiThread {
@@ -903,7 +914,6 @@ class MainActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun registerUser() {
-        requestProcess = getString(R.string.request_register_user)
         val mapper = jacksonObjectMapper()
         val registrationRequest = RegistrationRequest(
             registerUserName,
@@ -944,7 +954,14 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val registrationResponse = mapper.readValue<RegistrationResponse>(myResponse)
+                var registrationResponse = RegistrationResponse(
+                    0, "", "", "", false, "")
+
+                try {
+                    registrationResponse = mapper.readValue(myResponse)
+                } catch (exception: IOException) {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
 
                 if (registrationResponse.memberId > 0) {
                     sharedPreferencesEditor.putInt("memberId", registrationResponse.memberId)
