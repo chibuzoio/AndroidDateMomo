@@ -1025,6 +1025,8 @@ class MainActivity : AppCompatActivity() {
                         binding.loginProgressIcon.visibility = View.GONE
                     }
 
+                    Log.e(TAG, "User just got authenticated!!!!!!!!!!!!")
+
                     // call the process that will navigate to the next activity after fetching the required data
 
                 }
