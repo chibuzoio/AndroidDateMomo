@@ -110,8 +110,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     sharedPreferences.getString("userLevel", "")
                         .equals(getString(R.string.level_display_matched_users)) -> {
-                            // load all required data for navigating to HomeDisplayActivity
+                        requestProcess = getString(R.string.request_fetch_matched_users)
                         setContentView(R.layout.splash_screen)
+
                         fetchMatchedUsers()
                     }
                     else -> {
@@ -617,6 +618,8 @@ class MainActivity : AppCompatActivity() {
                 binding.userNameInput.leftIconInputField.genericInputField.setText("")
                 binding.passwordInput.leftIconInputField.genericInputField.setText("")
                 binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
                 binding.authenticationLayout.visibility = View.VISIBLE
                 binding.registerProgressIcon.visibility = View.GONE
                 binding.pictureUploadLayout.visibility = View.GONE
@@ -633,6 +636,7 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.request_register_user) -> binding.createAccountSubmit.blueButtonLayout.performClick()
             getString(R.string.request_authenticate_user) -> binding.loginAccountSubmit.blueButtonLayout.performClick()
             getString(R.string.request_post_user_picture) -> binding.pictureUploadNext.blueButtonLayout.performClick()
+            getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
         }
     }
 
@@ -885,9 +889,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
-                startActivity(intent)
+//                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+//                intent.putExtra("jsonResponse", myResponse)
+//                startActivity(intent)
             }
         })
     }
@@ -1117,6 +1121,8 @@ class MainActivity : AppCompatActivity() {
                                 startActivity(intent)
                             }
                             getString(R.string.level_display_matched_users) -> {
+                                requestProcess = getString(R.string.request_fetch_matched_users)
+
                                 fetchMatchedUsers()
                             }
                             else -> {
