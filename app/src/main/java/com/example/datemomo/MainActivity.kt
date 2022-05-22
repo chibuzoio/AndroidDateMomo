@@ -93,14 +93,24 @@ class MainActivity : AppCompatActivity() {
 
             if (sharedPreferences.getBoolean("authenticated", false)) {
                 when {
-                    sharedPreferences.getString("userLevel", "").equals("profile picture upload") -> {
+                    sharedPreferences.getString("userLevel", "")
+                        .equals(getString(R.string.level_upload_profile_picture)) -> {
+                        binding.loginPassword.leftIconInputField.genericInputField.setText("")
+                        binding.loginUserName.leftIconInputField.genericInputField.setText("")
                         binding.pictureUploadLayout.visibility = View.VISIBLE
                         binding.authenticationLayout.visibility = View.GONE
                         binding.registrationLayout.visibility = View.GONE
                     }
-                    sharedPreferences.getString("userLevel", "").equals("sexuality") -> {
+                    sharedPreferences.getString("userLevel", "")
+                        .equals(getString(R.string.level_select_sexuality_interest)) -> {
                         val intent = Intent(baseContext, UserBioActivity::class.java)
                         startActivity(intent)
+                    }
+                    sharedPreferences.getString("userLevel", "")
+                        .equals(getString(R.string.level_display_matched_users)) -> {
+                            // load all required data for navigating to HomeDisplayActivity
+                        setContentView(R.layout.splash_screen)
+
                     }
                     else -> {
                         binding.authenticationLayout.visibility = View.VISIBLE
@@ -164,12 +174,19 @@ class MainActivity : AppCompatActivity() {
             binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
-                triggerRequestProcess()
+
+                if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
+                    triggerRequestProcess()
+                }
             }
 
             binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+                if (binding.doubleButtonDialog.dialogCancelButton.text == "Exit") {
+                    finish()
+                }
             }
 
             binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
@@ -316,7 +333,7 @@ class MainActivity : AppCompatActivity() {
                         .trim()
                 loginUserName =
                     binding.loginUserName.leftIconInputField.genericInputField.text.toString()
-                        .trim()
+                        .trim().lowercase(Locale.getDefault())
                 validateLoginPassword(loginPassword)
                 validateLoginUserName(loginUserName)
 
@@ -366,7 +383,7 @@ class MainActivity : AppCompatActivity() {
                         .trim()
                 registerUserName =
                     binding.userNameInput.leftIconInputField.genericInputField.text.toString()
-                        .trim()
+                        .trim().lowercase(Locale.getDefault())
                 validateRegisterPassword(registerPassword)
                 validateRegisterUserName(registerUserName)
 
@@ -586,12 +603,15 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         when {
             binding.pictureUploadLayout.isVisible -> {
-                // you must not go back to registration page
-                // Just display a beautiful exit dialogue asking the user if he wants to exit
-                // and continue the registration process later
-
+                binding.doubleButtonDialog.dialogCancelButton.text = "Exit"
+                binding.doubleButtonDialog.dialogRetryButton.text = "Cancel"
+                binding.doubleButtonDialog.doubleButtonTitle.text = "Exit Notice!"
+                binding.doubleButtonDialog.doubleButtonMessage.text = "Do you wish to exit the registration process and continue later?"
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
             }
             binding.registrationLayout.isVisible -> {
+                binding.loginPassword.leftIconInputField.genericInputField.setText("")
+                binding.loginUserName.leftIconInputField.genericInputField.setText("")
                 binding.userNameInput.leftIconInputField.genericInputField.setText("")
                 binding.passwordInput.leftIconInputField.genericInputField.setText("")
                 binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
@@ -1015,6 +1035,7 @@ class MainActivity : AppCompatActivity() {
 
                     sharedPreferencesEditor.apply()
 
+                    // do this after fetching all the data required for the next activity
                     runOnUiThread {
                         binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
                         binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
@@ -1025,10 +1046,39 @@ class MainActivity : AppCompatActivity() {
                         binding.loginProgressIcon.visibility = View.GONE
                     }
 
-                    Log.e(TAG, "User just got authenticated!!!!!!!!!!!!")
+                    runOnUiThread {
+                        when (authenticationResponse.userLevel) {
+                            getString(R.string.level_upload_profile_picture) -> {
+                                binding.loginPassword.leftIconInputField.genericInputField.setText("")
+                                binding.loginUserName.leftIconInputField.genericInputField.setText("")
+                                binding.pictureUploadLayout.visibility = View.VISIBLE
+                                binding.authenticationLayout.visibility = View.GONE
+                                binding.registrationLayout.visibility = View.GONE
+                            }
+                            getString(R.string.level_select_sexuality_interest) -> {
+                                val intent = Intent(baseContext, UserBioActivity::class.java)
+                                startActivity(intent)
+                            }
+                            getString(R.string.level_display_matched_users) -> {
+                                // load all required data for navigating to HomeDisplayActivity
+                                setContentView(R.layout.splash_screen)
 
-                    // call the process that will navigate to the next activity after fetching the required data
+                            }
+                            else -> {
+                                binding.loginAccountSubmit.blueButtonLayout.visibility =
+                                    View.VISIBLE
+                                binding.authenticationLayout.visibility = View.VISIBLE
+                                binding.pictureUploadLayout.visibility = View.GONE
+                                binding.registrationLayout.visibility = View.GONE
+                                binding.loginProgressIcon.visibility = View.GONE
 
+                                displaySingleButtonDialog(
+                                    getString(R.string.server_error_title),
+                                    getString(R.string.server_error_message)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -1095,6 +1145,10 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
 
                     runOnUiThread {
+                        binding.passwordInput.leftIconInputField.genericInputField.setText("")
+                        binding.userNameInput.leftIconInputField.genericInputField.setText("")
+                        binding.loginPassword.leftIconInputField.genericInputField.setText("")
+                        binding.loginUserName.leftIconInputField.genericInputField.setText("")
                         binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
                         binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
                         binding.pictureUploadLayout.visibility = View.VISIBLE

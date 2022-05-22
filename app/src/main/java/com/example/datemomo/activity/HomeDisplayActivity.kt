@@ -14,7 +14,7 @@ import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
-import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.response.HomeDisplayResponse
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -51,22 +51,22 @@ class HomeDisplayActivity : AppCompatActivity() {
         deviceWidth = displayMetrics.widthPixels
         deviceHeight = displayMetrics.heightPixels
 
-        val homeDisplayImages = ArrayList<HomeDisplayModel>()
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image1))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image2))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image3))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image4))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image5))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image6))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image7))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image8))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image9))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image10))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image11))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image12))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image13))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image14))
-        homeDisplayImages.add(HomeDisplayModel(R.drawable.image15))
+        val homeDisplayImages = ArrayList<HomeDisplayResponse>()
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image1))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image2))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image3))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image4))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image5))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image6))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image7))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image8))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image9))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image10))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image11))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image12))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image13))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image14))
+//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image15))
 
 //        val layoutManager = FlexboxLayoutManager(this)
 //        layoutManager.flexDirection = FlexDirection.COLUMN

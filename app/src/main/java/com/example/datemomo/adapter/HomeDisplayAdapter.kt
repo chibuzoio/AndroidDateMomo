@@ -9,9 +9,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
-import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.response.HomeDisplayResponse
 
-class HomeDisplayAdapter(private val homeDisplayImages: ArrayList<HomeDisplayModel>) :
+class HomeDisplayAdapter(private val homeDisplayImages: ArrayList<HomeDisplayResponse>) :
     RecyclerView.Adapter<HomeDisplayAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
