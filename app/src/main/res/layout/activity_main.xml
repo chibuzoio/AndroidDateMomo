@@ -13,18 +13,20 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        android:foregroundGravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/authenticationLayout"
             android:orientation="vertical"
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:orientation="vertical"
@@ -108,12 +110,13 @@
             android:id="@+id/registrationLayout"
             android:visibility="gone"
             android:orientation="vertical"
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:orientation="vertical"
@@ -193,13 +196,14 @@
             android:visibility="gone"
             android:orientation="vertical"
             android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ScrollView
                 android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:orientation="vertical"

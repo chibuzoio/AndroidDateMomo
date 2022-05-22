@@ -28,6 +28,7 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
+import com.example.datemomo.activity.HomeDisplayActivity
 import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.UserNameModel
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                         .equals(getString(R.string.level_display_matched_users)) -> {
                             // load all required data for navigating to HomeDisplayActivity
                         setContentView(R.layout.splash_screen)
-
+                        fetchMatchedUsers()
                     }
                     else -> {
                         binding.authenticationLayout.visibility = View.VISIBLE
@@ -854,10 +855,41 @@ class MainActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/loginmember.php")
+            .url(getString(R.string.date_momo_api) + "service/matcheduserdata.php")
             .post(requestBody)
             .build()
 
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+                    setContentView(binding.root)
+                    binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                    binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+                    binding.authenticationLayout.visibility = View.VISIBLE
+                    binding.registerProgressIcon.visibility = View.GONE
+                    binding.pictureUploadLayout.visibility = View.GONE
+                    binding.registrationLayout.visibility = View.GONE
+                    binding.loginProgressIcon.visibility = View.GONE
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -1071,17 +1103,6 @@ class MainActivity : AppCompatActivity() {
 
                     sharedPreferencesEditor.apply()
 
-                    // do this after fetching all the data required for the next activity
-                    runOnUiThread {
-                        binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-                        binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-                        binding.authenticationLayout.visibility = View.VISIBLE
-                        binding.registerProgressIcon.visibility = View.GONE
-                        binding.pictureUploadLayout.visibility = View.GONE
-                        binding.registrationLayout.visibility = View.GONE
-                        binding.loginProgressIcon.visibility = View.GONE
-                    }
-
                     runOnUiThread {
                         when (authenticationResponse.userLevel) {
                             getString(R.string.level_upload_profile_picture) -> {
@@ -1096,9 +1117,7 @@ class MainActivity : AppCompatActivity() {
                                 startActivity(intent)
                             }
                             getString(R.string.level_display_matched_users) -> {
-                                // load all required data for navigating to HomeDisplayActivity
-                                setContentView(R.layout.splash_screen)
-
+                                fetchMatchedUsers()
                             }
                             else -> {
                                 binding.loginAccountSubmit.blueButtonLayout.visibility =
