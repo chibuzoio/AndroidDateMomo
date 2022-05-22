@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 data class HomeDisplayRequest(var memberId: Int,
                               var age: Int,
                               var sex: String,
-                              var state: String,
                               var registrationDate: String,
 
                               var bisexualCategory: Int,

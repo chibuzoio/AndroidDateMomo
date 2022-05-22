@@ -32,6 +32,7 @@ import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.UserNameModel
 import com.example.datemomo.model.request.AuthenticationRequest
+import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.request.PictureUploadRequest
 import com.example.datemomo.model.request.RegistrationRequest
 import com.example.datemomo.model.response.AuthenticationResponse
@@ -822,6 +823,41 @@ class MainActivity : AppCompatActivity() {
 
             binding.userNameInputError.text = errorType
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchMatchedUsers() {
+        val mapper = jacksonObjectMapper()
+        val homeDisplayRequest = HomeDisplayRequest(sharedPreferences.getInt("memberId", 0),
+            sharedPreferences.getInt("age", 0), sharedPreferences.getString("sex", "")!!,
+            sharedPreferences.getString("registrationDate", "")!!, sharedPreferences.getInt("bisexualCategory", 0),
+            sharedPreferences.getInt("gayCategory", 0), sharedPreferences.getInt("lesbianCategory", 0),
+            sharedPreferences.getInt("straightCategory", 0), sharedPreferences.getInt("sugarDaddyCategory", 0),
+            sharedPreferences.getInt("sugarMommyCategory", 0), sharedPreferences.getInt("toyBoyCategory", 0),
+            sharedPreferences.getInt("toyGirlCategory", 0), sharedPreferences.getInt("bisexualInterest", 0),
+            sharedPreferences.getInt("gayInterest", 0), sharedPreferences.getInt("lesbianInterest", 0),
+            sharedPreferences.getInt("straightInterest", 0), sharedPreferences.getInt("sugarDaddyInterest", 0),
+            sharedPreferences.getInt("sugarMommyInterest", 0), sharedPreferences.getInt("toyBoyInterest", 0),
+            sharedPreferences.getInt("toyGirlInterest", 0), sharedPreferences.getInt("sixtyNineExperience", 0),
+            sharedPreferences.getInt("analSexExperience", 0), sharedPreferences.getInt("givenHeadExperience", 0),
+            sharedPreferences.getInt("oneNightStandExperience", 0), sharedPreferences.getInt("orgyExperience", 0),
+            sharedPreferences.getInt("poolSexExperience", 0), sharedPreferences.getInt("receivedHeadExperience", 0),
+            sharedPreferences.getInt("carSexExperience", 0), sharedPreferences.getInt("publicSexExperience", 0),
+            sharedPreferences.getInt("cameraSexExperience", 0), sharedPreferences.getInt("threesomeExperience", 0),
+            sharedPreferences.getInt("sexToyExperience", 0), sharedPreferences.getInt("videoSexExperience", 0))
+
+        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + "service/loginmember.php")
+            .post(requestBody)
+            .build()
+
     }
 
     @Throws(IOException::class)

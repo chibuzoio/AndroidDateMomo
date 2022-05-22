@@ -39,7 +39,7 @@ class HomeDisplayAdapter(private val homeDisplayImages: ArrayList<HomeDisplayRes
 */
 
         Glide.with(holder.itemView.context)
-            .load(ContextCompat.getDrawable(holder.itemView.context, homeDisplayImages[position].imageId))
+            .load("")
             .transform(CenterCrop(), RoundedCorners(33))
             .into(holder.binding.userImage)
     }
