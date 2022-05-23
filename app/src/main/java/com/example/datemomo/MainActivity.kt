@@ -172,6 +172,7 @@ class MainActivity : AppCompatActivity() {
             binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+                hideAllProgressIcon()
             }
 
             binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
@@ -195,6 +196,7 @@ class MainActivity : AppCompatActivity() {
             binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+                hideAllProgressIcon()
             }
 
             binding.femaleGenderSelect.hollowButtonLayout.setOnClickListener {
@@ -640,6 +642,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun hideAllProgressIcon() {
+        binding.uploadPictureButton.iconHollowButtonLayout.visibility = View.VISIBLE
+        binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+        binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
+        binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
+        binding.registerProgressIcon.visibility = View.GONE
+        binding.uploadProgressIcon.visibility = View.GONE
+        binding.loginProgressIcon.visibility = View.GONE
+    }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -889,9 +901,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-//                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-//                intent.putExtra("jsonResponse", myResponse)
-//                startActivity(intent)
+                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
             }
         })
     }
