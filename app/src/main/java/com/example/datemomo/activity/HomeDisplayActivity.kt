@@ -21,8 +21,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
 
 class HomeDisplayActivity : AppCompatActivity() {
-    private var deviceWidth: Int = 0
-    private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -41,71 +39,24 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         bundle = intent.extras!!
 
-        try {
-            val mapper = jacksonObjectMapper()
-
-            homeDisplayResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
-
-            for (homeDisplayResponse in homeDisplayResponseArray) {
-                Log.e(TAG, "sex in homeDisplayResponses is ${homeDisplayResponse.sex}")
-            }
-        } catch (exception: IOException) {
-            Log.e(TAG, "Error message from here is ${exception.message}")
-        }
-
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        val displayMetrics = DisplayMetrics()
+        try {
+            val mapper = jacksonObjectMapper()
+            homeDisplayResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            @Suppress("DEPRECATION")
-            display!!.getRealMetrics(displayMetrics)
-        } else {
-            @Suppress("DEPRECATION")
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            binding.homeDisplayRecyclerView.layoutManager = layoutManager
+            binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
+
+            val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray)
+            binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
+        } catch (exception: IOException) {
+            Log.e(TAG, "Error message from here is ${exception.message}")
         }
-
-        deviceWidth = displayMetrics.widthPixels
-        deviceHeight = displayMetrics.heightPixels
-
-        val homeDisplayImages = ArrayList<HomeDisplayResponse>()
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image1))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image2))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image3))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image4))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image5))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image6))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image7))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image8))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image9))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image10))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image11))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image12))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image13))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image14))
-//        homeDisplayImages.add(HomeDisplayResponse(R.drawable.image15))
-
-//        val layoutManager = FlexboxLayoutManager(this)
-//        layoutManager.flexDirection = FlexDirection.COLUMN
-//        layoutManager.justifyContent = JustifyContent.FLEX_END
-
-//        layoutManager.flexDirection = FlexDirection.ROW
-//        layoutManager.justifyContent = JustifyContent.CENTER
-//        layoutManager.alignItems = AlignItems.CENTER
-
-//        layoutManager.flexWrap = FlexWrap.WRAP
-//        layoutManager.flexDirection = FlexDirection.ROW
-//        layoutManager.alignItems = AlignItems.STRETCH
-
-        val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        binding.homeDisplayRecyclerView.layoutManager = layoutManager
-        binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
-
-        val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayImages)
-        binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
     }
 
     companion object {

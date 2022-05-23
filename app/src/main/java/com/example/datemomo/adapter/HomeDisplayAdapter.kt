@@ -11,7 +11,7 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.example.datemomo.model.response.HomeDisplayResponse
 
-class HomeDisplayAdapter(private val homeDisplayImages: ArrayList<HomeDisplayResponse>) :
+class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResponse>) :
     RecyclerView.Adapter<HomeDisplayAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -38,14 +38,30 @@ class HomeDisplayAdapter(private val homeDisplayImages: ArrayList<HomeDisplayRes
             .into(holder.binding.userImage);
 */
 
+        holder.binding.loveUserLayout.setOnClickListener {
+            if (holder.binding.loveUserIcon.drawable ==
+                ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_hollow)) {
+                holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_red))
+            } else {
+                holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_hollow))
+            }
+        }
+
         Glide.with(holder.itemView.context)
-            .load("")
+            .load(holder.itemView.context.getString(R.string.date_momo_api)
+                    + "client/image/" + homeDisplayResponses[position].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(holder.binding.userImage)
+
+        if (homeDisplayResponses[position].fullName.isEmpty()) {
+            holder.binding.userFullName.text = homeDisplayResponses[position].userName
+        } else {
+            holder.binding.userFullName.text = homeDisplayResponses[position].fullName
+        }
     }
 
     override fun getItemCount(): Int {
-        return homeDisplayImages.size
+        return homeDisplayResponses.size
     }
 
     class MyViewHolder(val binding: RecyclerHomeDisplayBinding) :
