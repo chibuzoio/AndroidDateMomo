@@ -14,6 +14,7 @@ import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
 import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
+import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.request.UserBioRequest
 import com.example.datemomo.model.response.UserBioResponse
 import com.example.datemomo.utility.Utility
@@ -24,6 +25,7 @@ import java.io.IOException
 
 class UserBioActivity : AppCompatActivity() {
     private lateinit var requestProcess: String
+    private lateinit var originalRequestProcess: String
     private lateinit var userBioRequest: UserBioRequest
     private lateinit var binding: ActivityUserBioBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -163,6 +165,7 @@ class UserBioActivity : AppCompatActivity() {
             }
 
             if (isCategoryFilled && isInterestFilled) {
+                originalRequestProcess = getString(R.string.request_submit_sexuality_interest)
                 requestProcess = getString(R.string.request_submit_sexuality_interest)
 
                 commitUserBiometrics()
@@ -177,6 +180,7 @@ class UserBioActivity : AppCompatActivity() {
             binding.kycSkipProgressIcon.visibility = View.VISIBLE
             binding.kycSubmitProgressIcon.visibility = View.GONE
 
+            originalRequestProcess = getString(R.string.request_skip_sexuality_interest)
             requestProcess = getString(R.string.request_skip_sexuality_interest)
 
             userBioRequest.straightCategory = 1
@@ -700,7 +704,87 @@ class UserBioActivity : AppCompatActivity() {
         when (requestProcess) {
             getString(R.string.request_submit_sexuality_interest) -> binding.userKYCSubmitButton.blueButtonLayout.performClick()
             getString(R.string.request_skip_sexuality_interest) -> binding.userKYCSkipButton.greyButtonLayout.performClick()
+            getString(R.string.request_fetch_matched_users) -> {
+                when (originalRequestProcess) {
+                    getString(R.string.request_submit_sexuality_interest) -> {
+                        binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                        binding.userKYCSubmitButton.blueButtonLayout.visibility = View.GONE
+                        binding.kycSubmitProgressIcon.visibility = View.VISIBLE
+                        binding.kycSkipProgressIcon.visibility = View.GONE
+                    }
+                    getString(R.string.request_skip_sexuality_interest) -> {
+                        binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                        binding.userKYCSkipButton.greyButtonLayout.visibility = View.GONE
+                        binding.kycSkipProgressIcon.visibility = View.VISIBLE
+                        binding.kycSubmitProgressIcon.visibility = View.GONE
+                    }
+                }
+
+                fetchMatchedUsers()
+            }
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchMatchedUsers() {
+        val mapper = jacksonObjectMapper()
+        val homeDisplayRequest = HomeDisplayRequest(sharedPreferences.getInt("memberId", 0),
+            sharedPreferences.getInt("age", 0), sharedPreferences.getString("sex", "")!!,
+            sharedPreferences.getString("registrationDate", "")!!, sharedPreferences.getInt("bisexualCategory", 0),
+            sharedPreferences.getInt("gayCategory", 0), sharedPreferences.getInt("lesbianCategory", 0),
+            sharedPreferences.getInt("straightCategory", 0), sharedPreferences.getInt("sugarDaddyCategory", 0),
+            sharedPreferences.getInt("sugarMommyCategory", 0), sharedPreferences.getInt("toyBoyCategory", 0),
+            sharedPreferences.getInt("toyGirlCategory", 0), sharedPreferences.getInt("bisexualInterest", 0),
+            sharedPreferences.getInt("gayInterest", 0), sharedPreferences.getInt("lesbianInterest", 0),
+            sharedPreferences.getInt("straightInterest", 0), sharedPreferences.getInt("sugarDaddyInterest", 0),
+            sharedPreferences.getInt("sugarMommyInterest", 0), sharedPreferences.getInt("toyBoyInterest", 0),
+            sharedPreferences.getInt("toyGirlInterest", 0), sharedPreferences.getInt("sixtyNineExperience", 0),
+            sharedPreferences.getInt("analSexExperience", 0), sharedPreferences.getInt("givenHeadExperience", 0),
+            sharedPreferences.getInt("oneNightStandExperience", 0), sharedPreferences.getInt("orgyExperience", 0),
+            sharedPreferences.getInt("poolSexExperience", 0), sharedPreferences.getInt("receivedHeadExperience", 0),
+            sharedPreferences.getInt("carSexExperience", 0), sharedPreferences.getInt("publicSexExperience", 0),
+            sharedPreferences.getInt("cameraSexExperience", 0), sharedPreferences.getInt("threesomeExperience", 0),
+            sharedPreferences.getInt("sexToyExperience", 0), sharedPreferences.getInt("videoSexExperience", 0))
+
+        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + "service/matcheduserdata.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+                    binding.userKYCSubmitButton.blueButtonLayout.visibility = View.VISIBLE
+                    binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE
+                    binding.kycSubmitProgressIcon.visibility = View.GONE
+                    binding.kycSkipProgressIcon.visibility = View.GONE
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -757,10 +841,41 @@ class UserBioActivity : AppCompatActivity() {
                 }
 
                 if (userBioResponse.committed) {
-                    sharedPreferencesEditor.putString("userLevel", userBioResponse.userLevel).apply()
+                    requestProcess = getString(R.string.request_fetch_matched_users)
 
-                    val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-                    startActivity(intent)
+                    sharedPreferencesEditor.putInt("bisexualCategory", userBioRequest.bisexualCategory)
+                    sharedPreferencesEditor.putInt("gayCategory", userBioRequest.gayCategory)
+                    sharedPreferencesEditor.putInt("lesbianCategory", userBioRequest.lesbianCategory)
+                    sharedPreferencesEditor.putInt("straightCategory", userBioRequest.straightCategory)
+                    sharedPreferencesEditor.putInt("sugarDaddyCategory", userBioRequest.sugarDaddyCategory)
+                    sharedPreferencesEditor.putInt("sugarMommyCategory", userBioRequest.sugarMommyCategory)
+                    sharedPreferencesEditor.putInt("toyBoyCategory", userBioRequest.toyBoyCategory)
+                    sharedPreferencesEditor.putInt("toyGirlCategory", userBioRequest.toyGirlCategory)
+                    sharedPreferencesEditor.putInt("bisexualInterest", userBioRequest.bisexualInterest)
+                    sharedPreferencesEditor.putInt("gayInterest", userBioRequest.gayInterest)
+                    sharedPreferencesEditor.putInt("lesbianInterest", userBioRequest.lesbianInterest)
+                    sharedPreferencesEditor.putInt("straightInterest", userBioRequest.straightInterest)
+                    sharedPreferencesEditor.putInt("sugarDaddyInterest", userBioRequest.sugarDaddyInterest)
+                    sharedPreferencesEditor.putInt("sugarMommyInterest", userBioRequest.sugarMommyInterest)
+                    sharedPreferencesEditor.putInt("toyBoyInterest", userBioRequest.toyBoyInterest)
+                    sharedPreferencesEditor.putInt("toyGirlInterest", userBioRequest.toyGirlInterest)
+                    sharedPreferencesEditor.putInt("sixtyNineExperience", userBioRequest.sixtyNineExperience)
+                    sharedPreferencesEditor.putInt("analSexExperience", userBioRequest.analSexExperience)
+                    sharedPreferencesEditor.putInt("givenHeadExperience", userBioRequest.givenHeadExperience)
+                    sharedPreferencesEditor.putInt("oneNightStandExperience", userBioRequest.oneNightStandExperience)
+                    sharedPreferencesEditor.putInt("orgySexExperience", userBioRequest.orgySexExperience)
+                    sharedPreferencesEditor.putInt("poolSexExperience", userBioRequest.poolSexExperience)
+                    sharedPreferencesEditor.putInt("receivedHeadExperience", userBioRequest.receivedHeadExperience)
+                    sharedPreferencesEditor.putInt("carSexExperience", userBioRequest.carSexExperience)
+                    sharedPreferencesEditor.putInt("publicSexExperience", userBioRequest.publicSexExperience)
+                    sharedPreferencesEditor.putInt("cameraSexExperience", userBioRequest.cameraSexExperience)
+                    sharedPreferencesEditor.putInt("threesomeExperience", userBioRequest.threesomeExperience)
+                    sharedPreferencesEditor.putInt("sexToyExperience", userBioRequest.sexToyExperience)
+                    sharedPreferencesEditor.putInt("videoSexExperience", userBioRequest.videoSexExperience)
+                    sharedPreferencesEditor.putString("userLevel", userBioRequest.userLevel)
+                    sharedPreferencesEditor.apply()
+
+                    fetchMatchedUsers()
                 } else {
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }

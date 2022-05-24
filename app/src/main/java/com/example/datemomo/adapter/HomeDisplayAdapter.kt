@@ -38,13 +38,10 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .into(holder.binding.userImage);
 */
 
+        holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_hollow))
+
         holder.binding.loveUserLayout.setOnClickListener {
-            if (holder.binding.loveUserIcon.drawable ==
-                ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_hollow)) {
-                holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_red))
-            } else {
-                holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_hollow))
-            }
+            holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_red))
         }
 
         Glide.with(holder.itemView.context)
