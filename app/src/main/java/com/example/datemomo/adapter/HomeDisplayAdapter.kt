@@ -52,10 +52,42 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             holder.binding.userDisplayLayout.layoutParams = userDisplayLayoutParam
         }
 
-        holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_hollow))
+        if (homeDisplayResponses[position].liked == 1) {
+            holder.binding.loveUserIcon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    holder.itemView.context,
+                    R.drawable.icon_heart_red
+                )
+            )
+        } else {
+            holder.binding.loveUserIcon.setImageDrawable(
+                ContextCompat.getDrawable(
+                    holder.itemView.context,
+                    R.drawable.icon_heart_hollow
+                )
+            )
+        }
 
         holder.binding.loveUserLayout.setOnClickListener {
-            holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_red))
+            if (homeDisplayResponses[position].liked == 0) {
+                holder.binding.loveUserIcon.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        holder.itemView.context,
+                        R.drawable.icon_heart_red
+                    )
+                )
+
+                // commit it to the server
+            } else {
+                holder.binding.loveUserIcon.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        holder.itemView.context,
+                        R.drawable.icon_heart_hollow
+                    )
+                )
+
+                // commit it to the server
+            }
         }
 
         Glide.with(holder.itemView.context)
