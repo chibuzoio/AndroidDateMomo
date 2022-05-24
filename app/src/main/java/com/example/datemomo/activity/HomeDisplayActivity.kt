@@ -2,6 +2,7 @@ package com.example.datemomo.activity
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -20,7 +21,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
 
+
 class HomeDisplayActivity : AppCompatActivity() {
+    private var deviceWidth: Int = 0
+    private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -37,12 +41,32 @@ class HomeDisplayActivity : AppCompatActivity() {
         window.setStatusBarDarkIcons(true)
         window.setNavigationBarDarkIcons(true)
 
+        val displayMetrics = DisplayMetrics()
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            display?.getRealMetrics(displayMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            val display = windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getMetrics(displayMetrics)
+        }
+
+        deviceWidth = displayMetrics.widthPixels
+        deviceHeight = displayMetrics.heightPixels
+
         bundle = intent.extras!!
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
+
+        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
+
+        // Image width and height are 788 and 788
 
         try {
             val mapper = jacksonObjectMapper()
@@ -52,7 +76,7 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.homeDisplayRecyclerView.layoutManager = layoutManager
             binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray)
+            val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, deviceWidth)
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
         } catch (exception: IOException) {
             Log.e(TAG, "Error message from here is ${exception.message}")

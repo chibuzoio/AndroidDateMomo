@@ -9,6 +9,14 @@ import android.util.DisplayMetrics
 class Utility {
 
     companion object {
+        fun convertPixelToDp(context: Context, pixel: Float): Float {
+            return pixel / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
+        }
+
+        fun convertDpToPixel(context: Context, densityPixel: Float): Float {
+            return densityPixel * (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
+        }
+
         fun isConnected(context: Context): Boolean {
             var result = false
             val connectivityManager =
@@ -44,7 +52,7 @@ class Utility {
             return (imageHeight * (deviceWidth - dimen(context, xMarginSum.toFloat()))) / imageWidth
         }
 
-        private fun dimen(context: Context, densityPixel: Float): Int {
+        fun dimen(context: Context, densityPixel: Float): Int {
             return (densityPixel * (context.resources
                 .displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
         }
