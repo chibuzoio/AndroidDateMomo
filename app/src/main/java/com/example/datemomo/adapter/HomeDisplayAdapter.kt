@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
@@ -21,7 +22,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val allImageWidth = deviceWidth - Utility.dimen(holder.itemView.context, 23f)
-        val allImageHeight = (788 * (deviceWidth - Utility.dimen(holder.itemView.context, 23f))) / 788
+        val allImageHeight = (/* imageHeight */ 788 * (deviceWidth -
+                Utility.dimen(holder.itemView.context, 23f))) / /* imageWidth */ 788
 
         holder.binding.userImage.layoutParams.width = allImageWidth
         holder.binding.userImage.layoutParams.height = allImageHeight
@@ -56,11 +58,11 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             holder.binding.loveUserIcon.setImageDrawable(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_heart_red))
         }
 
-//        Glide.with(holder.itemView.context)
-//            .load(holder.itemView.context.getString(R.string.date_momo_api)
-//                    + "client/image/" + homeDisplayResponses[position].profilePicture)
-//            .transform(CenterCrop(), RoundedCorners(33))
-//            .into(holder.binding.userImage)
+        Glide.with(holder.itemView.context)
+            .load(holder.itemView.context.getString(R.string.date_momo_api)
+                    + "client/image/" + homeDisplayResponses[position].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(holder.binding.userImage)
 
         if (homeDisplayResponses[position].fullName.isEmpty()) {
             holder.binding.userFullName.text = homeDisplayResponses[position].userName
