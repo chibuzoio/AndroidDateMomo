@@ -16,11 +16,11 @@ import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
+import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
-
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -76,7 +76,9 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.homeDisplayRecyclerView.layoutManager = layoutManager
             binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, deviceWidth)
+            val homeDisplayModel = HomeDisplayModel(deviceWidth, binding)
+
+            val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, homeDisplayModel)
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
         } catch (exception: IOException) {
             Log.e(TAG, "Error message from here is ${exception.message}")

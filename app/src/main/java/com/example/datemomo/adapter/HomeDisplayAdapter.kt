@@ -1,12 +1,9 @@
 package com.example.datemomo.adapter
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -14,11 +11,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
-import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
-import com.example.datemomo.model.request.AuthenticationRequest
+import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.LikeUserRequest
-import com.example.datemomo.model.response.AuthenticationResponse
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
@@ -27,7 +22,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 
-class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResponse>, private val deviceWidth: Int) :
+class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResponse>, private val homeDisplayModel: HomeDisplayModel) :
     RecyclerView.Adapter<HomeDisplayAdapter.MyViewHolder>() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
@@ -43,8 +38,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
                 .itemView.context.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        val allImageWidth = deviceWidth - Utility.dimen(holder.itemView.context, 23f)
-        val allImageHeight = (/* imageHeight */ 788 * (deviceWidth -
+        val allImageWidth = homeDisplayModel.deviceWidth - Utility.dimen(holder.itemView.context, 23f)
+        val allImageHeight = (/* imageHeight */ 788 * (homeDisplayModel.deviceWidth -
                 Utility.dimen(holder.itemView.context, 23f))) / /* imageWidth */ 788
 
         holder.binding.userImage.layoutParams.width = allImageWidth
@@ -59,6 +54,11 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .load(R.drawable.motion_placeholder)
             .transform(RoundedCorners(15))
             .into(holder.binding.userImageBack)
+
+        Log.e("AdapterClass", "Image properties here are ${homeDisplayResponses[position].userPictureModels[0].imageName}")
+
+        // Add profilePicture properties to homeDisplayResponses
+        // Then, add collection of all user images, with their properties to homeDisplayResponses
 
 /*
         Glide.with(holder.itemView.context)
@@ -114,9 +114,13 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .into(holder.binding.userImage)
 
         if (homeDisplayResponses[position].fullName.isEmpty()) {
-            holder.binding.userFullName.text = homeDisplayResponses[position].userName
+            holder.binding.userFullName.text =
+                holder.itemView.context.getString(R.string.nameAndAgeText,
+                    homeDisplayResponses[position].userName, homeDisplayResponses[position].age)
         } else {
-            holder.binding.userFullName.text = homeDisplayResponses[position].fullName
+            holder.binding.userFullName.text =
+                holder.itemView.context.getString(R.string.nameAndAgeText,
+                    homeDisplayResponses[position].fullName, homeDisplayResponses[position].age)
         }
     }
 

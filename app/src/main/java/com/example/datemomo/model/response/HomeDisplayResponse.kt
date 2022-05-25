@@ -1,5 +1,6 @@
 package com.example.datemomo.model.response
 
+import com.example.datemomo.model.UserPictureModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +17,7 @@ data class HomeDisplayResponse(var memberId: Int,
                                var registrationDate: String,
 
                                var liked: Boolean,
+                               var userPictureModels: ArrayList<UserPictureModel>,
 
                                var bisexualCategory: Int,
                                var gayCategory: Int,

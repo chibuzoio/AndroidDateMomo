@@ -5,6 +5,7 @@
     <string name="date_momo_api">http://10.0.3.2/</string>
     <string name="shared_preferences">DateMomoPreferences</string>
 
+    <string name="nameAndAgeText">%1$s, %2$d</string>
     <string name="sexuality">Your Sexual Category</string>
     <string name="sexual_interest">You are interested in</string>
     <string name="user_bio_header">Meet The Right People You Seek!</string>

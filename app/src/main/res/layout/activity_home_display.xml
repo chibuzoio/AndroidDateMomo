@@ -18,6 +18,45 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/userInformationLayout"
+            android:visibility="gone"
+            android:background="@color/background_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:elevation="11dp"
+                android:layout_margin="11dp"
+                android:background="@drawable/home_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:id="@+id/userImageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/userInformationImage"
+                        android:adjustViewBounds="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/transparent_gradient"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp">
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
         <include
             android:id="@+id/doubleButtonDialog"
             layout="@layout/include_double_button_dialog"/>
