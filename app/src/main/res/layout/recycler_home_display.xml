@@ -12,6 +12,7 @@
 
     <FrameLayout
         android:id="@+id/userImageLayout"
+        android:layout_gravity="center_horizontal"
         android:foregroundGravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -36,6 +37,7 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/userFullNameLayout"
             android:layout_weight="8"
             android:orientation="vertical"
             android:layout_marginTop="3dp"

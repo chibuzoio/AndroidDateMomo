@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kotlinx.android.synthetic.main.activity_home_display.view.*
 import okhttp3.*
 import java.io.IOException
 
@@ -59,6 +61,22 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         // Add profilePicture properties to homeDisplayResponses
         // Then, add collection of all user images, with their properties to homeDisplayResponses
+
+        holder.binding.userImage.setOnClickListener {
+            processUserDataView(holder.itemView.context, position)
+        }
+
+        holder.binding.userImageBack.setOnClickListener {
+            processUserDataView(holder.itemView.context, position)
+        }
+
+        holder.binding.userImageLayout.setOnClickListener {
+            processUserDataView(holder.itemView.context, position)
+        }
+
+        holder.binding.userFullNameLayout.setOnClickListener {
+            processUserDataView(holder.itemView.context, position)
+        }
 
 /*
         Glide.with(holder.itemView.context)
@@ -130,6 +148,35 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
     class MyViewHolder(val binding: RecyclerHomeDisplayBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    private fun processUserDataView(context: Context, position: Int) {
+        var userPicturePosition = 0
+
+        for ((index, userPictureModel) in homeDisplayResponses[position].userPictureModels.withIndex()) {
+            if (userPictureModel.imageName == homeDisplayResponses[position].profilePicture) {
+                userPicturePosition = index
+            }
+        }
+
+        homeDisplayResponses[position].userPictureModels
+
+        val imageWidth = homeDisplayModel.deviceWidth - Utility.dimen(context, 23f)
+        val imageHeight = (homeDisplayResponses[position].userPictureModels[userPicturePosition].imageHeight *
+                (homeDisplayModel.deviceWidth - Utility.dimen(context, 23f))) /
+                homeDisplayResponses[position].userPictureModels[userPicturePosition].imageWidth
+
+        homeDisplayModel.binding.userImageContainer.layoutParams.width = imageWidth
+        homeDisplayModel.binding.userImageContainer.layoutParams.height = imageHeight
+        homeDisplayModel.binding.userInformationImage.layoutParams.width = imageWidth
+        homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
+
+        Glide.with(context)
+            .load(context.getString(R.string.date_momo_api) + "client/image/" + homeDisplayResponses[position].profilePicture)
+            .transform(RoundedCorners(33))
+            .into(homeDisplayModel.binding.userInformationImage)
+
+        homeDisplayModel.binding.userInformationLayout.visibility = View.VISIBLE
+    }
 
     @Throws(IOException::class)
     private fun processUserLike(context: Context, position: Int) {

@@ -6,8 +6,10 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -82,6 +84,14 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
         } catch (exception: IOException) {
             Log.e(TAG, "Error message from here is ${exception.message}")
+        }
+    }
+
+    override fun onBackPressed() {
+        if (binding.userInformationLayout.isVisible) {
+            binding.userInformationLayout.visibility = View.GONE
+        } else {
+            super.onBackPressed()
         }
     }
 
