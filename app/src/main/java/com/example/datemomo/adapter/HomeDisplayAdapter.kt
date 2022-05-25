@@ -1,5 +1,6 @@
 package com.example.datemomo.adapter
 
+import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -9,6 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
+import com.example.datemomo.model.request.LikeUserRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
 
@@ -52,7 +54,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             holder.binding.userDisplayLayout.layoutParams = userDisplayLayoutParam
         }
 
-        if (homeDisplayResponses[position].liked == 1) {
+        if (homeDisplayResponses[position].liked) {
             holder.binding.loveUserIcon.setImageDrawable(
                 ContextCompat.getDrawable(
                     holder.itemView.context,
@@ -69,25 +71,20 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         }
 
         holder.binding.loveUserLayout.setOnClickListener {
-            if (homeDisplayResponses[position].liked == 0) {
-                holder.binding.loveUserIcon.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        holder.itemView.context,
-                        R.drawable.icon_heart_red
-                    )
-                )
+            homeDisplayResponses[position].liked = !homeDisplayResponses[position].liked
+            notifyItemChanged(position)
 
-                // commit it to the server
-            } else {
-                holder.binding.loveUserIcon.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        holder.itemView.context,
-                        R.drawable.icon_heart_hollow
-                    )
-                )
+//            var likeUserRequest = LikeUserRequest(sharedPreferences)
 
-                // commit it to the server
-            }
+            /*
+            * notifyItemInserted(insertIndex)
+            * notifyItemRangeInserted(insertIndex, items.size())
+            * notifyItemChanged(updateIndex)
+            * notifyItemRemoved(removeIndex)
+            * notifyItemRangeRemoved(startIndex, count)
+            * notifyItemMoved(fromPosition, toPosition)
+            * notifyDataSetChanged()
+            * */
         }
 
         Glide.with(holder.itemView.context)

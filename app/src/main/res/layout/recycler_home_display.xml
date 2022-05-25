@@ -74,8 +74,8 @@
                 android:id="@+id/loveUserIcon"
                 android:layout_gravity="center"
                 android:src="@drawable/icon_heart_hollow"
-                android:layout_width="35dp"
-                android:layout_height="35dp"/>
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

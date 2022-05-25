@@ -15,7 +15,7 @@ data class HomeDisplayResponse(var memberId: Int,
                                var profilePicture: String,
                                var registrationDate: String,
 
-                               var liked: Int,
+                               var liked: Boolean,
 
                                var bisexualCategory: Int,
                                var gayCategory: Int,
