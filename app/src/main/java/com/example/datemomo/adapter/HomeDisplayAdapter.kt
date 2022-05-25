@@ -170,6 +170,22 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         homeDisplayModel.binding.userInformationImage.layoutParams.width = imageWidth
         homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
 
+        if (homeDisplayResponses[position].fullName.isEmpty()) {
+            homeDisplayModel.binding.userFullName.text =
+                context.getString(
+                    R.string.nameAndAgeText,
+                    homeDisplayResponses[position].userName,
+                    homeDisplayResponses[position].age
+                )
+        } else {
+            homeDisplayModel.binding.userFullName.text =
+                context.getString(
+                    R.string.nameAndAgeText,
+                    homeDisplayResponses[position].fullName,
+                    homeDisplayResponses[position].age
+                )
+        }
+
         Glide.with(context)
             .load(context.getString(R.string.date_momo_api) + "client/image/" + homeDisplayResponses[position].profilePicture)
             .transform(RoundedCorners(33))
