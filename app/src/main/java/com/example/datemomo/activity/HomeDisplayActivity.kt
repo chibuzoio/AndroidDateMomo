@@ -64,11 +64,40 @@ class HomeDisplayActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
+        binding.userGay.blueButtonText.text = "Gay"
+        binding.userToyBoy.blueButtonText.text = "Toy Boy"
+        binding.userLesbian.blueButtonText.text = "Lesbian"
+        binding.userToyGirl.blueButtonText.text = "Toy Girl"
+        binding.userBisexual.blueButtonText.text = "Bisexual"
+        binding.userStraight.blueButtonText.text = "Straight"
+        binding.userSugarDaddy.blueButtonText.text = "Sugar Daddy"
+        binding.userSugarMommy.blueButtonText.text = "Sugar Mommy"
 
-        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
+        binding.gayInterest.blueButtonText.text = "Gay"
+        binding.toyBoyInterest.blueButtonText.text = "Toy Boy"
+        binding.lesbianInterest.blueButtonText.text = "Lesbian"
+        binding.toyGirlInterest.blueButtonText.text = "Toy Girl"
+        binding.bisexualInterest.blueButtonText.text = "Bisexual"
+        binding.straightInterest.blueButtonText.text = "Straight"
+        binding.sugarDaddyInterest.blueButtonText.text = "Sugar Daddy"
+        binding.sugarMommyInterest.blueButtonText.text = "Sugar Mommy"
 
-        // Image width and height are 788 and 788
+        binding.sixtyNineExperience.blueButtonText.text = "69"
+        binding.analSexExperience.blueButtonText.text = "Anal Sex"
+        binding.orgySexExperience.blueButtonText.text = "Orgy Sex"
+        binding.poolSexExperience.blueButtonText.text = "Pool Sex"
+        binding.carSexExperience.blueButtonText.text = "Sexed In Car"
+        binding.threesomeExperience.blueButtonText.text = "Threesome"
+        binding.givenHeadExperience.blueButtonText.text = "Given Head"
+        binding.sexToyExperience.blueButtonText.text = "Used Sex Toys"
+        binding.videoSexExperience.blueButtonText.text = "Video Sex Chat"
+        binding.publicSexExperience.blueButtonText.text = "Sexed In Public"
+        binding.receivedHeadExperience.blueButtonText.text = "Received Head"
+        binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
+        binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
+
+//        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
+//        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
 
         try {
             val mapper = jacksonObjectMapper()

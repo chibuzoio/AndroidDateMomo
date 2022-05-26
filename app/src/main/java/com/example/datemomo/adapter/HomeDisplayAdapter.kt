@@ -200,6 +200,122 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .transform(RoundedCorners(37))
             .into(homeDisplayModel.binding.userInformationImage)
 
+        if (homeDisplayResponses[position].bisexualCategory > 0) {
+            homeDisplayModel.binding.userBisexual.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].gayCategory > 0) {
+            homeDisplayModel.binding.userGay.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].lesbianCategory > 0) {
+            homeDisplayModel.binding.userLesbian.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].straightCategory > 0) {
+            homeDisplayModel.binding.userStraight.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].sugarDaddyCategory > 0) {
+            homeDisplayModel.binding.userSugarDaddy.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].sugarMommyCategory > 0) {
+            homeDisplayModel.binding.userSugarMommy.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].toyBoyCategory > 0) {
+            homeDisplayModel.binding.userToyBoy.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].toyGirlCategory > 0) {
+            homeDisplayModel.binding.userToyGirl.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].bisexualInterest > 0) {
+            homeDisplayModel.binding.bisexualInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].gayInterest > 0) {
+            homeDisplayModel.binding.gayInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].straightInterest > 0) {
+            homeDisplayModel.binding.straightInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].lesbianInterest > 0) {
+            homeDisplayModel.binding.lesbianInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].sugarDaddyInterest > 0) {
+            homeDisplayModel.binding.sugarDaddyInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].sugarMommyInterest > 0) {
+            homeDisplayModel.binding.sugarMommyInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].toyBoyInterest > 0) {
+            homeDisplayModel.binding.toyBoyInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].toyGirlInterest > 0) {
+            homeDisplayModel.binding.toyGirlInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].analSexExperience > 0) {
+            homeDisplayModel.binding.analSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].sixtyNineExperience > 0) {
+            homeDisplayModel.binding.sixtyNineExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].cameraSexExperience > 0) {
+            homeDisplayModel.binding.cameraSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].carSexExperience > 0) {
+            homeDisplayModel.binding.carSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].threesomeExperience > 0) {
+            homeDisplayModel.binding.threesomeExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].givenHeadExperience > 0) {
+            homeDisplayModel.binding.givenHeadExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].receivedHeadExperience > 0) {
+            homeDisplayModel.binding.receivedHeadExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].oneNightStandExperience > 0) {
+            homeDisplayModel.binding.oneNightStandExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].orgySexExperience > 0) {
+            homeDisplayModel.binding.orgySexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].poolSexExperience > 0) {
+            homeDisplayModel.binding.poolSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].sexToyExperience > 0) {
+            homeDisplayModel.binding.sexToyExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].videoSexExperience > 0) {
+            homeDisplayModel.binding.videoSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].publicSexExperience > 0) {
+            homeDisplayModel.binding.publicSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
         homeDisplayModel.binding.userInformationLayout.visibility = View.VISIBLE
     }
 
