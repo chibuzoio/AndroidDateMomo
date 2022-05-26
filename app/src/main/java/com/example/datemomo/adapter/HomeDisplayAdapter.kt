@@ -174,21 +174,17 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         homeDisplayModel.binding.userImagePlaceholder.layoutParams.height = imageHeight
         homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
 
-        if (homeDisplayResponses[position].fullName.isEmpty()) {
-            homeDisplayModel.binding.userFullName.text =
-                context.getString(
-                    R.string.nameAndAgeText,
-                    homeDisplayResponses[position].userName,
-                    homeDisplayResponses[position].age
-                )
-        } else {
-            homeDisplayModel.binding.userFullName.text =
-                context.getString(
-                    R.string.nameAndAgeText,
-                    homeDisplayResponses[position].fullName,
-                    homeDisplayResponses[position].age
-                )
+        homeDisplayModel.binding.userStatusText.text = context.getString(R.string.status_default)
+
+        val userFullName = homeDisplayResponses[position].fullName.ifEmpty {
+            homeDisplayResponses[position].userName
         }
+
+        homeDisplayModel.binding.userFullName.text =
+            context.getString(R.string.nameAndAgeText, userFullName, homeDisplayResponses[position].age)
+        homeDisplayModel.binding.userInterestTitle.text = context.getString(R.string.title_interest, userFullName)
+        homeDisplayModel.binding.userSexualityTitle.text = context.getString(R.string.title_sexuality, userFullName)
+        homeDisplayModel.binding.userExperienceTitle.text = context.getString(R.string.title_experience, userFullName)
 
         Glide.with(context)
             .load(ColorDrawable(ContextCompat.getColor(context, R.color.grey_picture_placeholder)))
