@@ -2,6 +2,7 @@ package com.example.datemomo.adapter
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
@@ -167,7 +169,9 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         homeDisplayModel.binding.userImageContainer.layoutParams.width = imageWidth
         homeDisplayModel.binding.userImageContainer.layoutParams.height = imageHeight
+        homeDisplayModel.binding.userImagePlaceholder.layoutParams.width = imageWidth
         homeDisplayModel.binding.userInformationImage.layoutParams.width = imageWidth
+        homeDisplayModel.binding.userImagePlaceholder.layoutParams.height = imageHeight
         homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
 
         if (homeDisplayResponses[position].fullName.isEmpty()) {
@@ -187,8 +191,13 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         }
 
         Glide.with(context)
+            .load(ColorDrawable(ContextCompat.getColor(context, R.color.grey_picture_placeholder)))
+            .transform(RoundedCorners(37))
+            .into(homeDisplayModel.binding.userImagePlaceholder)
+
+        Glide.with(context)
             .load(context.getString(R.string.date_momo_api) + "client/image/" + homeDisplayResponses[position].profilePicture)
-            .transform(RoundedCorners(33))
+            .transform(RoundedCorners(37))
             .into(homeDisplayModel.binding.userInformationImage)
 
         homeDisplayModel.binding.userInformationLayout.visibility = View.VISIBLE
