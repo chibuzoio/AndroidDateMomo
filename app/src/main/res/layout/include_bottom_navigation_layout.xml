@@ -10,9 +10,8 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomHomeMenuLayout"
-        android:paddingTop="15dp"
         android:layout_weight="1"
-        android:paddingBottom="7dp"
+        android:paddingVertical="11dp"
         android:paddingHorizontal="7dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
@@ -39,9 +38,8 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomMessageMenuLayout"
-        android:paddingTop="15dp"
         android:layout_weight="1"
-        android:paddingBottom="7dp"
+        android:paddingVertical="11dp"
         android:paddingHorizontal="7dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
@@ -68,9 +66,8 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/bottomAccountMenu"
-        android:paddingTop="15dp"
         android:layout_weight="1"
-        android:paddingBottom="7dp"
+        android:paddingVertical="11dp"
         android:paddingHorizontal="7dp"
         android:orientation="horizontal"
         android:gravity="center_horizontal"
