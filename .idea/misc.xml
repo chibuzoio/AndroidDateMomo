@@ -13,14 +13,18 @@
         <entry key="app/src/main/res/drawable/home_card_view.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/ic_heart.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/ic_heart_red.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/ignored_bottom_menu.xml" value="0.142" />
+        <entry key="app/src/main/res/drawable/include_bottom_navigation_layout.xml" value="0.142" />
         <entry key="app/src/main/res/drawable/light_grey_button.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/normal_edit_text.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/selected_bottom_menu.xml" value="0.142" />
         <entry key="app/src/main/res/drawable/transparent_gradient.xml" value="0.141" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_bio.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/generic_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_blue_button.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/include_bottom_navigation_layout.xml" value="0.18958333333333333" />
         <entry key="app/src/main/res/layout/include_double_button_dialog.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_hollow_blue_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_icon_hollow_blue_button.xml" value="0.1796875" />
