@@ -96,7 +96,7 @@
 
                         <TextView
                             android:id="@+id/userStatusText"
-                            android:textSize="15sp"
+                            android:textSize="17sp"
                             android:layout_marginTop="20dp"
                             android:textColor="@color/edit_text"
                             android:layout_marginHorizontal="15dp"
@@ -112,7 +112,7 @@
 
                             <TextView
                                 android:id="@+id/userSexualityTitle"
-                                android:textSize="18dp"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 android:layout_marginTop="15dp"
                                 android:layout_marginBottom="10dp"
@@ -204,7 +204,7 @@
 
                             <TextView
                                 android:id="@+id/userInterestTitle"
-                                android:textSize="18dp"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 android:layout_marginTop="5dp"
                                 android:layout_marginBottom="10dp"
@@ -296,7 +296,7 @@
 
                             <TextView
                                 android:id="@+id/userExperienceTitle"
-                                android:textSize="18dp"
+                                android:textSize="20sp"
                                 android:textStyle="bold"
                                 android:layout_marginTop="5dp"
                                 android:layout_marginBottom="10dp"
@@ -442,6 +442,7 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <include
+            android:id="@+id/bottomNavigationLayout"
             layout="@layout/include_bottom_navigation_layout"/>
 
         <include

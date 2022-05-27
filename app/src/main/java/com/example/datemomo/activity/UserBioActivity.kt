@@ -45,9 +45,6 @@ class UserBioActivity : AppCompatActivity() {
         binding = ActivityUserBioBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        window.setStatusBarDarkIcons(true)
-        window.setNavigationBarDarkIcons(true)
-
         window.decorView.systemUiVisibility = flags
 
         // Code below is to handle presses of Volume up or Volume down.

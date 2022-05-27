@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,9 +48,6 @@ class HomeDisplayActivity : AppCompatActivity() {
         binding = ActivityHomeDisplayBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        window.setStatusBarDarkIcons(true)
-        window.setNavigationBarDarkIcons(true)
-
         window.decorView.systemUiVisibility = flags
 
         // Code below is to handle presses of Volume up or Volume down.
@@ -87,6 +85,8 @@ class HomeDisplayActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
+
         binding.userGay.blueButtonText.text = "Gay"
         binding.userToyBoy.blueButtonText.text = "Toy Boy"
         binding.userLesbian.blueButtonText.text = "Lesbian"
@@ -122,6 +122,18 @@ class HomeDisplayActivity : AppCompatActivity() {
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
 
+        binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
+            redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
+        }
+
+        binding.bottomNavigationLayout.bottomMessageMenuLayout.setOnClickListener {
+            redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
+        }
+
+        binding.bottomNavigationLayout.bottomAccountMenuLayout.setOnClickListener {
+            redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+        }
+
         try {
             val mapper = jacksonObjectMapper()
             homeDisplayResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
@@ -144,6 +156,35 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.userInformationLayout.visibility = View.GONE
         } else {
             super.onBackPressed()
+        }
+    }
+
+    private fun redrawBottomMenuIcons(clickedBottomMenu: String) {
+        when (clickedBottomMenu) {
+            getString(R.string.clicked_home_menu) -> {
+                binding.bottomNavigationLayout.homeMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.selected_bottom_menu)
+                binding.bottomNavigationLayout.bottomHomeMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_home_white))
+                binding.bottomNavigationLayout.accountMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.messageMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_blue))
+                binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_blue))
+            }
+            getString(R.string.clicked_account_menu) -> {
+                binding.bottomNavigationLayout.homeMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.bottomHomeMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_home_blue))
+                binding.bottomNavigationLayout.messageMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.accountMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.selected_bottom_menu)
+                binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_blue))
+                binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_white))
+            }
+            getString(R.string.clicked_message_menu) -> {
+                binding.bottomNavigationLayout.homeMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.bottomHomeMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_home_blue))
+                binding.bottomNavigationLayout.accountMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.messageMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.selected_bottom_menu)
+                binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_blue))
+                binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_white))
+            }
         }
     }
 

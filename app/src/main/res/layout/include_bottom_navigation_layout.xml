@@ -65,7 +65,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/bottomAccountMenu"
+        android:id="@+id/bottomAccountMenuLayout"
         android:layout_weight="1"
         android:paddingVertical="11dp"
         android:paddingHorizontal="7dp"

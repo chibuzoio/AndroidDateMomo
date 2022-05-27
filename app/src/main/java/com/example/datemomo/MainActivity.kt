@@ -86,9 +86,6 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
-        window.setStatusBarDarkIcons(true)
-        window.setNavigationBarDarkIcons(true)
-
         window.decorView.systemUiVisibility = flags
 
         // Code below is to handle presses of Volume up or Volume down.
