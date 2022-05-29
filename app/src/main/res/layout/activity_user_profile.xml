@@ -1,8 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <FrameLayout
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_marginBottom="53dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <FrameLayout
+                        android:layout_marginTop="11dp"
+                        android:layout_marginStart="11dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <FrameLayout
+                            android:foregroundGravity="center"
+                            android:background="@drawable/profile_picture_cover"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp">
+
+                            <ImageView
+                                android:id="@+id/profilePicturePlaceholder"
+                                android:layout_margin="7dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                            <ImageView
+                                android:id="@+id/accountProfilePicture"
+                                android:layout_margin="7dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                        </FrameLayout>
+
+                        <ImageView
+                            android:layout_marginEnd="7dp"
+                            android:layout_marginBottom="7dp"
+                            android:layout_gravity="bottom|end"
+                            android:src="@drawable/icon_camera_blue"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"/>
+
+                    </FrameLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:gravity="bottom"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="11dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/userFullName"
+                            android:textSize="23sp"
+                            android:textStyle="bold"
+                            android:text="Floxy, 33"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/userLocation"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:text="Minarelikoy"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/userStatusText"
+                            android:textSize="17sp"
+                            android:layout_marginTop="7dp"
+                            android:text="@string/status_default"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_marginTop="23dp"
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <include
+                        android:id="@+id/photoGalleryButton"
+                        android:layout_weight="3"
+                        layout="@layout/include_icon_hollow_blue_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                    <View
+                        android:layout_weight="7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+        <View
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="53dp"
+            android:background="@color/edit_text_hint"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <include
+            android:id="@+id/bottomNavigationLayout"
+            layout="@layout/include_bottom_navigation_layout"/>
+
+        <include
+            android:id="@+id/doubleButtonDialog"
+            layout="@layout/include_double_button_dialog"/>
+
+        <include
+            android:id="@+id/singleButtonDialog"
+            layout="@layout/include_single_button_dialog"/>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -2,14 +2,17 @@ package com.example.datemomo.activity
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
-import com.example.datemomo.databinding.ActivityUserBioBinding
 import com.example.datemomo.databinding.ActivityUserProfileBinding
-import com.example.datemomo.model.request.UserBioRequest
 
 class UserProfileActivity : AppCompatActivity() {
     private lateinit var requestProcess: String
@@ -53,6 +56,67 @@ class UserProfileActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+
+        binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
+            redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
+        }
+
+        binding.bottomNavigationLayout.bottomMessageMenuLayout.setOnClickListener {
+            redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
+        }
+
+        binding.bottomNavigationLayout.bottomAccountMenuLayout.setOnClickListener {
+            redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+        }
+
+        Glide.with(this)
+            .load(ColorDrawable(ContextCompat.getColor(this, R.color.grey_picture_placeholder)))
+            .transform(CircleCrop())
+            .into(binding.profilePicturePlaceholder)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image1))
+            .transform(CircleCrop(), CenterCrop())
+            .into(binding.accountProfilePicture)
+
+        binding.photoGalleryButton.iconHollowButtonText.text = "Photos"
+        binding.photoGalleryButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
+        binding.photoGalleryButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
+
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
+
+    private fun redrawBottomMenuIcons(clickedBottomMenu: String) {
+        when (clickedBottomMenu) {
+            getString(R.string.clicked_home_menu) -> {
+                binding.bottomNavigationLayout.homeMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.selected_bottom_menu)
+                binding.bottomNavigationLayout.bottomHomeMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_home_white))
+                binding.bottomNavigationLayout.accountMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.messageMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_blue))
+                binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_blue))
+            }
+            getString(R.string.clicked_account_menu) -> {
+                binding.bottomNavigationLayout.homeMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.bottomHomeMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_home_blue))
+                binding.bottomNavigationLayout.messageMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.accountMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.selected_bottom_menu)
+                binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_blue))
+                binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_white))
+            }
+            getString(R.string.clicked_message_menu) -> {
+                binding.bottomNavigationLayout.homeMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.bottomHomeMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_home_blue))
+                binding.bottomNavigationLayout.accountMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.ignored_bottom_menu)
+                binding.bottomNavigationLayout.messageMenuImageCover.background = ContextCompat.getDrawable(this, R.drawable.selected_bottom_menu)
+                binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_blue))
+                binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_white))
+            }
+        }
     }
 }
 

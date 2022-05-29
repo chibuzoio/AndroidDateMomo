@@ -66,7 +66,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         val displayMetrics = DisplayMetrics()
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             display?.getRealMetrics(displayMetrics)
         } else {
             @Suppress("DEPRECATION")
