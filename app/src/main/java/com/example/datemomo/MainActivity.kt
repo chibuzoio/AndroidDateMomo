@@ -16,8 +16,12 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,8 +30,6 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.datemomo.MainApplication.Companion.setNavigationBarDarkIcons
-import com.example.datemomo.MainApplication.Companion.setStatusBarDarkIcons
 import com.example.datemomo.activity.HomeDisplayActivity
 import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
@@ -70,7 +72,13 @@ class MainActivity : AppCompatActivity() {
     private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
+    private var registrationInnerLayoutTopPadding: Int = 0
+    private var pictureUploadInnerLayoutTopPadding: Int = 0
+    private var authenticationInnerLayoutTopPadding: Int = 0
     private lateinit var sharedPreferences: SharedPreferences
+    private var registrationInnerLayoutBottomPadding: Int = 0
+    private var pictureUploadInnerLayoutBottomPadding: Int = 0
+    private var authenticationInnerLayoutBottomPadding: Int = 0
     private var userNameArray: Array<UserNameModel> = emptyArray()
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -162,6 +170,15 @@ class MainActivity : AppCompatActivity() {
                 .load(R.drawable.loading_puzzle)
                 .into(binding.uploadProgressIcon)
 
+            binding.authenticationInnerLayout.viewTreeObserver.addOnGlobalLayoutListener {
+                registrationInnerLayoutTopPadding = binding.registrationInnerLayout.paddingTop
+                pictureUploadInnerLayoutTopPadding = binding.pictureUploadInnerLayout.paddingTop
+                authenticationInnerLayoutTopPadding = binding.authenticationInnerLayout.paddingTop
+                registrationInnerLayoutBottomPadding = binding.registrationInnerLayout.paddingBottom
+                pictureUploadInnerLayoutBottomPadding = binding.pictureUploadInnerLayout.paddingBottom
+                authenticationInnerLayoutBottomPadding = binding.authenticationInnerLayout.paddingBottom
+            }
+
             binding.userAgeInput.genericInputField.hint = "Age"
             binding.userAgeInput.genericInputField.inputType = InputType.TYPE_CLASS_NUMBER
 
@@ -182,6 +199,34 @@ class MainActivity : AppCompatActivity() {
                     R.drawable.icon_gallery_blue
                 )
             )
+
+            binding.registrationInnerLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
+
+            binding.pictureUploadInnerLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
+
+            binding.authenticationInnerLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
+
+            binding.activityFrameLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
+
+            binding.authenticationLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
+
+            binding.pictureUploadLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
+
+            binding.registrationLayout.setOnClickListener {
+                clearAllFieldFocus()
+            }
 
             binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -531,7 +576,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
 
+            binding.userAgeInput.genericInputField.setOnFocusChangeListener { _, focused ->
+                setGravityOnFieldFocus(focused)
+            }
+
             binding.loginUserName.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                setGravityOnFieldFocus(focused)
+
                 if (focused) {
                     binding.loginUserName.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -555,6 +606,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.userNameInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                setGravityOnFieldFocus(focused)
+
                 if (focused) {
                     binding.userNameInput.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -578,6 +631,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.loginPassword.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                setGravityOnFieldFocus(focused)
+
                 if (focused) {
                     binding.loginPassword.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -601,6 +656,8 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.passwordInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
+                setGravityOnFieldFocus(focused)
+
                 if (focused) {
                     binding.passwordInput.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -650,6 +707,55 @@ class MainActivity : AppCompatActivity() {
             else -> {
                 super.onBackPressed()
             }
+        }
+    }
+
+    private fun clearAllFieldFocus() {
+        binding.userNameInput.leftIconInputField.genericInputField.clearFocus()
+        binding.loginUserName.leftIconInputField.genericInputField.clearFocus()
+        binding.passwordInput.leftIconInputField.genericInputField.clearFocus()
+        binding.loginPassword.leftIconInputField.genericInputField.clearFocus()
+        binding.userAgeInput.genericInputField.clearFocus()
+
+        val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(binding.loginUserName.leftIconInputField.genericInputField.windowToken, 0)
+    }
+
+    private fun setGravityOnFieldFocus(focused: Boolean) {
+        if (focused) {
+            binding.authenticationInnerLayout.setPadding(0, 0, 0, 0)
+            binding.pictureUploadInnerLayout.setPadding(0, 0, 0, 0)
+            binding.registrationInnerLayout.setPadding(0, 0, 0, 0)
+
+            binding.activityFrameLayout.foregroundGravity = Gravity.NO_GRAVITY
+
+            val genericLayoutParams = FrameLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.NO_GRAVITY
+            }
+
+            binding.authenticationLayout.layoutParams = genericLayoutParams
+            binding.pictureUploadLayout.layoutParams = genericLayoutParams
+            binding.registrationLayout.layoutParams = genericLayoutParams
+        } else {
+            binding.authenticationInnerLayout.setPadding(0, authenticationInnerLayoutTopPadding, 0, authenticationInnerLayoutBottomPadding)
+            binding.pictureUploadInnerLayout.setPadding(0, pictureUploadInnerLayoutTopPadding, 0, pictureUploadInnerLayoutBottomPadding)
+            binding.registrationInnerLayout.setPadding(0, registrationInnerLayoutTopPadding, 0, registrationInnerLayoutBottomPadding)
+
+            binding.activityFrameLayout.foregroundGravity = Gravity.CENTER_VERTICAL
+
+            val genericLayoutParams = FrameLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = Gravity.CENTER_VERTICAL
+            }
+
+            binding.authenticationLayout.layoutParams = genericLayoutParams
+            binding.pictureUploadLayout.layoutParams = genericLayoutParams
+            binding.registrationLayout.layoutParams = genericLayoutParams
         }
     }
 

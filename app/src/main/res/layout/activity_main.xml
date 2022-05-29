@@ -9,11 +9,12 @@
     tools:context=".MainActivity">
 
     <FrameLayout
+        android:id="@+id/activityFrameLayout"
         app:layout_constraintTop_toTopOf="parent"
+        android:foregroundGravity="center_vertical"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:foregroundGravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -29,6 +30,7 @@
                 android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/authenticationInnerLayout"
                     android:orientation="vertical"
                     android:paddingVertical="87dp"
                     android:layout_width="match_parent"
@@ -119,6 +121,7 @@
                 android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/registrationInnerLayout"
                     android:orientation="vertical"
                     android:paddingVertical="87dp"
                     android:layout_width="match_parent"
@@ -195,17 +198,16 @@
             android:id="@+id/pictureUploadLayout"
             android:visibility="gone"
             android:orientation="vertical"
-            android:gravity="center_vertical"
             android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ScrollView
-                android:layout_gravity="center_vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/pictureUploadInnerLayout"
                     android:orientation="vertical"
                     android:paddingVertical="15dp"
                     android:gravity="center_vertical"
@@ -235,23 +237,23 @@
                         android:layout_height="wrap_content">
 
                         <include
+                            android:id="@+id/takePictureButton"
+                            android:layout_weight="1"
                             android:layout_marginEnd="3dp"
                             android:layout_marginTop="7dp"
                             android:layout_marginStart="15dp"
                             android:layout_marginBottom="20dp"
-                            android:id="@+id/takePictureButton"
-                            android:layout_weight="1"
                             layout="@layout/include_icon_hollow_blue_button"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"/>
 
                         <include
+                            android:id="@+id/uploadPictureButton"
+                            android:layout_weight="1"
                             android:layout_marginTop="7dp"
                             android:layout_marginEnd="15dp"
                             android:layout_marginStart="3dp"
                             android:layout_marginBottom="20dp"
-                            android:id="@+id/uploadPictureButton"
-                            android:layout_weight="1"
                             layout="@layout/include_icon_hollow_blue_button"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"/>
@@ -364,4 +366,5 @@
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
