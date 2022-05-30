@@ -19,15 +19,21 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
+import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import okhttp3.*
 import java.io.IOException
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private lateinit var requestProcess: String
+    private lateinit var originalRequestProcess: String
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
@@ -121,6 +127,36 @@ class HomeDisplayActivity : AppCompatActivity() {
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
 
+        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            triggerRequestProcess()
+        }
+
+        binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+            if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
+                triggerRequestProcess()
+            }
+        }
+
+        binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
         binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
             // Reload HomeDisplayActivity
@@ -133,8 +169,8 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         binding.bottomNavigationLayout.bottomAccountMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
-            val intent = Intent(baseContext, UserProfileActivity::class.java)
-            startActivity(intent)
+            requestProcess = getString(R.string.request_fetch_user_likers)
+            fetchUserLikers()
         }
 
         try {
@@ -160,6 +196,55 @@ class HomeDisplayActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun triggerRequestProcess() {
+        when (requestProcess) {
+            getString(R.string.request_fetch_matched_users) -> fetchUserLikers()
+        }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserLikers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_likers_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, UserProfileActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     private fun redrawBottomMenuIcons(clickedBottomMenu: String) {
@@ -188,6 +273,22 @@ class HomeDisplayActivity : AppCompatActivity() {
                 binding.bottomNavigationLayout.bottomAccountMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_account_blue))
                 binding.bottomNavigationLayout.bottomMessageMenuImage.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_white))
             }
+        }
+    }
+
+    fun displayDoubleButtonDialog() {
+        runOnUiThread {
+            binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
+            binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun displaySingleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.singleButtonDialog.singleButtonTitle.text = title
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
         }
     }
 

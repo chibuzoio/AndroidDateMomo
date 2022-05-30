@@ -13,28 +13,36 @@ import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginStart
-import androidx.core.view.marginTop
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
+import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityUserProfileBinding
+import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.response.HomeDisplayResponse
+import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kotlinx.android.synthetic.main.activity_user_profile.*
+import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 
 class UserProfileActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
+    private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
     private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,12 +88,71 @@ class UserProfileActivity : AppCompatActivity() {
         deviceWidth = displayMetrics.widthPixels
         deviceHeight = displayMetrics.heightPixels
 
+        bundle = intent.extras!!
+
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
         redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+
+        try {
+            val mapper = jacksonObjectMapper()
+            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+
+            // check if it's up to six, less than six or greater than six
+            // get the total count and set it
+            if (userLikerResponseArray.size > 1) {
+                binding.allLikesCount.text = getString(R.string.many_likers_count, userLikerResponseArray.size)
+            }
+
+            if (userLikerResponseArray.size == 1) {
+                binding.allLikesCount.text = getString(R.string.single_liker_count)
+            }
+
+            if (userLikerResponseArray.isEmpty()) {
+                binding.allLikersDisplayLayout.visibility = View.GONE
+            } else {
+                if (userLikerResponseArray.size == 1) {
+                    initializeFirstLikerLayout()
+                }
+
+                if (userLikerResponseArray.size == 2) {
+                    initializeSecondLikerLayout()
+                    initializeFirstLikerLayout()
+                }
+
+                if (userLikerResponseArray.size == 3) {
+                    initializeSecondLikerLayout()
+                    initializeFirstLikerLayout()
+                    initializeThirdLikerLayout()
+                }
+
+                if (userLikerResponseArray.size <= 3) {
+                    binding.allLikersSecondLayout.visibility = View.GONE
+                } else if (userLikerResponseArray.size > 3) {
+                    binding.allLikersSecondLayout.visibility = View.VISIBLE
+
+                    if (userLikerResponseArray.size == 4) {
+                        initializeFourthLikerLayout()
+                    }
+
+                    if (userLikerResponseArray.size == 5) {
+                        initializeFourthLikerLayout()
+                        initializeFifthLikerLayout()
+                    }
+
+                    if (userLikerResponseArray.size >= 6) {
+                        initializeFourthLikerLayout()
+                        initializeSixthLikerLayout()
+                        initializeFifthLikerLayout()
+                    }
+                }
+            }
+        } catch (exception: IOException) {
+            Log.e(TAG, "Error message from here is ${exception.message}")
+        }
 
         val marginStartHere = binding.checkFrameStartMargin.marginStart
         val marginPercentage = (marginStartHere.toFloat() / deviceWidth) * 100
@@ -147,53 +214,12 @@ class UserProfileActivity : AppCompatActivity() {
         binding.sixthLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
         binding.sixthLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
 
-        Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image1))
-            .transform(CenterCrop(), RoundedCorners(33))
-            .into(binding.firstLikerImage)
-
-        Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image10))
-            .transform(CenterCrop(), RoundedCorners(33))
-            .into(binding.secondLikerImage)
-
-        Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image11))
-            .transform(CenterCrop(), RoundedCorners(33))
-            .into(binding.thirdLikerImage)
-
-        Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image2))
-            .transform(CenterCrop(), RoundedCorners(33))
-            .into(binding.fourthLikerImage)
-
-        Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image3))
-            .transform(CenterCrop(), RoundedCorners(33))
-            .into(binding.fifthLikerImage)
-
-        Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image4))
-            .transform(CenterCrop(), RoundedCorners(33))
-            .into(binding.sixthLikerImage)
-
-        binding.allLikesCount.text = "53 People Like You"
-
-        binding.firstLikerUsername.text = "Floxy kajfaj lkajkalsj ldak aldjlksaj kl, 33"
-        binding.secondLikerUsername.text = "Melas, 34"
-        binding.thirdLikerUsername.text = "Millicent, 30"
         binding.firstLikerUsername.layoutParams.height = eachUsernameHeight
         binding.thirdLikerUsername.layoutParams.height = eachUsernameHeight
-        binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
-
-        binding.fourthLikerUsername.text = "Frenzy, 25"
-        binding.fifthLikerUsername.text = "Sunshine, 29"
-        binding.sixthLikerUsername.text = "Clara, 35"
-        binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.fifthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.sixthLikerUsername.layoutParams.height = eachUsernameHeight
-
-        binding.moreLikersCount.text = "+48"
+        binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
+        binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -294,13 +320,13 @@ class UserProfileActivity : AppCompatActivity() {
 
         if (sharedPreferences.getString(getString(R.string.full_name), "") != "") {
             binding.userFullName.text = getString(
-                R.string.nameAndAgeText,
+                R.string.name_and_age_text,
                 sharedPreferences.getString(getString(R.string.full_name), ""),
                 sharedPreferences.getInt(getString(R.string.age), 0)
             )
         } else {
             binding.userFullName.text = getString(
-                R.string.nameAndAgeText,
+                R.string.name_and_age_text,
                 sharedPreferences.getString(getString(R.string.user_name), ""),
                 sharedPreferences.getInt(getString(R.string.age), 0)
             )
@@ -425,6 +451,148 @@ class UserProfileActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+    }
+
+    private fun initializeSixthLikerLayout() {
+        binding.sixthLikerFrameLayout.visibility = View.VISIBLE
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + userLikerResponseArray[5].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.sixthLikerImage)
+
+        if (userLikerResponseArray[5].fullName != "") {
+            binding.sixthLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[5].fullName, userLikerResponseArray[5].age
+            )
+        } else {
+            binding.sixthLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[5].userName, userLikerResponseArray[5].age
+            )
+        }
+
+        if (userLikerResponseArray.size > 6) {
+            val moreLikersCount = userLikerResponseArray.size - 5
+            binding.moreLikersCount.visibility = View.VISIBLE
+            binding.moreLikersCover.visibility = View.VISIBLE
+            binding.moreLikersCount.text = getString(R.string.more_likers_count, moreLikersCount)
+        } else {
+            binding.moreLikersCount.visibility = View.GONE
+            binding.moreLikersCover.visibility = View.GONE
+        }
+    }
+
+    private fun initializeFifthLikerLayout() {
+        binding.fifthLikerFrameLayout.visibility = View.VISIBLE
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + userLikerResponseArray[4].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.fifthLikerImage)
+
+        if (userLikerResponseArray[4].fullName != "") {
+            binding.fifthLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[4].fullName, userLikerResponseArray[4].age
+            )
+        } else {
+            binding.fifthLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[4].userName, userLikerResponseArray[4].age
+            )
+        }
+    }
+
+    private fun initializeFourthLikerLayout() {
+        binding.fourthLikerFrameLayout.visibility = View.VISIBLE
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + userLikerResponseArray[3].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.fourthLikerImage)
+
+        if (userLikerResponseArray[3].fullName != "") {
+            binding.fourthLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[3].fullName, userLikerResponseArray[3].age
+            )
+        } else {
+            binding.fourthLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[3].userName, userLikerResponseArray[3].age
+            )
+        }
+    }
+
+    private fun initializeThirdLikerLayout() {
+        binding.thirdLikerFrameLayout.visibility = View.VISIBLE
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + userLikerResponseArray[2].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.thirdLikerImage)
+
+        if (userLikerResponseArray[2].fullName != "") {
+            binding.thirdLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[2].fullName, userLikerResponseArray[2].age
+            )
+        } else {
+            binding.thirdLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[2].userName, userLikerResponseArray[2].age
+            )
+        }
+    }
+
+    private fun initializeSecondLikerLayout() {
+        binding.secondLikerFrameLayout.visibility = View.VISIBLE
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + userLikerResponseArray[1].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.secondLikerImage)
+
+        if (userLikerResponseArray[1].fullName != "") {
+            binding.secondLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[1].fullName, userLikerResponseArray[1].age
+            )
+        } else {
+            binding.secondLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[1].userName, userLikerResponseArray[1].age
+            )
+        }
+    }
+
+    private fun initializeFirstLikerLayout() {
+        binding.firstLikerFrameLayout.visibility = View.VISIBLE
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + userLikerResponseArray[0].profilePicture)
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.firstLikerImage)
+
+        if (userLikerResponseArray[0].fullName != "") {
+            binding.firstLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[0].fullName, userLikerResponseArray[0].age
+            )
+        } else {
+            binding.firstLikerUsername.text = getString(
+                R.string.name_and_age_text,
+                userLikerResponseArray[0].userName, userLikerResponseArray[0].age
+            )
+        }
     }
 
     private fun triggerRequestProcess() {

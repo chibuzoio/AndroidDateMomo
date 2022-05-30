@@ -123,6 +123,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/allLikersDisplayLayout"
                     android:orientation="vertical"
                     android:layout_marginTop="21dp"
                     android:layout_width="match_parent"
@@ -144,6 +145,7 @@
                         android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/allLikersFirstLayout"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -155,6 +157,7 @@
 
                             <FrameLayout
                                 android:id="@+id/firstLikerFrameLayout"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -190,6 +193,7 @@
 
                             <FrameLayout
                                 android:id="@+id/secondLikerFrameLayout"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -225,6 +229,7 @@
 
                             <FrameLayout
                                 android:id="@+id/thirdLikerFrameLayout"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -261,6 +266,7 @@
                         </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/allLikersSecondLayout"
                             android:layout_marginTop="11dp"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
@@ -273,6 +279,7 @@
 
                             <FrameLayout
                                 android:id="@+id/fourthLikerFrameLayout"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -308,6 +315,7 @@
 
                             <FrameLayout
                                 android:id="@+id/fifthLikerFrameLayout"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 
@@ -343,6 +351,7 @@
 
                             <FrameLayout
                                 android:id="@+id/sixthLikerFrameLayout"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
 

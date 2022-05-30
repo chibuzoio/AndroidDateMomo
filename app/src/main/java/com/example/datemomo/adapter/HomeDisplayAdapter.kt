@@ -134,11 +134,11 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         if (homeDisplayResponses[position].fullName.isEmpty()) {
             holder.binding.userFullName.text =
-                holder.itemView.context.getString(R.string.nameAndAgeText,
+                holder.itemView.context.getString(R.string.name_and_age_text,
                     homeDisplayResponses[position].userName, homeDisplayResponses[position].age)
         } else {
             holder.binding.userFullName.text =
-                holder.itemView.context.getString(R.string.nameAndAgeText,
+                holder.itemView.context.getString(R.string.name_and_age_text,
                     homeDisplayResponses[position].fullName, homeDisplayResponses[position].age)
         }
     }
@@ -180,7 +180,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         }
 
         homeDisplayModel.binding.userFullName.text =
-            context.getString(R.string.nameAndAgeText, userFullName, homeDisplayResponses[position].age)
+            context.getString(R.string.name_and_age_text, userFullName, homeDisplayResponses[position].age)
         homeDisplayModel.binding.userInterestTitle.text = context.getString(R.string.title_interest, userFullName)
         homeDisplayModel.binding.userSexualityTitle.text = context.getString(R.string.title_sexuality, userFullName)
         homeDisplayModel.binding.userExperienceTitle.text = context.getString(R.string.title_experience, userFullName)
