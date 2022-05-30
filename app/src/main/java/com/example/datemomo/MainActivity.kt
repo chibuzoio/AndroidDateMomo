@@ -1228,6 +1228,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.phone_number), authenticationResponse.phoneNumber)
                     sharedPreferencesEditor.putString(getString(R.string.email_address), authenticationResponse.emailAddress)
                     sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), authenticationResponse.authenticated)
+                    sharedPreferencesEditor.putString(getString(R.string.profile_picture), authenticationResponse.profilePicture)
                     sharedPreferencesEditor.putString(getString(R.string.registration_date), authenticationResponse.registrationDate)
 
                     sharedPreferencesEditor.putInt(getString(R.string.bisexual_category), authenticationResponse.bisexualCategory)

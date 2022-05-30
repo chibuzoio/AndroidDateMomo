@@ -124,6 +124,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/userSexualityLayout"
                     android:orientation="vertical"
+                    android:layout_marginTop="10dp"
                     android:layout_marginHorizontal="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -476,6 +477,23 @@
         <include
             android:id="@+id/singleButtonDialog"
             layout="@layout/include_single_button_dialog"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/progressIconLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:layout_marginBottom="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/progressIconImage"
+                android:layout_width="111dp"
+                android:layout_height="111dp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </FrameLayout>
 

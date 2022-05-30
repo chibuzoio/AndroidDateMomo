@@ -1,6 +1,7 @@
 package com.example.datemomo.activity
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -122,14 +123,18 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
+            // Reload HomeDisplayActivity
         }
 
         binding.bottomNavigationLayout.bottomMessageMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
+            // Open message activity
         }
 
         binding.bottomNavigationLayout.bottomAccountMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+            val intent = Intent(baseContext, UserProfileActivity::class.java)
+            startActivity(intent)
         }
 
         try {

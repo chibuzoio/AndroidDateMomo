@@ -127,7 +127,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         Glide.with(holder.itemView.context)
             .load(holder.itemView.context.getString(R.string.date_momo_api)
-                    + "client/image/" + homeDisplayResponses[position].profilePicture)
+                    + holder.itemView.context.getString(R.string.api_image)
+                    + homeDisplayResponses[position].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(holder.binding.userImage)
 
@@ -190,7 +191,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .into(homeDisplayModel.binding.userImagePlaceholder)
 
         Glide.with(context)
-            .load(context.getString(R.string.date_momo_api) + "client/image/" + homeDisplayResponses[position].profilePicture)
+            .load(context.getString(R.string.date_momo_api) + context.getString(R.string.api_image)
+                    + homeDisplayResponses[position].profilePicture)
             .transform(RoundedCorners(37))
             .into(homeDisplayModel.binding.userInformationImage)
 

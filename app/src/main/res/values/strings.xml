@@ -45,6 +45,7 @@
     <string name="level_display_matched_users">displayMatchedUsers</string>
 
     <!-- APIs -->
+    <string name="api_image">client/image/</string>
     <string name="api_like_user">service/likeuser.php</string>
     <string name="api_login_member">service/loginmember.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
