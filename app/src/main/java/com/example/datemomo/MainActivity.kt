@@ -121,9 +121,9 @@ class MainActivity : AppCompatActivity() {
             binding = ActivityMainBinding.inflate(layoutInflater)
             setContentView(binding.root)
 
-            if (sharedPreferences.getBoolean("authenticated", false)) {
+            if (sharedPreferences.getBoolean(getString(R.string.authenticated), false)) {
                 when {
-                    sharedPreferences.getString("userLevel", "")
+                    sharedPreferences.getString(getString(R.string.user_level), "")
                         .equals(getString(R.string.level_upload_profile_picture)) -> {
                         binding.loginPassword.leftIconInputField.genericInputField.setText("")
                         binding.loginUserName.leftIconInputField.genericInputField.setText("")
@@ -131,12 +131,12 @@ class MainActivity : AppCompatActivity() {
                         binding.authenticationLayout.visibility = View.GONE
                         binding.registrationLayout.visibility = View.GONE
                     }
-                    sharedPreferences.getString("userLevel", "")
+                    sharedPreferences.getString(getString(R.string.user_level), "")
                         .equals(getString(R.string.level_select_sexuality_interest)) -> {
                         val intent = Intent(baseContext, UserBioActivity::class.java)
                         startActivity(intent)
                     }
-                    sharedPreferences.getString("userLevel", "")
+                    sharedPreferences.getString(getString(R.string.user_level), "")
                         .equals(getString(R.string.level_display_matched_users)) -> {
                         requestProcess = getString(R.string.request_fetch_matched_users)
                         setContentView(R.layout.splash_screen)
@@ -971,23 +971,40 @@ class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(sharedPreferences.getInt("memberId", 0),
-            sharedPreferences.getInt("age", 0), sharedPreferences.getString("sex", "")!!,
-            sharedPreferences.getString("registrationDate", "")!!, sharedPreferences.getInt("bisexualCategory", 0),
-            sharedPreferences.getInt("gayCategory", 0), sharedPreferences.getInt("lesbianCategory", 0),
-            sharedPreferences.getInt("straightCategory", 0), sharedPreferences.getInt("sugarDaddyCategory", 0),
-            sharedPreferences.getInt("sugarMommyCategory", 0), sharedPreferences.getInt("toyBoyCategory", 0),
-            sharedPreferences.getInt("toyGirlCategory", 0), sharedPreferences.getInt("bisexualInterest", 0),
-            sharedPreferences.getInt("gayInterest", 0), sharedPreferences.getInt("lesbianInterest", 0),
-            sharedPreferences.getInt("straightInterest", 0), sharedPreferences.getInt("sugarDaddyInterest", 0),
-            sharedPreferences.getInt("sugarMommyInterest", 0), sharedPreferences.getInt("toyBoyInterest", 0),
-            sharedPreferences.getInt("toyGirlInterest", 0), sharedPreferences.getInt("sixtyNineExperience", 0),
-            sharedPreferences.getInt("analSexExperience", 0), sharedPreferences.getInt("givenHeadExperience", 0),
-            sharedPreferences.getInt("oneNightStandExperience", 0), sharedPreferences.getInt("orgyExperience", 0),
-            sharedPreferences.getInt("poolSexExperience", 0), sharedPreferences.getInt("receivedHeadExperience", 0),
-            sharedPreferences.getInt("carSexExperience", 0), sharedPreferences.getInt("publicSexExperience", 0),
-            sharedPreferences.getInt("cameraSexExperience", 0), sharedPreferences.getInt("threesomeExperience", 0),
-            sharedPreferences.getInt("sexToyExperience", 0), sharedPreferences.getInt("videoSexExperience", 0))
+        val homeDisplayRequest = HomeDisplayRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            sharedPreferences.getInt(getString(R.string.age), 0),
+            sharedPreferences.getString(getString(R.string.sex), "")!!,
+            sharedPreferences.getString(getString(R.string.registration_date), "")!!,
+            sharedPreferences.getInt(getString(R.string.bisexual_category), 0),
+            sharedPreferences.getInt(getString(R.string.gay_category), 0),
+            sharedPreferences.getInt(getString(R.string.lesbian_category), 0),
+            sharedPreferences.getInt(getString(R.string.straight_category), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_daddy_category), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_mommy_category), 0),
+            sharedPreferences.getInt(getString(R.string.toy_boy_category), 0),
+            sharedPreferences.getInt(getString(R.string.toy_girl_category), 0),
+            sharedPreferences.getInt(getString(R.string.bisexual_interest), 0),
+            sharedPreferences.getInt(getString(R.string.gay_interest), 0),
+            sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
+            sharedPreferences.getInt(getString(R.string.straight_interest), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
+            sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
+            sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
+            sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
+            sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.received_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.car_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.public_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.camera_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.threesome_experience), 0),
+            sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
+            sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
 
         val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -997,7 +1014,7 @@ class MainActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/matcheduserdata.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_matched_user_data))
             .post(requestBody)
             .build()
 
@@ -1048,7 +1065,7 @@ class MainActivity : AppCompatActivity() {
         val mapper = jacksonObjectMapper()
         val pictureUploadRequest = PictureUploadRequest(
             userSex,
-            sharedPreferences.getInt("memberId", 0),
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
             userAge,
             imageWidth,
             imageHeight,
@@ -1064,7 +1081,7 @@ class MainActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/postpicture.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_post_picture))
             .post(requestBody)
             .build()
 
@@ -1099,11 +1116,11 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 if (pictureUploadResponse.pictureId > 0) {
-                    sharedPreferencesEditor.putString("profilePicture",
+                    sharedPreferencesEditor.putString(getString(R.string.profile_picture),
                         pictureUploadResponse.profilePicture)
-                    sharedPreferencesEditor.putString("sex", userSex)
-                    sharedPreferencesEditor.putInt("age", pictureUploadResponse.age)
-                    sharedPreferencesEditor.putString("userLevel", pictureUploadResponse.userLevel)
+                    sharedPreferencesEditor.putString(getString(R.string.sex), userSex)
+                    sharedPreferencesEditor.putInt(getString(R.string.age), pictureUploadResponse.age)
+                    sharedPreferencesEditor.putString(getString(R.string.user_level), pictureUploadResponse.userLevel)
                     sharedPreferencesEditor.apply()
 
                     runOnUiThread {
@@ -1123,7 +1140,7 @@ class MainActivity : AppCompatActivity() {
         val client = OkHttpClient()
         val mapper = jacksonObjectMapper()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/usernamecomposite.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_name_composite))
             .build()
 
         client.newCall(request).enqueue(object : Callback {
@@ -1156,7 +1173,7 @@ class MainActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/loginmember.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_login_member))
             .post(requestBody)
             .build()
 
@@ -1199,49 +1216,49 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 if (authenticationResponse.authenticated) {
-                    sharedPreferencesEditor.putInt("age", authenticationResponse.age)
-                    sharedPreferencesEditor.putString("sex", authenticationResponse.sex)
-                    sharedPreferencesEditor.putString("state", authenticationResponse.state)
-                    sharedPreferencesEditor.putInt("memberId", authenticationResponse.memberId)
-                    sharedPreferencesEditor.putString("country", authenticationResponse.country)
-                    sharedPreferencesEditor.putString("fullName", authenticationResponse.fullName)
-                    sharedPreferencesEditor.putString("userName", authenticationResponse.userName)
-                    sharedPreferencesEditor.putString("userRole", authenticationResponse.userRole)
-                    sharedPreferencesEditor.putString("userLevel", authenticationResponse.userLevel)
-                    sharedPreferencesEditor.putString("phoneNumber", authenticationResponse.phoneNumber)
-                    sharedPreferencesEditor.putString("emailAddress", authenticationResponse.emailAddress)
-                    sharedPreferencesEditor.putBoolean("authenticated", authenticationResponse.authenticated)
-                    sharedPreferencesEditor.putString("registrationDate", authenticationResponse.registrationDate)
+                    sharedPreferencesEditor.putInt(getString(R.string.age), authenticationResponse.age)
+                    sharedPreferencesEditor.putString(getString(R.string.sex), authenticationResponse.sex)
+                    sharedPreferencesEditor.putString(getString(R.string.state), authenticationResponse.state)
+                    sharedPreferencesEditor.putInt(getString(R.string.member_id), authenticationResponse.memberId)
+                    sharedPreferencesEditor.putString(getString(R.string.country), authenticationResponse.country)
+                    sharedPreferencesEditor.putString(getString(R.string.full_name), authenticationResponse.fullName)
+                    sharedPreferencesEditor.putString(getString(R.string.user_name), authenticationResponse.userName)
+                    sharedPreferencesEditor.putString(getString(R.string.user_role), authenticationResponse.userRole)
+                    sharedPreferencesEditor.putString(getString(R.string.user_level), authenticationResponse.userLevel)
+                    sharedPreferencesEditor.putString(getString(R.string.phone_number), authenticationResponse.phoneNumber)
+                    sharedPreferencesEditor.putString(getString(R.string.email_address), authenticationResponse.emailAddress)
+                    sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), authenticationResponse.authenticated)
+                    sharedPreferencesEditor.putString(getString(R.string.registration_date), authenticationResponse.registrationDate)
 
-                    sharedPreferencesEditor.putInt("bisexualCategory", authenticationResponse.bisexualCategory)
-                    sharedPreferencesEditor.putInt("gayCategory", authenticationResponse.gayCategory)
-                    sharedPreferencesEditor.putInt("lesbianCategory", authenticationResponse.lesbianCategory)
-                    sharedPreferencesEditor.putInt("straightCategory", authenticationResponse.straightCategory)
-                    sharedPreferencesEditor.putInt("sugarDaddyCategory", authenticationResponse.sugarDaddyCategory)
-                    sharedPreferencesEditor.putInt("sugarMommyCategory", authenticationResponse.sugarMommyCategory)
-                    sharedPreferencesEditor.putInt("toyBoyCategory", authenticationResponse.toyBoyCategory)
-                    sharedPreferencesEditor.putInt("toyGirlCategory", authenticationResponse.toyGirlCategory)
-                    sharedPreferencesEditor.putInt("bisexualInterest", authenticationResponse.bisexualInterest)
-                    sharedPreferencesEditor.putInt("gayInterest", authenticationResponse.gayInterest)
-                    sharedPreferencesEditor.putInt("lesbianInterest", authenticationResponse.lesbianInterest)
-                    sharedPreferencesEditor.putInt("straightInterest", authenticationResponse.straightInterest)
-                    sharedPreferencesEditor.putInt("sugarDaddyInterest", authenticationResponse.sugarDaddyInterest)
-                    sharedPreferencesEditor.putInt("sugarMommyInterest", authenticationResponse.sugarMommyInterest)
-                    sharedPreferencesEditor.putInt("toyBoyInterest", authenticationResponse.toyBoyInterest)
-                    sharedPreferencesEditor.putInt("toyGirlInterest", authenticationResponse.toyGirlInterest)
-                    sharedPreferencesEditor.putInt("sixtyNineExperience", authenticationResponse.sixtyNineExperience)
-                    sharedPreferencesEditor.putInt("analSexExperience", authenticationResponse.analSexExperience)
-                    sharedPreferencesEditor.putInt("givenHeadExperience", authenticationResponse.givenHeadExperience)
-                    sharedPreferencesEditor.putInt("oneNightStandExperience", authenticationResponse.oneNightStandExperience)
-                    sharedPreferencesEditor.putInt("orgySexExperience", authenticationResponse.orgySexExperience)
-                    sharedPreferencesEditor.putInt("poolSexExperience", authenticationResponse.poolSexExperience)
-                    sharedPreferencesEditor.putInt("receivedHeadExperience", authenticationResponse.receivedHeadExperience)
-                    sharedPreferencesEditor.putInt("carSexExperience", authenticationResponse.carSexExperience)
-                    sharedPreferencesEditor.putInt("publicSexExperience", authenticationResponse.publicSexExperience)
-                    sharedPreferencesEditor.putInt("cameraSexExperience", authenticationResponse.cameraSexExperience)
-                    sharedPreferencesEditor.putInt("threesomeExperience", authenticationResponse.threesomeExperience)
-                    sharedPreferencesEditor.putInt("sexToyExperience", authenticationResponse.sexToyExperience)
-                    sharedPreferencesEditor.putInt("videoSexExperience", authenticationResponse.videoSexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.bisexual_category), authenticationResponse.bisexualCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.gay_category), authenticationResponse.gayCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.lesbian_category), authenticationResponse.lesbianCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.straight_category), authenticationResponse.straightCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.sugar_daddy_category), authenticationResponse.sugarDaddyCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.sugar_mommy_category), authenticationResponse.sugarMommyCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.toy_boy_category), authenticationResponse.toyBoyCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.toy_girl_category), authenticationResponse.toyGirlCategory)
+                    sharedPreferencesEditor.putInt(getString(R.string.bisexual_interest), authenticationResponse.bisexualInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.gay_interest), authenticationResponse.gayInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.lesbian_interest), authenticationResponse.lesbianInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.straight_interest), authenticationResponse.straightInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.sugar_daddy_interest), authenticationResponse.sugarDaddyInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.sugar_mommy_interest), authenticationResponse.sugarMommyInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.toy_boy_interest), authenticationResponse.toyBoyInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.toy_girl_interest), authenticationResponse.toyGirlInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.sixty_nine_experience), authenticationResponse.sixtyNineExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.anal_sex_experience), authenticationResponse.analSexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.given_head_experience), authenticationResponse.givenHeadExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.one_night_stand_experience), authenticationResponse.oneNightStandExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.orgy_experience), authenticationResponse.orgySexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.pool_sex_experience), authenticationResponse.poolSexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.received_head_experience), authenticationResponse.receivedHeadExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.car_sex_experience), authenticationResponse.carSexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.public_sex_experience), authenticationResponse.publicSexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.camera_sex_experience), authenticationResponse.cameraSexExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.threesome_experience), authenticationResponse.threesomeExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.sex_toy_experience), authenticationResponse.sexToyExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.video_sex_experience), authenticationResponse.videoSexExperience)
 
                     sharedPreferencesEditor.apply()
 
@@ -1300,7 +1317,7 @@ class MainActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/registermember.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_register_member))
             .post(requestBody)
             .build()
 
@@ -1335,12 +1352,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 if (registrationResponse.authenticated) {
-                    sharedPreferencesEditor.putInt("memberId", registrationResponse.memberId)
-                    sharedPreferencesEditor.putString("userName", registrationResponse.userName)
-                    sharedPreferencesEditor.putString("userRole", registrationResponse.userRole)
-                    sharedPreferencesEditor.putString("userLevel", registrationResponse.userLevel)
-                    sharedPreferencesEditor.putBoolean("authenticated", registrationResponse.authenticated)
-                    sharedPreferencesEditor.putString("registrationDate", registrationResponse.registrationDate)
+                    sharedPreferencesEditor.putInt(getString(R.string.member_id), registrationResponse.memberId)
+                    sharedPreferencesEditor.putString(getString(R.string.user_name), registrationResponse.userName)
+                    sharedPreferencesEditor.putString(getString(R.string.user_role), registrationResponse.userRole)
+                    sharedPreferencesEditor.putString(getString(R.string.user_level), registrationResponse.userLevel)
+                    sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), registrationResponse.authenticated)
+                    sharedPreferencesEditor.putString(getString(R.string.registration_date), registrationResponse.registrationDate)
                     sharedPreferencesEditor.apply()
 
                     runOnUiThread {

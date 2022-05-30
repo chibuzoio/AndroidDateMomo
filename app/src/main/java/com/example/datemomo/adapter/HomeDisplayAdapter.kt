@@ -317,7 +317,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
     private fun processUserLike(context: Context, position: Int) {
         val mapper = jacksonObjectMapper()
         val likeUserRequest = LikeUserRequest(
-            sharedPreferences.getInt("memberId", 0),
+            sharedPreferences.getInt(context.getString(R.string.member_id), 0),
             homeDisplayResponses[position].liked,
             homeDisplayResponses[position].memberId)
 
@@ -329,7 +329,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(context.getString(R.string.date_momo_api) + "service/likeuser.php")
+            .url(context.getString(R.string.date_momo_api) + context.getString(R.string.api_like_user))
             .post(requestBody)
             .build()
 

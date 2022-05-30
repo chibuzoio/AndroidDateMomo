@@ -84,6 +84,121 @@ class UserProfileActivity : AppCompatActivity() {
         binding.photoGalleryButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
         binding.photoGalleryButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
 
+        if (sharedPreferences.getInt(getString(R.string.bisexual_category), 0) > 0) {
+            binding.userBisexual.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.gay_category), 0) > 0) {
+            binding.userGay.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.lesbian_category), 0) > 0) {
+            binding.userLesbian.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.straight_category), 0) > 0) {
+            binding.userStraight.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.sugar_daddy_category), 0) > 0) {
+            binding.userSugarDaddy.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.sugar_mommy_category), 0) > 0) {
+            binding.userSugarMommy.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.toy_boy_category), 0) > 0) {
+            binding.userToyBoy.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.toy_girl_category), 0) > 0) {
+            binding.userToyGirl.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.bisexual_interest), 0) > 0) {
+            binding.bisexualInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.gay_interest), 0) > 0) {
+            binding.gayInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.straight_interest), 0) > 0) {
+            binding.straightInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.lesbian_interest), 0) > 0) {
+            binding.lesbianInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0) > 0) {
+            binding.sugarDaddyInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0) > 0) {
+            binding.sugarMommyInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0) > 0) {
+            binding.toyBoyInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0) > 0) {
+            binding.toyGirlInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0) > 0) {
+            binding.analSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0) > 0) {
+            binding.sixtyNineExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.camera_sex_experience), 0) > 0) {
+            binding.cameraSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.car_sex_experience), 0) > 0) {
+            binding.carSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.threesome_experience), 0) > 0) {
+            binding.threesomeExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.given_head_experience), 0) > 0) {
+            binding.givenHeadExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.received_head_experience), 0) > 0) {
+            binding.receivedHeadExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0) > 0) {
+            binding.oneNightStandExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.orgy_experience), 0) > 0) {
+            binding.orgySexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0) > 0) {
+            binding.poolSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0) > 0) {
+            binding.sexToyExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.video_sex_experience), 0) > 0) {
+            binding.videoSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.public_sex_experience), 0) > 0) {
+            binding.publicSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
     }
 
     override fun onBackPressed() {

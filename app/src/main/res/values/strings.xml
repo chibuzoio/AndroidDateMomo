@@ -43,6 +43,60 @@
     <string name="level_upload_profile_picture">uploadProfilePicture</string>
     <string name="level_select_sexuality_interest">selectSexualityInterest</string>
     <string name="level_display_matched_users">displayMatchedUsers</string>
+
+    <!-- APIs -->
+    <string name="api_like_user">service/likeuser.php</string>
+    <string name="api_login_member">service/loginmember.php</string>
+    <string name="api_post_picture">service/postpicture.php</string>
+    <string name="api_register_member">service/registermember.php</string>
+    <string name="api_user_biometrics">service/userbiometrics.php</string>
+    <string name="api_matched_user_data">service/matcheduserdata.php</string>
+    <string name="api_user_name_composite">service/usernamecomposite.php</string>
+
+    <!-- Shared Preferences Keys -->
+    <string name="age">age</string>
+    <string name="sex">sex</string>
+    <string name="state">state</string>
+    <string name="country">country</string>
+    <string name="full_name">fullName</string>
+    <string name="member_id">memberId</string>
+    <string name="user_name">userName</string>
+    <string name="user_role">userRole</string>
+    <string name="user_level">userLevel</string>
+    <string name="gay_category">gayCategory</string>
+    <string name="gay_interest">gayInterest</string>
+    <string name="phone_number">phoneNumber</string>
+    <string name="email_address">emailAddress</string>
+    <string name="authenticated">authenticated</string>
+    <string name="orgy_experience">orgyExperience</string>
+    <string name="profile_picture">profilePicture</string>
+    <string name="toy_boy_category">toyBoyCategory</string>
+    <string name="toy_boy_interest">toyBoyInterest</string>
+    <string name="lesbian_category">lesbianCategory</string>
+    <string name="lesbian_interest">lesbianInterest</string>
+    <string name="toy_girl_category">toyGirlCategory</string>
+    <string name="toy_girl_interest">toyGirlInterest</string>
+    <string name="bisexual_category">bisexualCategory</string>
+    <string name="bisexual_interest">bisexualInterest</string>
+    <string name="registration_date">registrationDate</string>
+    <string name="straight_category">straightCategory</string>
+    <string name="straight_interest">straightInterest</string>
+    <string name="car_sex_experience">carSexExperience</string>
+    <string name="sex_toy_experience">sexToyExperience</string>
+    <string name="anal_sex_experience">analSexExperience</string>
+    <string name="pool_sex_experience">poolSexExperience</string>
+    <string name="sugar_daddy_category">sugarDaddyCategory</string>
+    <string name="sugar_mommy_category">sugarMommyCategory</string>
+    <string name="sugar_daddy_interest">sugarDaddyInterest</string>
+    <string name="sugar_mommy_interest">sugarMommyInterest</string>
+    <string name="video_sex_experience">videoSexExperience</string>
+    <string name="threesome_experience">threesomeExperience</string>
+    <string name="camera_sex_experience">cameraSexExperience</string>
+    <string name="given_head_experience">givenHeadExperience</string>
+    <string name="sixty_nine_experience">sixtyNineExperience</string>
+    <string name="public_sex_experience">publicSexExperience</string>
+    <string name="received_head_experience">receivedHeadExperience</string>
+    <string name="one_night_stand_experience">oneNightStandExperience</string>
 </resources>
 
 

@@ -748,23 +748,40 @@ class UserBioActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(sharedPreferences.getInt("memberId", 0),
-            sharedPreferences.getInt("age", 0), sharedPreferences.getString("sex", "")!!,
-            sharedPreferences.getString("registrationDate", "")!!, sharedPreferences.getInt("bisexualCategory", 0),
-            sharedPreferences.getInt("gayCategory", 0), sharedPreferences.getInt("lesbianCategory", 0),
-            sharedPreferences.getInt("straightCategory", 0), sharedPreferences.getInt("sugarDaddyCategory", 0),
-            sharedPreferences.getInt("sugarMommyCategory", 0), sharedPreferences.getInt("toyBoyCategory", 0),
-            sharedPreferences.getInt("toyGirlCategory", 0), sharedPreferences.getInt("bisexualInterest", 0),
-            sharedPreferences.getInt("gayInterest", 0), sharedPreferences.getInt("lesbianInterest", 0),
-            sharedPreferences.getInt("straightInterest", 0), sharedPreferences.getInt("sugarDaddyInterest", 0),
-            sharedPreferences.getInt("sugarMommyInterest", 0), sharedPreferences.getInt("toyBoyInterest", 0),
-            sharedPreferences.getInt("toyGirlInterest", 0), sharedPreferences.getInt("sixtyNineExperience", 0),
-            sharedPreferences.getInt("analSexExperience", 0), sharedPreferences.getInt("givenHeadExperience", 0),
-            sharedPreferences.getInt("oneNightStandExperience", 0), sharedPreferences.getInt("orgyExperience", 0),
-            sharedPreferences.getInt("poolSexExperience", 0), sharedPreferences.getInt("receivedHeadExperience", 0),
-            sharedPreferences.getInt("carSexExperience", 0), sharedPreferences.getInt("publicSexExperience", 0),
-            sharedPreferences.getInt("cameraSexExperience", 0), sharedPreferences.getInt("threesomeExperience", 0),
-            sharedPreferences.getInt("sexToyExperience", 0), sharedPreferences.getInt("videoSexExperience", 0))
+        val homeDisplayRequest = HomeDisplayRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            sharedPreferences.getInt(getString(R.string.age), 0),
+            sharedPreferences.getString(getString(R.string.sex), "")!!,
+            sharedPreferences.getString(getString(R.string.registration_date), "")!!,
+            sharedPreferences.getInt(getString(R.string.bisexual_category), 0),
+            sharedPreferences.getInt(getString(R.string.gay_category), 0),
+            sharedPreferences.getInt(getString(R.string.lesbian_category), 0),
+            sharedPreferences.getInt(getString(R.string.straight_category), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_daddy_category), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_mommy_category), 0),
+            sharedPreferences.getInt(getString(R.string.toy_boy_category), 0),
+            sharedPreferences.getInt(getString(R.string.toy_girl_category), 0),
+            sharedPreferences.getInt(getString(R.string.bisexual_interest), 0),
+            sharedPreferences.getInt(getString(R.string.gay_interest), 0),
+            sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
+            sharedPreferences.getInt(getString(R.string.straight_interest), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
+            sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
+            sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
+            sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
+            sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.received_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.car_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.public_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.camera_sex_experience), 0),
+            sharedPreferences.getInt(getString(R.string.threesome_experience), 0),
+            sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
+            sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
 
         val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -774,7 +791,7 @@ class UserBioActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/matcheduserdata.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_matched_user_data))
             .post(requestBody)
             .build()
 
@@ -818,7 +835,7 @@ class UserBioActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + "service/userbiometrics.php")
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_biometrics))
             .post(requestBody)
             .build()
 
