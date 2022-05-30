@@ -9,6 +9,7 @@
     <string name="clicked_account_menu">clickedAccountMenu</string>
     <string name="clicked_message_menu">clickedMessageMenu</string>
 
+    <string name="all_likes_count">%$d Likes</string>
     <string name="title_sexuality">%1$s sexuality</string>
     <string name="title_interest">%1$s is looking for</string>
     <string name="title_experience">%1$s sexual fantasies</string>

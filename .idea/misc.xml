@@ -18,6 +18,9 @@
         <entry key="app/src/main/res/drawable/ignored_bottom_menu.xml" value="0.142" />
         <entry key="app/src/main/res/drawable/include_bottom_navigation_layout.xml" value="0.142" />
         <entry key="app/src/main/res/drawable/light_grey_button.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/likers_image_layout.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/likers_image_placeholder.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/likers_layout_username.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/normal_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/profile_picture_cover.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/selected_bottom_menu.xml" value="0.142" />

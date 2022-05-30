@@ -4,24 +4,32 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginStart
+import androidx.core.view.marginTop
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserProfileBinding
 import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import kotlinx.android.synthetic.main.activity_user_profile.*
 import okhttp3.*
 import java.io.IOException
 
 class UserProfileActivity : AppCompatActivity() {
+    private var deviceWidth: Int = 0
+    private var deviceHeight: Int = 0
     private lateinit var requestProcess: String
     private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -58,12 +66,160 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
+        val displayMetrics = DisplayMetrics()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display?.getRealMetrics(displayMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            val display = windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getMetrics(displayMetrics)
+        }
+
+        deviceWidth = displayMetrics.widthPixels
+        deviceHeight = displayMetrics.heightPixels
+
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
         redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+
+        val marginStartHere = binding.checkFrameStartMargin.marginStart
+        val marginPercentage = (marginStartHere.toFloat() / deviceWidth) * 100
+        val totalMarginValue = ((marginPercentage * 4) / 100) * deviceWidth
+        val remainingPictureWidth = deviceWidth - totalMarginValue
+        val eachPictureWidth = remainingPictureWidth / 3
+        val eachMarginValue = totalMarginValue / 4
+        val eachPictureHeight = 1.1 * eachPictureWidth
+        val eachUsernameHeight = ((30 / 100F) * eachPictureHeight).toInt()
+
+        binding.firstMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.secondMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.thirdMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.fourthMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.fifthMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.sixthMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.seventhMargin.layoutParams.width = eachMarginValue.toInt()
+        binding.eighthMargin.layoutParams.width = eachMarginValue.toInt()
+
+        binding.firstLikerImage.layoutParams.width = eachPictureWidth.toInt()
+        binding.firstLikerImage.layoutParams.height = eachPictureHeight.toInt()
+        binding.firstLikerFrameLayout.layoutParams.width = eachPictureWidth.toInt()
+        binding.firstLikerPlaceholder.layoutParams.width = eachPictureWidth.toInt()
+        binding.firstLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
+        binding.firstLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
+
+        binding.secondLikerImage.layoutParams.width = eachPictureWidth.toInt()
+        binding.secondLikerImage.layoutParams.height = eachPictureHeight.toInt()
+        binding.secondLikerFrameLayout.layoutParams.width = eachPictureWidth.toInt()
+        binding.secondLikerPlaceholder.layoutParams.width = eachPictureWidth.toInt()
+        binding.secondLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
+        binding.secondLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
+
+        binding.thirdLikerImage.layoutParams.width = eachPictureWidth.toInt()
+        binding.thirdLikerImage.layoutParams.height = eachPictureHeight.toInt()
+        binding.thirdLikerFrameLayout.layoutParams.width = eachPictureWidth.toInt()
+        binding.thirdLikerPlaceholder.layoutParams.width = eachPictureWidth.toInt()
+        binding.thirdLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
+        binding.thirdLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
+
+        binding.fourthLikerImage.layoutParams.width = eachPictureWidth.toInt()
+        binding.fourthLikerImage.layoutParams.height = eachPictureHeight.toInt()
+        binding.fourthLikerFrameLayout.layoutParams.width = eachPictureWidth.toInt()
+        binding.fourthLikerPlaceholder.layoutParams.width = eachPictureWidth.toInt()
+        binding.fourthLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
+        binding.fourthLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
+
+        binding.fifthLikerImage.layoutParams.width = eachPictureWidth.toInt()
+        binding.fifthLikerImage.layoutParams.height = eachPictureHeight.toInt()
+        binding.fifthLikerFrameLayout.layoutParams.width = eachPictureWidth.toInt()
+        binding.fifthLikerPlaceholder.layoutParams.width = eachPictureWidth.toInt()
+        binding.fifthLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
+        binding.fifthLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
+
+        binding.sixthLikerImage.layoutParams.width = eachPictureWidth.toInt()
+        binding.sixthLikerImage.layoutParams.height = eachPictureHeight.toInt()
+        binding.sixthLikerFrameLayout.layoutParams.width = eachPictureWidth.toInt()
+        binding.sixthLikerPlaceholder.layoutParams.width = eachPictureWidth.toInt()
+        binding.sixthLikerFrameLayout.layoutParams.height = eachPictureHeight.toInt()
+        binding.sixthLikerPlaceholder.layoutParams.height = eachPictureHeight.toInt()
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image1))
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.firstLikerImage)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image10))
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.secondLikerImage)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image11))
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.thirdLikerImage)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image2))
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.fourthLikerImage)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image3))
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.fifthLikerImage)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image4))
+            .transform(CenterCrop(), RoundedCorners(33))
+            .into(binding.sixthLikerImage)
+
+        binding.firstLikerUsername.text = "Floxy kajfaj lkajkalsj ldak aldjlksaj kl, 33"
+        binding.secondLikerUsername.text = "Melas, 34"
+        binding.thirdLikerUsername.text = "Millicent, 30"
+        binding.firstLikerUsername.layoutParams.height = eachUsernameHeight
+        binding.thirdLikerUsername.layoutParams.height = eachUsernameHeight
+        binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
+
+        binding.fourthLikerUsername.text = "Frenzy, 25"
+        binding.fifthLikerUsername.text = "Sunshine, 29"
+        binding.sixthLikerUsername.text = "Clara, 35"
+        binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
+        binding.fifthLikerUsername.layoutParams.height = eachUsernameHeight
+        binding.sixthLikerUsername.layoutParams.height = eachUsernameHeight
+
+        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            triggerRequestProcess()
+        }
+
+        binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+            if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
+                triggerRequestProcess()
+            }
+        }
+
+        binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
 
         binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
@@ -265,6 +421,12 @@ class UserProfileActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+    }
+
+    private fun triggerRequestProcess() {
+        when (requestProcess) {
+            getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
+        }
     }
 
     @Throws(IOException::class)

@@ -30,6 +30,7 @@
                     android:layout_height="wrap_content">
 
                     <FrameLayout
+                        android:id="@+id/checkFrameStartMargin"
                         android:layout_marginTop="11dp"
                         android:layout_marginStart="11dp"
                         android:layout_width="wrap_content"
@@ -118,6 +119,263 @@
                         layout="@layout/include_icon_hollow_blue_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="vertical"
+                    android:layout_marginTop="21dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/allLikesCount"
+                        android:textSize="23sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/firstMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <FrameLayout
+                                android:id="@+id/firstLikerFrameLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:id="@+id/firstLikerPlaceholder"
+                                    android:background="@drawable/likers_image_placeholder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/firstLikerImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/firstLikerUsername"
+                                    android:padding="7dp"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_gravity="bottom"
+                                    android:textColor="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/likers_layout_username"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </FrameLayout>
+
+                            <View
+                                android:id="@+id/secondMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <FrameLayout
+                                android:id="@+id/secondLikerFrameLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:id="@+id/secondLikerPlaceholder"
+                                    android:background="@drawable/likers_image_placeholder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/secondLikerImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/secondLikerUsername"
+                                    android:padding="7dp"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_gravity="bottom"
+                                    android:textColor="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/likers_layout_username"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </FrameLayout>
+
+                            <View
+                                android:id="@+id/thirdMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <FrameLayout
+                                android:id="@+id/thirdLikerFrameLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:id="@+id/thirdLikerPlaceholder"
+                                    android:background="@drawable/likers_image_placeholder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/thirdLikerImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/thirdLikerUsername"
+                                    android:padding="7dp"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_gravity="bottom"
+                                    android:textColor="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/likers_layout_username"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </FrameLayout>
+
+                            <View
+                                android:id="@+id/fourthMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_marginTop="11dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/fifthMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <FrameLayout
+                                android:id="@+id/fourthLikerFrameLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:id="@+id/fourthLikerPlaceholder"
+                                    android:background="@drawable/likers_image_placeholder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/fourthLikerImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/fourthLikerUsername"
+                                    android:padding="7dp"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_gravity="bottom"
+                                    android:textColor="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/likers_layout_username"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </FrameLayout>
+
+                            <View
+                                android:id="@+id/sixthMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <FrameLayout
+                                android:id="@+id/fifthLikerFrameLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:id="@+id/fifthLikerPlaceholder"
+                                    android:background="@drawable/likers_image_placeholder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/fifthLikerImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/fifthLikerUsername"
+                                    android:padding="7dp"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_gravity="bottom"
+                                    android:textColor="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/likers_layout_username"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </FrameLayout>
+
+                            <View
+                                android:id="@+id/seventhMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <FrameLayout
+                                android:id="@+id/sixthLikerFrameLayout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <View
+                                    android:id="@+id/sixthLikerPlaceholder"
+                                    android:background="@drawable/likers_image_placeholder"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <ImageView
+                                    android:id="@+id/sixthLikerImage"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+
+                                <TextView
+                                    android:id="@+id/sixthLikerUsername"
+                                    android:padding="7dp"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:layout_gravity="bottom"
+                                    android:textColor="@color/white"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/likers_layout_username"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </FrameLayout>
+
+                            <View
+                                android:id="@+id/eighthMargin"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
