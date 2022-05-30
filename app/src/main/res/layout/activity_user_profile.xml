@@ -130,7 +130,10 @@
 
                     <TextView
                         android:id="@+id/allLikesCount"
-                        android:textSize="23sp"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="11dp"
+                        android:layout_marginBottom="7dp"
                         android:textColor="@color/edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
@@ -365,6 +368,20 @@
                                     android:background="@drawable/likers_layout_username"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"/>
+
+                                <View
+                                    android:id="@+id/moreLikersCover"
+                                    android:background="@drawable/more_likers_count_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"/>
+
+                                <TextView
+                                    android:id="@+id/moreLikersCount"
+                                    android:textSize="25sp"
+                                    android:gravity="center"
+                                    android:textColor="@color/edit_text"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"/>
 
                             </FrameLayout>
 

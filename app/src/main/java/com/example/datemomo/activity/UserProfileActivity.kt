@@ -177,6 +177,8 @@ class UserProfileActivity : AppCompatActivity() {
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.sixthLikerImage)
 
+        binding.allLikesCount.text = "53 People Like You"
+
         binding.firstLikerUsername.text = "Floxy kajfaj lkajkalsj ldak aldjlksaj kl, 33"
         binding.secondLikerUsername.text = "Melas, 34"
         binding.thirdLikerUsername.text = "Millicent, 30"
@@ -190,6 +192,8 @@ class UserProfileActivity : AppCompatActivity() {
         binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.fifthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.sixthLikerUsername.layoutParams.height = eachUsernameHeight
+
+        binding.moreLikersCount.text = "+48"
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE

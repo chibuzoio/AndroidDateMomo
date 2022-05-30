@@ -8,6 +8,7 @@
     <color name="edit_text_grey">#EAEDED</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+    <color name="white_background_cover">#99FFFFFF</color>
     <color name="grey_picture_placeholder">#E5E7E9</color>
     <color name="selected_bottom_menu">@color/blue</color>
     <color name="ignored_bottom_menu">#D4E6F1</color>
