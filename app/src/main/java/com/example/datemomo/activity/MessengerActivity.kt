@@ -55,7 +55,7 @@ class MessengerActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
+        redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
 
     }
 

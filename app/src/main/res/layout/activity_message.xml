@@ -20,9 +20,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <include
-            android:id="@+id/bottomNavigationLayout"
-            layout="@layout/include_bottom_navigation_layout"/>
+        <!-- Replace bottomNavigationLayout with message
+        editor and sending layout -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/messageEditorLayout"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <include
             android:id="@+id/doubleButtonDialog"

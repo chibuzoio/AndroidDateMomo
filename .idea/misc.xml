@@ -46,6 +46,8 @@
         <entry key="app/src/main/res/layout/include_single_button_dialog.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_single_button_error.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/recycler_home_display.xml" value="0.10597826086956522" />
+        <entry key="app/src/main/res/layout/recycler_message.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/recycler_messenger.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/splash_screen.xml" value="0.1796875" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.1796875" />
       </map>
