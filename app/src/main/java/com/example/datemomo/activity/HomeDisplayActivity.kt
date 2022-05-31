@@ -34,8 +34,8 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
     private lateinit var originalRequestProcess: String
-    private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var homeDisplayResponseArray: Array<HomeDisplayResponse>
