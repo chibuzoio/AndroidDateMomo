@@ -162,9 +162,10 @@ class HomeDisplayActivity : AppCompatActivity() {
             // Reload HomeDisplayActivity
         }
 
-        binding.bottomNavigationLayout.bottomMessageMenuLayout.setOnClickListener {
+        binding.bottomNavigationLayout.bottomMessengerMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
-            // Open message activity
+            requestProcess = getString(R.string.request_fetch_user_messengers)
+            fetchUserMessengers()
         }
 
         binding.bottomNavigationLayout.bottomAccountMenuLayout.setOnClickListener {
@@ -200,8 +201,52 @@ class HomeDisplayActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
+            getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
             getString(R.string.request_fetch_matched_users) -> fetchUserLikers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserMessengers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messengers_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, MessengerActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)

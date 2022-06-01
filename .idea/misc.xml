@@ -21,9 +21,11 @@
         <entry key="app/src/main/res/drawable/likers_image_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/likers_image_placeholder.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/likers_layout_username.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/message_status_counter.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/more_likers_count_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/normal_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/profile_picture_cover.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/profile_picture_placeholder.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/selected_bottom_menu.xml" value="0.142" />
         <entry key="app/src/main/res/drawable/transparent_gradient.xml" value="0.141" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.1796875" />

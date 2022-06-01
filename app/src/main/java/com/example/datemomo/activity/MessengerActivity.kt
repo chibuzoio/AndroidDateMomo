@@ -2,21 +2,36 @@ package com.example.datemomo.activity
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
+import com.example.datemomo.adapter.MessengerAdapter
 import com.example.datemomo.databinding.ActivityMessengerBinding
+import com.example.datemomo.model.MessengerModel
+import com.example.datemomo.model.response.MessengerResponse
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import java.io.IOException
 
 class MessengerActivity : AppCompatActivity() {
+    private var deviceWidth: Int = 0
+    private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
     private lateinit var originalRequestProcess: String
     private lateinit var binding: ActivityMessengerBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var messengerResponseArray: Array<MessengerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +63,20 @@ class MessengerActivity : AppCompatActivity() {
             }
         }
 
+        val displayMetrics = DisplayMetrics()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display?.getRealMetrics(displayMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            val display = windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getMetrics(displayMetrics)
+        }
+
+        deviceWidth = displayMetrics.widthPixels
+        deviceHeight = displayMetrics.heightPixels
+
         bundle = intent.extras!!
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
@@ -57,6 +86,21 @@ class MessengerActivity : AppCompatActivity() {
 
         redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
 
+        try {
+            val mapper = jacksonObjectMapper()
+            messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+
+            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            binding.messengerRecyclerView.layoutManager = layoutManager
+            binding.messengerRecyclerView.itemAnimator = DefaultItemAnimator()
+
+            val messengerModel = MessengerModel(deviceWidth)
+
+            val messengerAdapter = MessengerAdapter(messengerResponseArray, messengerModel)
+            binding.messengerRecyclerView.adapter = messengerAdapter
+        } catch (exception: IOException) {
+            Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
+        }
     }
 
     private fun redrawBottomMenuIcons(clickedBottomMenu: String) {

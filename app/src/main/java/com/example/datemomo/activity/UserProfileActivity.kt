@@ -25,6 +25,7 @@ import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityUserProfileBinding
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.utility.Utility
@@ -258,8 +259,11 @@ class UserProfileActivity : AppCompatActivity() {
             fetchMatchedUsers()
         }
 
-        binding.bottomNavigationLayout.bottomMessageMenuLayout.setOnClickListener {
+        binding.bottomNavigationLayout.bottomMessengerMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
+            requestProcess = getString(R.string.request_fetch_user_messengers)
+            binding.progressIconLayout.visibility = View.VISIBLE
+            fetchUserMessengers()
         }
 
         binding.bottomNavigationLayout.bottomAccountMenuLayout.setOnClickListener {
@@ -597,8 +601,52 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
+            getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserMessengers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messengers_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+                    binding.progressIconLayout.visibility = View.GONE
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, MessengerActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
