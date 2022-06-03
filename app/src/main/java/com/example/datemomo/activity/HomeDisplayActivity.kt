@@ -3,6 +3,7 @@ package com.example.datemomo.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -19,14 +20,19 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
-import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
+import okio.ByteString
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
+import java.util.concurrent.TimeUnit
+
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -191,12 +197,134 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        establishSystemSocket()
+    }
+
     override fun onBackPressed() {
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun establishSystemSocket() {
+        val request = Request.Builder().url(resources.getString(R.string.api_web_socket_test)).build()
+        val webSocketClient = OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build()
+
+        webSocketClient.newWebSocket(request, object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                val jsonObject = JSONObject()
+
+                Log.e(TAG, "Execution got here in establishSystemSocket 0")
+
+                try {
+                    jsonObject.put("messengerTableName", "messengerTableName")
+                    jsonObject.put("notificationTableName", "notificationTableName")
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+
+                Log.e(TAG, "Execution got here in establishSystemSocket 1")
+
+                webSocket.send("Hello my friend!")
+
+                Log.e(TAG, "Execution got here in establishSystemSocket 2")
+
+/*
+                val asyncClassModel = AsyncClassModel()
+                asyncClassModel.setContext(this@MainActivity)
+                asyncClassModel.setUserActiveState(C.TRUE_CONSTANT)
+                asyncClassModel.setMemberId(
+                    sharedPreferences.getString("chibuzo.memberId", "")!!.toInt()
+                )
+                StatusUpdateAsyncTask(asyncClassModel).execute()
+*/
+            }
+
+            override fun onMessage(webSocket: WebSocket, message: String) {
+                Log.e(TAG, "Execution got here in establishSystemSocket 3, with message $message")
+                try {
+                    val notificationComposite = JSONArray(message)
+                } catch (exception: JSONException) {
+                    exception.printStackTrace()
+                }
+
+                try {
+                    Thread.sleep(1000)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+
+                val jsonObject = JSONObject()
+
+                try {
+                    jsonObject.put("messengerTableName", "messengerTableName")
+                    jsonObject.put("notificationTableName", "notificationTableName")
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+/*
+                if (isActivityActive) {
+                    webSocket.send(jsonObject.toString())
+                } else {
+                    checkSocketStatus(webSocket)
+                }
+*/
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {}
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                webSocket.close(1000, null)
+                checkSocketStatus(webSocket)
+                Log.e(TAG, "Execution got here in establishSystemSocket 4, with reason for closing $reason")
+            }
+
+            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                checkSocketStatus(webSocket)
+                Log.e(TAG, "Execution got here in establishSystemSocket 5, with closing reason $reason")
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                t.printStackTrace()
+                checkSocketStatus(webSocket)
+                Log.e(TAG, "errorMessage from web socket onFailure method here is ${t.message}")
+            }
+
+            private fun checkSocketStatus(webSocket: WebSocket) {
+//                if (isActivityActive) {
+                    if (webSocket.send("Hello World!")) {
+                        webSocket.close(1000, "Closing Socket...")
+                    }
+
+                    if (sharedPreferences.getString("chibuzo.memberId", "") != "") {
+                        establishSystemSocket()
+                    }
+//                } else {
+//                    if (webSocket.send("Hello World!")) {
+//                        webSocket.close(1000, "Closing Socket...")
+//                    }
+
+/*                    if (!sharedPreferences.getString("chibuzo.memberId", "")!!.isEmpty()) {
+                        val asyncClassModel = AsyncClassModel()
+                        asyncClassModel.setContext(this@MainActivity)
+                        asyncClassModel.setUserActiveState(C.FALSE_CONSTANT)
+                        asyncClassModel.setMemberId(
+                            sharedPreferences.getString(
+                                "chibuzo.memberId",
+                                ""
+                            )!!.toInt()
+                        )
+                        StatusUpdateAsyncTask(asyncClassModel).execute()
+                    }*/
+//                }
+            }
+        })
+
+        webSocketClient.dispatcher().executorService().shutdown()
     }
 
     private fun triggerRequestProcess() {
