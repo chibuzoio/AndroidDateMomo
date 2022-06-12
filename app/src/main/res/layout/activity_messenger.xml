@@ -14,11 +14,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/messengerRecyclerView"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="vertical"
             android:layout_marginBottom="54dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Chats"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:paddingTop="7dp"
+                android:paddingBottom="3dp"
+                android:paddingHorizontal="11dp"
+                android:background="@color/white"
+                android:textColor="@color/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/messengerRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <View
             android:layout_gravity="bottom"

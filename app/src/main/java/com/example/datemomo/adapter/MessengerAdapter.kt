@@ -16,14 +16,14 @@ import com.example.datemomo.model.response.MessengerResponse
 class MessengerAdapter(private val messengerResponses: Array<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessengerAdapter.MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerMessengerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MessengerAdapter.MyViewHolder(binding)
+        return MyViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MessengerAdapter.MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val messengerPropertyLeftPadding = holder.binding.messengerPropertyLayout.paddingLeft
-        val imageLayoutHeight = ((messengerModel.deviceWidth - messengerPropertyLeftPadding) * 20) / 100
+        val imageLayoutHeight = ((messengerModel.deviceWidth - messengerPropertyLeftPadding) * 16) / 100
         val imageHeight = imageLayoutHeight - ((imageLayoutHeight * 5) / 100)
 
         Log.e(MessengerActivity.TAG, "messengerPropertyLeftPadding value here is $messengerPropertyLeftPadding")
@@ -52,6 +52,11 @@ class MessengerAdapter(private val messengerResponses: Array<MessengerResponse>,
         holder.binding.lastMessage.text = messengerResponses[position].lastMessage
         holder.binding.messageStatusTime.text = messengerResponses[position].lastMessageDate
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
+
+        holder.binding.messengerPropertyLayout.setOnClickListener {
+            // transmit data to MessageActivity
+
+        }
     }
 
     override fun getItemCount(): Int {

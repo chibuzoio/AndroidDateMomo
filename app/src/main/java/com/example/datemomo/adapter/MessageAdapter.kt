@@ -9,12 +9,12 @@ import com.example.datemomo.model.response.MessageResponse
 class MessageAdapter(private val messageResponses: Array<MessageResponse>) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageAdapter.MyViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MessageAdapter.MyViewHolder(binding)
+        return MyViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MessageAdapter.MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
     }
 

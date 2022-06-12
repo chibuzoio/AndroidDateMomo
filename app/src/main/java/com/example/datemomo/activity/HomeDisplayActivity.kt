@@ -20,8 +20,10 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.request.UpdateStatusRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
+import com.example.datemomo.utility.OkHttpUtility
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -39,6 +41,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
+    private var isActivityActive: Boolean = true
     private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityHomeDisplayBinding
@@ -199,7 +202,17 @@ class HomeDisplayActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        establishSystemSocket()
+        isActivityActive = true
+
+        if (sharedPreferences.getBoolean(getString(R.string.authenticated), false)) {
+//            Log.e(TAG, "User was truly authenticated!!!!!!!!!!!!")
+//            establishSystemSocket()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        isActivityActive = false
     }
 
     override fun onBackPressed() {
@@ -210,9 +223,24 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
     }
 
+    private fun startSystemSocket() {
+        // wss test
+        val client = OkHttpClient.Builder()
+            .readTimeout(3, TimeUnit.SECONDS)
+            //.sslSocketFactory() - ? нужно ли его указывать дополнительно
+            .build()
+        val request = Request.Builder()
+            .url(getString(R.string.api_web_socket_test)) // 'wss' - для защищенного канала
+            .build()
+        val wsListener = EchoWebSocketListener ()
+        val webSocket = client.newWebSocket(request, wsListener) // this provide to make 'Open ws connection'
+    }
+
     private fun establishSystemSocket() {
-        val request = Request.Builder().url(resources.getString(R.string.api_web_socket_test)).build()
+        val request = Request.Builder().url(getString(R.string.api_web_socket_test)).build()
         val webSocketClient = OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build()
+
+        Log.e(TAG, "Execution got here in establishSystemSocket, but hasn't gotten into newWebSocket")
 
         webSocketClient.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -233,19 +261,12 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                 Log.e(TAG, "Execution got here in establishSystemSocket 2")
 
-/*
-                val asyncClassModel = AsyncClassModel()
-                asyncClassModel.setContext(this@MainActivity)
-                asyncClassModel.setUserActiveState(C.TRUE_CONSTANT)
-                asyncClassModel.setMemberId(
-                    sharedPreferences.getString("chibuzo.memberId", "")!!.toInt()
-                )
-                StatusUpdateAsyncTask(asyncClassModel).execute()
-*/
+//                OkHttpUtility.updateUserStatus(baseContext, sharedPreferences, isActivityActive)
             }
 
             override fun onMessage(webSocket: WebSocket, message: String) {
-                Log.e(TAG, "Execution got here in establishSystemSocket 3, with message $message")
+                Log.e(TAG, "Execution got to onMessage method of webSocketClient with message = $message")
+
                 try {
                     val notificationComposite = JSONArray(message)
                 } catch (exception: JSONException) {
@@ -266,13 +287,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
-/*
+
                 if (isActivityActive) {
                     webSocket.send(jsonObject.toString())
                 } else {
                     checkSocketStatus(webSocket)
                 }
-*/
             }
 
             override fun onMessage(webSocket: WebSocket, bytes: ByteString) {}
@@ -295,32 +315,21 @@ class HomeDisplayActivity : AppCompatActivity() {
             }
 
             private fun checkSocketStatus(webSocket: WebSocket) {
-//                if (isActivityActive) {
+                if (isActivityActive) {
                     if (webSocket.send("Hello World!")) {
                         webSocket.close(1000, "Closing Socket...")
                     }
 
-                    if (sharedPreferences.getString("chibuzo.memberId", "") != "") {
+                    if (sharedPreferences.getBoolean(getString(R.string.authenticated), false)) {
                         establishSystemSocket()
                     }
-//                } else {
-//                    if (webSocket.send("Hello World!")) {
-//                        webSocket.close(1000, "Closing Socket...")
-//                    }
+                } else {
+                    if (webSocket.send("Hello World!")) {
+                        webSocket.close(1000, "Closing Socket...")
+                    }
 
-/*                    if (!sharedPreferences.getString("chibuzo.memberId", "")!!.isEmpty()) {
-                        val asyncClassModel = AsyncClassModel()
-                        asyncClassModel.setContext(this@MainActivity)
-                        asyncClassModel.setUserActiveState(C.FALSE_CONSTANT)
-                        asyncClassModel.setMemberId(
-                            sharedPreferences.getString(
-                                "chibuzo.memberId",
-                                ""
-                            )!!.toInt()
-                        )
-                        StatusUpdateAsyncTask(asyncClassModel).execute()
-                    }*/
-//                }
+//                    OkHttpUtility.updateUserStatus(baseContext, sharedPreferences, isActivityActive)
+                }
             }
         })
 
@@ -462,6 +471,40 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.singleButtonDialog.singleButtonTitle.text = title
             binding.singleButtonDialog.singleButtonMessage.text = message
             binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
+    private class EchoWebSocketListener : WebSocketListener() {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
+            webSocket.send("Hello, it's SSaurel !")
+            webSocket.send("What's up ?")
+            webSocket.send(ByteString.decodeHex("deadbeef"))
+            webSocket.close(NORMAL_CLOSURE_STATUS, "Goodbye !")
+        }
+
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            output("Receiving : $text")
+        }
+
+        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+            output("Receiving bytes : " + bytes.hex())
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            webSocket.close(NORMAL_CLOSURE_STATUS, null)
+            output("Closing : $code / $reason")
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            output("Error : " + t.message)
+        }
+
+        companion object {
+            private const val NORMAL_CLOSURE_STATUS = 1000
+        }
+
+        private fun output(txt: String) {
+            Log.v("WSS", txt)
         }
     }
 

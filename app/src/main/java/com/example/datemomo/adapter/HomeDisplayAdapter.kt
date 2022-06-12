@@ -57,8 +57,6 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .transform(RoundedCorners(15))
             .into(holder.binding.userImageBack)
 
-        Log.e("AdapterClass", "Image properties here are ${homeDisplayResponses[position].userPictureModels[0].imageName}")
-
         // Add profilePicture properties to homeDisplayResponses
         // Then, add collection of all user images, with their properties to homeDisplayResponses
 

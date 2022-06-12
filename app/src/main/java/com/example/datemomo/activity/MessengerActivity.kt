@@ -86,6 +86,25 @@ class MessengerActivity : AppCompatActivity() {
 
         redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
 
+        /*
+            messengerResponseArray = arrayOf(
+                MessengerResponse(1, "", "Memphis",
+                    "How do you do?", "profile165385261200006.png",
+                    "436436457", 3),
+                MessengerResponse(2, "", "Chisom",
+                    "Hello dear!", "profile165385261200006.png",
+                    "436436457", 0),
+                MessengerResponse(3, "", "Precious",
+                    "He collected the package", "profile165385261200006.png",
+                    "436436457", 5),
+                MessengerResponse(4, "", "Chioma",
+                    "I love you!", "profile165385261200006.png",
+                    "436436457", 2),
+                MessengerResponse(5, "", "Memphis",
+                    "Who are you?", "profile165385261200006.png",
+                    "436436457", 0))
+        */
+
         try {
             val mapper = jacksonObjectMapper()
             messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
