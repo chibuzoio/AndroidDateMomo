@@ -15,6 +15,7 @@ data class HomeDisplayResponse(var memberId: Int,
                                var emailAddress: String,
                                var profilePicture: String,
                                var registrationDate: String,
+                               var messengerTableName: String,
 
                                var liked: Boolean,
                                var userPictureModels: ArrayList<UserPictureModel>,

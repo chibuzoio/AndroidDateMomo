@@ -380,6 +380,7 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val intent = Intent(baseContext, MessengerActivity::class.java)
+                Log.e(TAG, "My response value here before navigating to MessengerActivity is $myResponse")
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
             }
