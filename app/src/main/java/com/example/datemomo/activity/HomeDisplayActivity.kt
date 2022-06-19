@@ -20,6 +20,7 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UpdateStatusRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
@@ -46,6 +47,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var homeDisplayResponse: HomeDisplayResponse
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var homeDisplayResponseArray: Array<HomeDisplayResponse>
 
@@ -191,7 +193,8 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.homeDisplayRecyclerView.layoutManager = layoutManager
             binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val homeDisplayModel = HomeDisplayModel(deviceWidth, binding)
+            val homeDisplayModel = HomeDisplayModel(deviceWidth,
+                requestProcess, buttonClickEffect, binding, this)
 
             val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, homeDisplayModel)
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
@@ -339,8 +342,55 @@ class HomeDisplayActivity : AppCompatActivity() {
     private fun triggerRequestProcess() {
         when (requestProcess) {
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
+            getString(R.string.request_fetch_user_messages) -> fetchUserMessages(homeDisplayResponse)
             getString(R.string.request_fetch_matched_users) -> fetchUserLikers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserMessages(homeDisplayResponse: HomeDisplayResponse) {
+        val mapper = jacksonObjectMapper()
+        this.homeDisplayResponse = homeDisplayResponse
+        val messageRequest = MessageRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            homeDisplayResponse.memberId)
+
+        val jsonObjectString = mapper.writeValueAsString(messageRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messages_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, MessageActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)

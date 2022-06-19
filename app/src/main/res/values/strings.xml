@@ -42,6 +42,7 @@
     <string name="request_post_user_picture">postUserPicture</string>
     <string name="request_authenticate_user">authenticateUser</string>
     <string name="request_fetch_matched_users">fetchMatchedUsers</string>
+    <string name="request_fetch_user_messages">fetchUserMessages</string>
     <string name="request_fetch_user_messengers">fetchUserMessengers</string>
     <string name="request_skip_sexuality_interest">skipSexualityInterest</string>
     <string name="request_submit_sexuality_interest">submitSexualityInterest</string>
@@ -61,6 +62,7 @@
     <string name="api_user_biometrics">service/userbiometrics.php</string>
     <string name="api_user_likers_data">service/userlikersdata.php</string>
     <string name="api_matched_user_data">service/matcheduserdata.php</string>
+    <string name="api_user_messages_data">service/usermessagesdata.php</string>
     <string name="api_user_status_update">service/userstatusupdate.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>

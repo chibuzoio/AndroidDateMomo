@@ -116,6 +116,7 @@
                                 android:layout_height="wrap_content"/>
 
                             <androidx.appcompat.widget.LinearLayoutCompat
+                                android:id="@+id/userMessageButton"
                                 android:padding="15dp"
                                 android:gravity="center"
                                 android:orientation="vertical"

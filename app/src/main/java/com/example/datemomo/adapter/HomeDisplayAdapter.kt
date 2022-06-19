@@ -1,6 +1,7 @@
 package com.example.datemomo.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
@@ -13,9 +14,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
+import com.example.datemomo.activity.HomeDisplayActivity
+import com.example.datemomo.activity.MessageActivity
+import com.example.datemomo.activity.MessengerActivity
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.LikeUserRequest
+import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
@@ -59,6 +64,14 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         // Add profilePicture properties to homeDisplayResponses
         // Then, add collection of all user images, with their properties to homeDisplayResponses
+
+        homeDisplayModel.binding.userMessageButton.setOnClickListener {
+            // Use user messengerTableName to fetch requested user messageTableName
+            // Using messageTableName to fetch all the chats between host user and guest user
+            homeDisplayModel.binding.userMessageButton.startAnimation(homeDisplayModel.buttonClickEffect)
+            homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_messages)
+            homeDisplayModel.homeDisplayActivity.fetchUserMessages(homeDisplayResponses[position])
+        }
 
         holder.binding.userImage.setOnClickListener {
             processUserDataView(holder.itemView.context, position)
