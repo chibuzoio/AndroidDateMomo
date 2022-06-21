@@ -24,13 +24,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <!-- Back arrow, profile picture, name and menu icon -->
-                <!--<ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>-->
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_weight="1.5"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <FrameLayout
-                    android:layout_weight="2"
+                    android:layout_weight="1.5"
                     android:foregroundGravity="center"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
@@ -46,7 +53,7 @@
                 </FrameLayout>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_weight="6.5"
+                    android:layout_weight="5.5"
                     android:orientation="vertical"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
