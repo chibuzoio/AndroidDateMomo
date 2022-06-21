@@ -1,7 +1,6 @@
 package com.example.datemomo.adapter
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.util.Log
@@ -14,13 +13,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
-import com.example.datemomo.activity.HomeDisplayActivity
-import com.example.datemomo.activity.MessageActivity
-import com.example.datemomo.activity.MessengerActivity
 import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.LikeUserRequest
-import com.example.datemomo.model.request.UserLikerRequest
+import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
@@ -31,6 +27,7 @@ import java.io.IOException
 
 class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResponse>, private val homeDisplayModel: HomeDisplayModel) :
     RecyclerView.Adapter<HomeDisplayAdapter.MyViewHolder>() {
+    private lateinit var messageRequest: MessageRequest
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -70,7 +67,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             // Using messageTableName to fetch all the chats between host user and guest user
             homeDisplayModel.binding.userMessageButton.startAnimation(homeDisplayModel.buttonClickEffect)
             homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_messages)
-            homeDisplayModel.homeDisplayActivity.fetchUserMessages(homeDisplayResponses[position])
+            homeDisplayModel.homeDisplayActivity.fetchUserMessages(messageRequest)
         }
 
         holder.binding.userImage.setOnClickListener {
@@ -163,6 +160,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
     private fun processUserDataView(context: Context, position: Int) {
         var userPicturePosition = 0
+        this.messageRequest = MessageRequest(sharedPreferences.getInt("memberId", 0),
+            homeDisplayResponses[position].memberId)
 
         for ((index, userPictureModel) in homeDisplayResponses[position].userPictureModels.withIndex()) {
             if (userPictureModel.imageName == homeDisplayResponses[position].profilePicture) {

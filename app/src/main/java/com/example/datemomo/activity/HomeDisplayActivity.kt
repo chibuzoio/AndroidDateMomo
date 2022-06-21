@@ -3,7 +3,6 @@ package com.example.datemomo.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -21,10 +20,8 @@ import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.MessageRequest
-import com.example.datemomo.model.request.UpdateStatusRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
-import com.example.datemomo.utility.OkHttpUtility
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -41,10 +38,12 @@ class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private lateinit var requestProcess: String
+    private var requestProcess: String = ""
     private var isActivityActive: Boolean = true
+    private lateinit var messageRequest: MessageRequest
     private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var homeDisplayModel: HomeDisplayModel
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var homeDisplayResponse: HomeDisplayResponse
@@ -193,8 +192,8 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.homeDisplayRecyclerView.layoutManager = layoutManager
             binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val homeDisplayModel = HomeDisplayModel(deviceWidth,
-                requestProcess, buttonClickEffect, binding, this)
+            this.homeDisplayModel = HomeDisplayModel(deviceWidth, requestProcess,
+                buttonClickEffect, binding, this)
 
             val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, homeDisplayModel)
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
@@ -342,18 +341,15 @@ class HomeDisplayActivity : AppCompatActivity() {
     private fun triggerRequestProcess() {
         when (requestProcess) {
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
-            getString(R.string.request_fetch_user_messages) -> fetchUserMessages(homeDisplayResponse)
+            getString(R.string.request_fetch_user_messages) -> fetchUserMessages(messageRequest)
             getString(R.string.request_fetch_matched_users) -> fetchUserLikers()
         }
     }
 
     @Throws(IOException::class)
-    fun fetchUserMessages(homeDisplayResponse: HomeDisplayResponse) {
+    fun fetchUserMessages(messageRequest: MessageRequest) {
         val mapper = jacksonObjectMapper()
-        this.homeDisplayResponse = homeDisplayResponse
-        val messageRequest = MessageRequest(
-            sharedPreferences.getInt(getString(R.string.member_id), 0),
-            homeDisplayResponse.memberId)
+        this.messageRequest = messageRequest
 
         val jsonObjectString = mapper.writeValueAsString(messageRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -387,6 +383,7 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val intent = Intent(baseContext, MessageActivity::class.java)
+                Log.e(TAG, "Response from the server for querying all messages for a particular recipient is $myResponse")
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
             }
