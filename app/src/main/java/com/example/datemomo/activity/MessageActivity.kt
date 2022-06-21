@@ -11,6 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
 import com.example.datemomo.adapter.MessageAdapter
 import com.example.datemomo.adapter.MessengerAdapter
@@ -67,6 +70,11 @@ class MessageActivity : AppCompatActivity() {
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.image11))
+            .transform(CenterCrop(), CircleCrop())
+            .into(binding.receiverProfilePicture)
 
         try {
             val mapper = jacksonObjectMapper()
