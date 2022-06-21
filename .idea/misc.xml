@@ -4,11 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/blue_button.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/blue_message_lower_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/circular_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/error_dialog.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/error_dialog_layout.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/error_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/focused_edit_text.xml" value="0.141" />
+        <entry key="app/src/main/res/drawable/grey_message_lower_layout.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/grey_message_upper_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/heart_selector.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/hollow_blue_button.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/hollow_blue_grey_button.xml" value="0.1455" />
@@ -22,6 +25,7 @@
         <entry key="app/src/main/res/drawable/likers_image_placeholder.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/likers_layout_username.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/message_status_counter.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/message_upper_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/more_likers_count_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/normal_edit_text.xml" value="0.141" />
         <entry key="app/src/main/res/drawable/profile_picture_cover.xml" value="0.1455" />
