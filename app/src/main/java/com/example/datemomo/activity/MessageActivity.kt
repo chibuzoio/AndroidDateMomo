@@ -72,14 +72,12 @@ class MessageActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             messageResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-/*
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.messageRecyclerView.layoutManager = layoutManager
             binding.messageRecyclerView.itemAnimator = DefaultItemAnimator()
 
             val messageAdapter = MessageAdapter(messageResponseArray)
             binding.messageRecyclerView.adapter = messageAdapter
-*/
         } catch (exception: IOException) {
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
