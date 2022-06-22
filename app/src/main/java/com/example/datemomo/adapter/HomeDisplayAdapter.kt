@@ -160,9 +160,13 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
     private fun processUserDataView(context: Context, position: Int) {
         var userPicturePosition = 0
-        this.messageRequest = MessageRequest(sharedPreferences.getInt("memberId", 0),
-            homeDisplayResponses[position].memberId, homeDisplayResponses[position].fullName,
-            homeDisplayResponses[position].userName, "", homeDisplayResponses[position].profilePicture)
+        this.messageRequest = MessageRequest(
+            sharedPreferences.getInt("memberId", 0),
+            homeDisplayResponses[position].memberId,
+            homeDisplayResponses[position].fullName,
+            homeDisplayResponses[position].userName, "",
+            homeDisplayResponses[position].profilePicture,
+            homeDisplayResponses[position].messengerTableName)
 
         for ((index, userPictureModel) in homeDisplayResponses[position].userPictureModels.withIndex()) {
             if (userPictureModel.imageName == homeDisplayResponses[position].profilePicture) {

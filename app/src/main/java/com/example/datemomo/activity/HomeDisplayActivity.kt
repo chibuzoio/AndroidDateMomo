@@ -384,6 +384,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 Log.e(TAG, "Response from the server for querying all messages for a particular recipient is $myResponse")
+                intent.putExtra("messengerTableName", messageRequest.messengerTableName)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
                 intent.putExtra("receiverId", messageRequest.receiverId)

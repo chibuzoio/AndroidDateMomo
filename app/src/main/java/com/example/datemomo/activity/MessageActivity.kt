@@ -122,7 +122,8 @@ class MessageActivity : AppCompatActivity() {
             binding.messageRecyclerView.itemAnimator = DefaultItemAnimator()
 
             val messageModel = MessageModel(bundle.getInt("senderId"),
-                bundle.getInt("receiverId"), binding)
+                bundle.getInt("receiverId"), this,
+                bundle.getString("messengerTableName")!!, binding)
 
             val messageAdapter = MessageAdapter(messageResponseArray, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter
