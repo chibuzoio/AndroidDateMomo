@@ -8,7 +8,7 @@ import com.example.datemomo.databinding.RecyclerMessageBinding
 import com.example.datemomo.model.MessageModel
 import com.example.datemomo.model.response.MessageResponse
 
-class MessageAdapter(private val messageResponses: Array<MessageResponse>, private val messageModel: MessageModel) :
+class MessageAdapter(private var messageResponses: Array<MessageResponse>, private val messageModel: MessageModel) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -33,18 +33,39 @@ class MessageAdapter(private val messageResponses: Array<MessageResponse>, priva
                 holder.binding.senderMessageLayout.visibility = View.GONE
             }
         }
-
-        messageModel.binding.messageSenderLayout.setOnClickListener {
-
-        }
     }
 
     override fun getItemCount(): Int {
+        messageModel.binding.messageSenderLayout.setOnClickListener {
+            val senderMessage = messageModel.binding.messageInputField.text.toString()
+
+            if (senderMessage.isNotEmpty()) {
+                val messageResponse = MessageResponse(
+                    0, messageModel.senderId, senderMessage,
+                    0, 0, 0, "")
+
+                messageResponses = append(messageResponses, messageResponse)
+                notifyItemInserted(itemCount)
+
+                messageModel.binding.welcomeMessageLayout.visibility = View.GONE
+            }
+        }
+
         return messageResponses.size
     }
 
     class MyViewHolder(val binding: RecyclerMessageBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    private fun append(messageResponses: Array<MessageResponse>, messageResponse: MessageResponse): Array<MessageResponse> {
+        val messageResponseList: MutableList<MessageResponse> = messageResponses.toMutableList()
+        messageResponseList.add(messageResponse)
+        return messageResponseList.toTypedArray()
+    }
+
+    companion object {
+        const val TAG = "MessageAdapter"
+    }
 }
 
 
