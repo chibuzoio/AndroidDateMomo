@@ -1,6 +1,5 @@
 package com.example.datemomo.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +7,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
-import com.example.datemomo.activity.MessengerActivity
 import com.example.datemomo.databinding.RecyclerMessengerBinding
 import com.example.datemomo.model.MessengerModel
 import com.example.datemomo.model.response.MessengerResponse
@@ -25,8 +23,6 @@ class MessengerAdapter(private val messengerResponses: Array<MessengerResponse>,
         val messengerPropertyLeftPadding = holder.binding.messengerPropertyLayout.paddingLeft
         val imageLayoutHeight = ((messengerModel.deviceWidth - messengerPropertyLeftPadding) * 16) / 100
         val imageHeight = imageLayoutHeight - ((imageLayoutHeight * 5) / 100)
-
-        Log.e(MessengerActivity.TAG, "messengerPropertyLeftPadding value here is $messengerPropertyLeftPadding")
 
         holder.binding.messengerProfilePicture.layoutParams.width = imageHeight
         holder.binding.messengerProfilePicture.layoutParams.height = imageHeight

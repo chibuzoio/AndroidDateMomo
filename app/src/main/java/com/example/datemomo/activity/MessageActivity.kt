@@ -18,6 +18,7 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.MessageAdapter
 import com.example.datemomo.adapter.MessengerAdapter
 import com.example.datemomo.databinding.ActivityMessageBinding
+import com.example.datemomo.model.MessageModel
 import com.example.datemomo.model.MessengerModel
 import com.example.datemomo.model.response.MessageResponse
 import com.example.datemomo.model.response.MessengerResponse
@@ -71,8 +72,38 @@ class MessageActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        binding.messageMenuLayout.setOnClickListener {
+
+        }
+
+        binding.receiverUserName.setOnClickListener {
+
+        }
+
+        binding.profilePictureLayout.setOnClickListener {
+
+        }
+
+        binding.backArrowLayout.setOnClickListener {
+
+        }
+
         Glide.with(this)
-            .load(ContextCompat.getDrawable(this, R.drawable.image11))
+            .asGif()
+            .load(R.drawable.hello_message)
+            .into(binding.welcomeHelloMessage)
+
+        binding.receiverUserName.text = bundle.getString("fullName")!!.ifEmpty {
+            bundle.getString("userName")
+        }
+        binding.lastActiveTime.text = bundle.getString("lastActiveTime")!!.ifEmpty {
+            "online"
+        }
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api)
+                    + getString(R.string.api_image)
+                    + bundle.getString("profilePicture"))
             .transform(CenterCrop(), CircleCrop())
             .into(binding.receiverProfilePicture)
 
@@ -80,11 +111,20 @@ class MessageActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             messageResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
+            if (messageResponseArray.isEmpty()) {
+                binding.welcomeMessageLayout.visibility = View.VISIBLE
+            } else {
+                binding.welcomeMessageLayout.visibility = View.GONE
+            }
+
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.messageRecyclerView.layoutManager = layoutManager
             binding.messageRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val messageAdapter = MessageAdapter(messageResponseArray)
+            val messageModel = MessageModel(bundle.getInt("senderId"),
+                bundle.getInt("receiverId"), binding)
+
+            val messageAdapter = MessageAdapter(messageResponseArray, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter
         } catch (exception: IOException) {
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")

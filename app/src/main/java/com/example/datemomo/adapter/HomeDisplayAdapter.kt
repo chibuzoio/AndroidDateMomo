@@ -161,7 +161,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
     private fun processUserDataView(context: Context, position: Int) {
         var userPicturePosition = 0
         this.messageRequest = MessageRequest(sharedPreferences.getInt("memberId", 0),
-            homeDisplayResponses[position].memberId)
+            homeDisplayResponses[position].memberId, homeDisplayResponses[position].fullName,
+            homeDisplayResponses[position].userName, "", homeDisplayResponses[position].profilePicture)
 
         for ((index, userPictureModel) in homeDisplayResponses[position].userPictureModels.withIndex()) {
             if (userPictureModel.imageName == homeDisplayResponses[position].profilePicture) {
@@ -201,7 +202,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .into(homeDisplayModel.binding.userImagePlaceholder)
 
         Glide.with(context)
-            .load(context.getString(R.string.date_momo_api) + context.getString(R.string.api_image)
+            .load(context.getString(R.string.date_momo_api)
+                    + context.getString(R.string.api_image)
                     + homeDisplayResponses[position].profilePicture)
             .transform(RoundedCorners(37))
             .into(homeDisplayModel.binding.userInformationImage)

@@ -136,7 +136,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
-        
+
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
@@ -384,6 +384,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 Log.e(TAG, "Response from the server for querying all messages for a particular recipient is $myResponse")
+                intent.putExtra("profilePicture", messageRequest.profilePicture)
+                intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
+                intent.putExtra("receiverId", messageRequest.receiverId)
+                intent.putExtra("userName", messageRequest.userName)
+                intent.putExtra("senderId", messageRequest.senderId)
+                intent.putExtra("fullName", messageRequest.fullName)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
             }
