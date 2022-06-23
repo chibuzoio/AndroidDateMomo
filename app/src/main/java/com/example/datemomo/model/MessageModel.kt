@@ -1,6 +1,7 @@
 package com.example.datemomo.model
 
 import android.content.Context
+import com.example.datemomo.activity.MessageActivity
 import com.example.datemomo.databinding.ActivityMessageBinding
 import kotlinx.serialization.Serializable
 
@@ -9,6 +10,7 @@ data class MessageModel(var senderId: Int,
                         var receiverId: Int,
                         var context: Context,
                         var messengerTableName: String,
-                        var binding: ActivityMessageBinding)
+                        var binding: ActivityMessageBinding,
+                        var messageActivity: MessageActivity)
 
 

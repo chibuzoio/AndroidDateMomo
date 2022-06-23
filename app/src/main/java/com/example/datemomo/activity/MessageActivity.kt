@@ -123,7 +123,8 @@ class MessageActivity : AppCompatActivity() {
 
             val messageModel = MessageModel(bundle.getInt("senderId"),
                 bundle.getInt("receiverId"), this,
-                bundle.getString("messengerTableName")!!, binding)
+                bundle.getString("messengerTableName")!!,
+                binding, this)
 
             val messageAdapter = MessageAdapter(messageResponseArray, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter

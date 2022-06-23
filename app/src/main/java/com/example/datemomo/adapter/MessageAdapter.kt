@@ -63,7 +63,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 messageModel.binding.welcomeMessageLayout.visibility = View.GONE
 
                 val postMessageRequest = PostMessageRequest(messageModel.senderId,
-                    insertPosition, senderMessage, messageModel.messengerTableName)
+                    messageModel.receiverId, insertPosition, senderMessage, messageModel.messengerTableName)
 
                 postSenderMessage(messageModel.context, postMessageRequest)
             }
@@ -112,8 +112,15 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                         postMessageResponse.messageDate
                     )
 
+                    Log.e(TAG, "Message position here before and after committing message " +
+                            "to the server are ${postMessageRequest.messagePosition} and " +
+                            "${postMessageResponse.messagePosition}. MessageId here is ${postMessageResponse.messageId}")
+
                     messageResponses[postMessageResponse.messagePosition] = messageResponse
-                    notifyItemChanged(postMessageResponse.messagePosition)
+
+                    messageModel.messageActivity.runOnUiThread {
+                        notifyItemChanged(postMessageResponse.messagePosition)
+                    }
 
                     Log.e(TAG, "Response from server updated and the actual item on array data has been changed!!!!!!")
                 } catch (exception: IOException) {
