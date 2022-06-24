@@ -9,7 +9,6 @@ import kotlinx.serialization.Serializable
 data class MessageModel(var senderId: Int,
                         var receiverId: Int,
                         var context: Context,
-                        var messengerTableName: String,
                         var binding: ActivityMessageBinding,
                         var messageActivity: MessageActivity)
 

@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
 import com.example.datemomo.adapter.MessengerAdapter
 import com.example.datemomo.databinding.ActivityMessengerBinding
+import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.MessengerModel
 import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.MessengerResponse
 import com.example.datemomo.utility.Utility
@@ -31,7 +33,8 @@ class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private lateinit var requestProcess: String
+    private var requestProcess: String = ""
+    private lateinit var messageRequest: MessageRequest
     private lateinit var originalRequestProcess: String
     private lateinit var binding: ActivityMessengerBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -131,25 +134,6 @@ class MessengerActivity : AppCompatActivity() {
             fetchUserLikers()
         }
 
-        /*
-            messengerResponseArray = arrayOf(
-                MessengerResponse(1, "", "Memphis",
-                    "How do you do?", "profile165385261200006.png",
-                    "436436457", 3),
-                MessengerResponse(2, "", "Chisom",
-                    "Hello dear!", "profile165385261200006.png",
-                    "436436457", 0),
-                MessengerResponse(3, "", "Precious",
-                    "He collected the package", "profile165385261200006.png",
-                    "436436457", 5),
-                MessengerResponse(4, "", "Chioma",
-                    "I love you!", "profile165385261200006.png",
-                    "436436457", 2),
-                MessengerResponse(5, "", "Memphis",
-                    "Who are you?", "profile165385261200006.png",
-                    "436436457", 0))
-        */
-
         try {
             val mapper = jacksonObjectMapper()
             messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
@@ -158,13 +142,62 @@ class MessengerActivity : AppCompatActivity() {
             binding.messengerRecyclerView.layoutManager = layoutManager
             binding.messengerRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val messengerModel = MessengerModel(deviceWidth)
+            val messengerModel = MessengerModel(deviceWidth, requestProcess, binding, this)
 
             val messengerAdapter = MessengerAdapter(messengerResponseArray, messengerModel)
             binding.messengerRecyclerView.adapter = messengerAdapter
         } catch (exception: IOException) {
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserMessages(messageRequest: MessageRequest) {
+        val mapper = jacksonObjectMapper()
+        this.messageRequest = messageRequest
+
+        val jsonObjectString = mapper.writeValueAsString(messageRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messages_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, MessageActivity::class.java)
+                intent.putExtra("profilePicture", messageRequest.profilePicture)
+                intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
+                intent.putExtra("receiverId", messageRequest.receiverId)
+                intent.putExtra("userName", messageRequest.userName)
+                intent.putExtra("senderId", messageRequest.senderId)
+                intent.putExtra("fullName", messageRequest.fullName)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -285,6 +318,7 @@ class MessengerActivity : AppCompatActivity() {
     private fun triggerRequestProcess() {
         when (requestProcess) {
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
+            getString(R.string.request_fetch_user_messages) -> fetchUserMessages(messageRequest)
             getString(R.string.request_fetch_matched_users) -> fetchUserLikers()
         }
     }

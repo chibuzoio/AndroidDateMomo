@@ -165,8 +165,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             homeDisplayResponses[position].memberId,
             homeDisplayResponses[position].fullName,
             homeDisplayResponses[position].userName, "",
-            homeDisplayResponses[position].profilePicture,
-            homeDisplayResponses[position].messengerTableName)
+            homeDisplayResponses[position].profilePicture)
 
         for ((index, userPictureModel) in homeDisplayResponses[position].userPictureModels.withIndex()) {
             if (userPictureModel.imageName == homeDisplayResponses[position].profilePicture) {

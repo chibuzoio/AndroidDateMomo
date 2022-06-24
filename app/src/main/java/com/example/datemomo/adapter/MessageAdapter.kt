@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerMessageBinding
 import com.example.datemomo.model.MessageModel
-import com.example.datemomo.model.request.LikeUserRequest
 import com.example.datemomo.model.request.PostMessageRequest
-import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.MessageResponse
 import com.example.datemomo.model.response.PostMessageResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -63,7 +61,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 messageModel.binding.welcomeMessageLayout.visibility = View.GONE
 
                 val postMessageRequest = PostMessageRequest(messageModel.senderId,
-                    messageModel.receiverId, insertPosition, senderMessage, messageModel.messengerTableName)
+                    messageModel.receiverId, insertPosition, senderMessage)
 
                 postSenderMessage(messageModel.context, postMessageRequest)
             }
@@ -112,17 +110,11 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                         postMessageResponse.messageDate
                     )
 
-                    Log.e(TAG, "Message position here before and after committing message " +
-                            "to the server are ${postMessageRequest.messagePosition} and " +
-                            "${postMessageResponse.messagePosition}. MessageId here is ${postMessageResponse.messageId}")
-
                     messageResponses[postMessageResponse.messagePosition] = messageResponse
 
                     messageModel.messageActivity.runOnUiThread {
                         notifyItemChanged(postMessageResponse.messagePosition)
                     }
-
-                    Log.e(TAG, "Response from server updated and the actual item on array data has been changed!!!!!!")
                 } catch (exception: IOException) {
                     Log.e(TAG, "Exception from postSenderMessage is ${exception.message}")
                 }

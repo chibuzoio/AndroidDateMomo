@@ -8,7 +8,6 @@ data class MessageRequest(var senderId: Int,
                           var fullName: String,
                           var userName: String,
                           var lastActiveTime: String,
-                          var profilePicture: String,
-                          var messengerTableName: String)
+                          var profilePicture: String)
 
 
