@@ -15,10 +15,12 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.datemomo.MainActivity
 import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
@@ -221,7 +223,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
         } else {
-            super.onBackPressed()
+            finishAffinity()
         }
     }
 
@@ -382,6 +384,14 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                sharedPreferencesEditor.putString(getString(R.string.intent_origin), getString(R.string.origin_home_display_activity))
+                sharedPreferencesEditor.apply()
+
+                runOnUiThread {
+                    binding.userInformationLayout.visibility = View.GONE
+                }
+
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
@@ -431,8 +441,11 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                sharedPreferencesEditor.putString(getString(R.string.intent_origin), getString(R.string.origin_home_display_activity))
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, MessengerActivity::class.java)
-                Log.e(TAG, "My response value here before navigating to MessengerActivity is $myResponse")
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
             }

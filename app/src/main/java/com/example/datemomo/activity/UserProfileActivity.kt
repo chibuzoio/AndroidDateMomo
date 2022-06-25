@@ -454,7 +454,12 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        if (sharedPreferences.getString(getString(R.string.intent_origin), "") ==
+            getString(R.string.origin_home_display_activity)) {
+            fetchMatchedUsers()
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun initializeSixthLikerLayout() {

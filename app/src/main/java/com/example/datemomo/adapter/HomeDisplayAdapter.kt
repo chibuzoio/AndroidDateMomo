@@ -175,6 +175,9 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         homeDisplayResponses[position].userPictureModels
 
+        sharedPreferencesEditor.putBoolean(context.getString(R.string.user_information_layout_visible), true)
+        sharedPreferencesEditor.apply()
+
         val imageWidth = homeDisplayModel.deviceWidth - Utility.dimen(context, 23f)
         val imageHeight = (homeDisplayResponses[position].userPictureModels[userPicturePosition].imageHeight *
                 (homeDisplayModel.deviceWidth - Utility.dimen(context, 23f))) /

@@ -151,6 +151,15 @@ class MessengerActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (sharedPreferences.getString(getString(R.string.intent_origin), "") ==
+            getString(R.string.origin_home_display_activity)) {
+            fetchMatchedUsers()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     @Throws(IOException::class)
     fun fetchUserMessages(messageRequest: MessageRequest) {
         val mapper = jacksonObjectMapper()
