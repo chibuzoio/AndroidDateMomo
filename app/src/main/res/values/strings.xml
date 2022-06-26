@@ -6,8 +6,11 @@
     <string name="shared_preferences">DateMomoPreferences</string>
 
     <!-- Intent Activity Origin -->
-    <string name="origin_main_activity">MainActivity</string>
-    <string name="origin_home_display_activity">HomeDisplayActivity</string>
+    <string name="activity_main">MainActivity</string>
+    <string name="activity_message">MessageActivity</string>
+    <string name="activity_messenger">MessengerActivity</string>
+    <string name="activity_home_display">HomeDisplayActivity</string>
+    <string name="activity_user_profile">UserProfileActivity</string>
 
     <string name="clicked_home_menu">clickedHomeMenu</string>
     <string name="clicked_account_menu">clickedAccountMenu</string>
@@ -86,8 +89,8 @@
     <string name="gay_interest">gayInterest</string>
     <string name="phone_number">phoneNumber</string>
     <string name="email_address">emailAddress</string>
-    <string name="intent_origin">intentOrigin</string>
     <string name="authenticated">authenticated</string>
+    <string name="activity_stack">activityStack</string>
     <string name="orgy_experience">orgyExperience</string>
     <string name="profile_picture">profilePicture</string>
     <string name="toy_boy_category">toyBoyCategory</string>

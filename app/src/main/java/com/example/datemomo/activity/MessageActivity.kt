@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,14 +16,11 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
 import com.example.datemomo.adapter.MessageAdapter
-import com.example.datemomo.adapter.MessengerAdapter
 import com.example.datemomo.databinding.ActivityMessageBinding
+import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.MessageModel
-import com.example.datemomo.model.MessengerModel
 import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.response.MessageResponse
-import com.example.datemomo.model.response.MessengerResponse
-import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -137,11 +133,19 @@ class MessageActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (sharedPreferences.getString(getString(R.string.intent_origin), "") ==
-            getString(R.string.origin_home_display_activity)) {
-            fetchMatchedUsers()
-        } else {
-            super.onBackPressed()
+        val mapper = jacksonObjectMapper()
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        activityStackModel.activityStack.pop()
+
+        val activityStackString = mapper.writeValueAsString(activityStackModel)
+        sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+        sharedPreferencesEditor.apply()
+
+        when (activityStackModel.activityStack.peek()) {
+            getString(R.string.activity_home_display) -> fetchMatchedUsers()
+            else -> super.onBackPressed()
         }
     }
     

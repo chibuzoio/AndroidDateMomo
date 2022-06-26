@@ -15,12 +15,11 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.datemomo.MainActivity
 import com.example.datemomo.R
 import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
+import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.HomeDisplayModel
-import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
@@ -194,7 +193,7 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.homeDisplayRecyclerView.layoutManager = layoutManager
             binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            this.homeDisplayModel = HomeDisplayModel(deviceWidth, requestProcess,
+            homeDisplayModel = HomeDisplayModel(deviceWidth, requestProcess,
                 buttonClickEffect, binding, this)
 
             val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, homeDisplayModel)
@@ -385,7 +384,11 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
 
-                sharedPreferencesEditor.putString(getString(R.string.intent_origin), getString(R.string.origin_home_display_activity))
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_message))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
                 runOnUiThread {
@@ -442,8 +445,16 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
 
-                sharedPreferencesEditor.putString(getString(R.string.intent_origin), getString(R.string.origin_home_display_activity))
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_messenger))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                runOnUiThread {
+                    binding.userInformationLayout.visibility = View.GONE
+                }
 
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -488,6 +499,18 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                runOnUiThread {
+                    binding.userInformationLayout.visibility = View.GONE
+                }
+
                 val intent = Intent(baseContext, UserProfileActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)

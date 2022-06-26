@@ -33,6 +33,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.activity.HomeDisplayActivity
 import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
+import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.UserNameModel
 import com.example.datemomo.model.request.AuthenticationRequest
 import com.example.datemomo.model.request.HomeDisplayRequest
@@ -50,6 +51,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private var userAge = 0
@@ -1044,6 +1046,13 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStack = Stack<String>()
+                activityStack.push(getString(R.string.activity_home_display))
+                val activityStackString = mapper.writeValueAsString(ActivityStackModel(activityStack))
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)

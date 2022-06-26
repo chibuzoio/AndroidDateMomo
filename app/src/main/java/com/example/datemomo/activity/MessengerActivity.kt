@@ -14,9 +14,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.datemomo.MainActivity
 import com.example.datemomo.R
 import com.example.datemomo.adapter.MessengerAdapter
 import com.example.datemomo.databinding.ActivityMessengerBinding
+import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.MessengerModel
 import com.example.datemomo.model.request.HomeDisplayRequest
@@ -28,6 +30,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -152,11 +155,20 @@ class MessengerActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (sharedPreferences.getString(getString(R.string.intent_origin), "") ==
-            getString(R.string.origin_home_display_activity)) {
-            fetchMatchedUsers()
-        } else {
-            super.onBackPressed()
+        val mapper = jacksonObjectMapper()
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        activityStackModel.activityStack.pop()
+
+        val activityStackString = mapper.writeValueAsString(activityStackModel)
+        sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+        sharedPreferencesEditor.apply()
+
+        when (activityStackModel.activityStack.peek()) {
+            getString(R.string.activity_home_display) -> fetchMatchedUsers()
+            getString(R.string.activity_user_profile) -> fetchUserLikers()
+            else -> super.onBackPressed()
         }
     }
 
@@ -196,6 +208,14 @@ class MessengerActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_message))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
@@ -274,6 +294,14 @@ class MessengerActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_home_display))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -317,6 +345,14 @@ class MessengerActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, UserProfileActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)

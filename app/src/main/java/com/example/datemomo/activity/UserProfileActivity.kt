@@ -13,20 +13,15 @@ import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginStart
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
-import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityUserProfileBinding
-import com.example.datemomo.model.HomeDisplayModel
+import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.request.HomeDisplayRequest
 import com.example.datemomo.model.request.UserLikerRequest
-import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -454,11 +449,20 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (sharedPreferences.getString(getString(R.string.intent_origin), "") ==
-            getString(R.string.origin_home_display_activity)) {
-            fetchMatchedUsers()
-        } else {
-            super.onBackPressed()
+        val mapper = jacksonObjectMapper()
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        activityStackModel.activityStack.pop()
+
+        val activityStackString = mapper.writeValueAsString(activityStackModel)
+        sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+        sharedPreferencesEditor.apply()
+
+        when (activityStackModel.activityStack.peek()) {
+            getString(R.string.activity_home_display) -> fetchMatchedUsers()
+            getString(R.string.activity_messenger) -> fetchUserMessengers()
+            else -> super.onBackPressed()
         }
     }
 
@@ -647,6 +651,14 @@ class UserProfileActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_messenger))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -723,6 +735,14 @@ class UserProfileActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_home_display))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
