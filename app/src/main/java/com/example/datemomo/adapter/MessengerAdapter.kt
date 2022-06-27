@@ -3,6 +3,7 @@ package com.example.datemomo.adapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,10 +12,11 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerMessengerBinding
 import com.example.datemomo.model.MessengerModel
+import com.example.datemomo.model.request.DeleteMessageRequest
 import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.response.MessengerResponse
 
-class MessengerAdapter(private val messengerResponses: Array<MessengerResponse>, private val messengerModel: MessengerModel) :
+class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
@@ -59,6 +61,38 @@ class MessengerAdapter(private val messengerResponses: Array<MessengerResponse>,
         holder.binding.messageStatusTime.text = messengerResponses[position].lastMessageDate
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
 
+        holder.binding.messengerPropertyLayout.setOnLongClickListener {
+            messengerModel.binding.messengerMenuLayout.visibility = View.VISIBLE
+            messengerModel.currentPosition = position
+            return@setOnLongClickListener true
+        }
+
+        messengerModel.binding.userInfoMenu.setOnClickListener {
+            messengerModel.messengerActivity.fetchUserInformation(messengerResponses[messengerModel.currentPosition].chatmateId)
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+        }
+
+        messengerModel.binding.deleteChatsMenu.setOnClickListener {
+            /*
+            * 0 = None deleted the message
+            * 1 = Sender deleted the message
+            * 2 = Receiver Deleted the message
+            * 3 = Delete for everyone and can only be effected by the sender
+            * */
+
+            val deleteMessageRequest = DeleteMessageRequest(
+                sharedPreferences.getInt(holder.itemView.context.getString(R.string.member_id), 0),
+                messengerResponses[messengerModel.currentPosition].messageTableName)
+            messengerModel.messengerActivity.deleteMessengerMessages(deleteMessageRequest)
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+            messengerResponses = removeAt(messengerModel.currentPosition)
+            notifyItemRemoved(messengerModel.currentPosition)
+        }
+
+        messengerModel.binding.cancelMenu.setOnClickListener {
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+        }
+
         holder.binding.messengerPropertyLayout.setOnClickListener {
             messengerModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_messages)
 
@@ -81,6 +115,12 @@ class MessengerAdapter(private val messengerResponses: Array<MessengerResponse>,
 
     class MyViewHolder(val binding: RecyclerMessengerBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    private fun removeAt(position: Int): Array<MessengerResponse> {
+        val messengerResponseList = messengerResponses.toMutableList()
+        messengerResponseList.removeAt(position)
+        return messengerResponseList.toTypedArray()
+    }
 
     companion object {
         const val TAG = "MessengerAdapter"

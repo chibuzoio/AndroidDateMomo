@@ -3,6 +3,6 @@ package com.example.datemomo.model.request
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserLikerRequest(var memberId: Int)
+data class UserInformationRequest(var memberId: Int)
 
 

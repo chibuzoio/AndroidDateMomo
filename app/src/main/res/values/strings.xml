@@ -11,6 +11,7 @@
     <string name="activity_messenger">MessengerActivity</string>
     <string name="activity_home_display">HomeDisplayActivity</string>
     <string name="activity_user_profile">UserProfileActivity</string>
+    <string name="activity_user_information">UserInformationActivity</string>
 
     <string name="clicked_home_menu">clickedHomeMenu</string>
     <string name="clicked_account_menu">clickedAccountMenu</string>
@@ -69,11 +70,13 @@
     <string name="api_register_member">service/registermember.php</string>
     <string name="api_user_biometrics">service/userbiometrics.php</string>
     <string name="api_user_likers_data">service/userlikersdata.php</string>
+    <string name="api_user_information">service/userinformation.php</string>
     <string name="api_matched_user_data">service/matcheduserdata.php</string>
     <string name="api_user_messages_data">service/usermessagesdata.php</string>
     <string name="api_user_status_update">service/userstatusupdate.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
+    <string name="api_delete_messenger_messages">service/deletemessengermessages.php</string>
 
     <!-- Shared Preferences Keys -->
     <string name="age">age</string>

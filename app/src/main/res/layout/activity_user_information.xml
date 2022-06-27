@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <FrameLayout
+                        android:id="@+id/checkFrameStartMargin"
+                        android:layout_marginTop="11dp"
+                        android:layout_marginStart="11dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <FrameLayout
+                            android:foregroundGravity="center"
+                            android:background="@drawable/profile_picture_cover"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp">
+
+                            <ImageView
+                                android:id="@+id/profilePicturePlaceholder"
+                                android:layout_margin="7dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                            <ImageView
+                                android:id="@+id/accountProfilePicture"
+                                android:layout_margin="7dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                        </FrameLayout>
+
+                        <ImageView
+                            android:layout_marginEnd="7dp"
+                            android:layout_marginBottom="7dp"
+                            android:layout_gravity="bottom|end"
+                            android:src="@drawable/icon_camera_blue"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"/>
+
+                    </FrameLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:gravity="bottom"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="11dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/userFullName"
+                            android:textSize="23sp"
+                            android:textStyle="bold"
+                            android:text="Floxy, 33"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/userLocation"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:text="Minarelikoy"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/userStatusText"
+                            android:textSize="17sp"
+                            android:layout_marginTop="7dp"
+                            android:text="@string/status_default"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_marginTop="23dp"
+                        android:paddingHorizontal="15dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_marginHorizontal="11dp"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/photoGalleryButton"
+                            layout="@layout/include_icon_hollow_blue_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_marginTop="23dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_horizontal"
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/userMessageButton"
+                            layout="@layout/include_icon_hollow_blue_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/userSexualityLayout"
+                    android:orientation="vertical"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/userSexualityTitle"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:text="My Sexuality"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/userSexualityOptions"
+                        app:flexWrap="wrap"
+                        app:alignItems="stretch"
+                        app:alignContent="stretch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/userBisexual"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userGay"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userLesbian"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userStraight"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userSugarDaddy"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userSugarMommy"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userToyBoy"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/userToyGirl"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <TextView
+                        android:id="@+id/userInterestTitle"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:text="My Interests"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/userInterestOptions"
+                        app:flexWrap="wrap"
+                        app:alignItems="stretch"
+                        app:alignContent="stretch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/bisexualInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/gayInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/lesbianInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/straightInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/sugarDaddyInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/sugarMommyInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/toyBoyInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/toyGirlInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <TextView
+                        android:id="@+id/userExperienceTitle"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:text="My Experiences"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/sexExperienceOptions"
+                        app:flexWrap="wrap"
+                        app:alignItems="stretch"
+                        app:alignContent="stretch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <include
+                            android:id="@+id/sixtyNineExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/analSexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/givenHeadExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/oneNightStandExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/orgySexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/poolSexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/receivedHeadExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/carSexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/publicSexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/cameraSexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/threesomeExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/sexToyExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/videoSexExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+        <include
+            android:id="@+id/doubleButtonDialog"
+            layout="@layout/include_double_button_dialog"/>
+
+        <include
+            android:id="@+id/singleButtonDialog"
+            layout="@layout/include_single_button_dialog"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/progressIconLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:layout_marginBottom="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/progressIconImage"
+                android:layout_width="111dp"
+                android:layout_height="111dp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

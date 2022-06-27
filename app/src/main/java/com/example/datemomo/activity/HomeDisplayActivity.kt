@@ -34,7 +34,6 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
@@ -47,7 +46,6 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var homeDisplayModel: HomeDisplayModel
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var homeDisplayResponse: HomeDisplayResponse
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var homeDisplayResponseArray: Array<HomeDisplayResponse>
 
