@@ -38,8 +38,8 @@
         <entry key="app/src/main/res/layout/activity_message.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_messenger.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_user_bio.xml" value="0.1796875" />
-        <entry key="app/src/main/res/layout/activity_user_information.xml" value="0.19375" />
-        <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.18854166666666666" />
+        <entry key="app/src/main/res/layout/activity_user_information.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.1" />
         <entry key="app/src/main/res/layout/generic_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_blue_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_bottom_navigation_layout.xml" value="0.18958333333333333" />
@@ -55,7 +55,7 @@
         <entry key="app/src/main/res/layout/include_single_button_error.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/recycler_home_display.xml" value="0.10597826086956522" />
         <entry key="app/src/main/res/layout/recycler_message.xml" value="0.19375" />
-        <entry key="app/src/main/res/layout/recycler_messenger.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/recycler_messenger.xml" value="0.1" />
         <entry key="app/src/main/res/layout/splash_screen.xml" value="0.1796875" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.1796875" />
       </map>

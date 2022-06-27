@@ -105,13 +105,14 @@
                             <TextView
                                 android:id="@+id/userStatusText"
                                 android:textSize="17sp"
+                                android:layout_weight="8"
                                 android:layout_marginEnd="11dp"
                                 android:textColor="@color/edit_text"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"/>
 
                             <View
-                                android:layout_weight="1"
+                                android:layout_weight="0.3"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"/>
 
@@ -119,10 +120,10 @@
                                 android:id="@+id/userMessageButton"
                                 android:padding="15dp"
                                 android:gravity="center"
+                                android:layout_weight="1.7"
                                 android:orientation="vertical"
-                                android:layout_marginEnd="15dp"
                                 android:background="@drawable/message_status_counter"
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content">
 
                                 <ImageView

@@ -124,7 +124,7 @@
                     <ImageView
                         android:id="@+id/welcomeHelloMessage"
                         android:layout_width="wrap_content"
-                        android:layout_height="230dp"/>
+                        android:layout_height="171dp"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

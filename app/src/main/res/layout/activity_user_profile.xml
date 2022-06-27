@@ -39,8 +39,8 @@
                         <FrameLayout
                             android:foregroundGravity="center"
                             android:background="@drawable/profile_picture_cover"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp">
+                            android:layout_width="125dp"
+                            android:layout_height="125dp">
 
                             <ImageView
                                 android:id="@+id/profilePicturePlaceholder"
@@ -61,8 +61,8 @@
                             android:layout_marginBottom="7dp"
                             android:layout_gravity="bottom|end"
                             android:src="@drawable/icon_camera_blue"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"/>
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"/>
 
                     </FrameLayout>
 
@@ -78,7 +78,6 @@
                             android:id="@+id/userFullName"
                             android:textSize="23sp"
                             android:textStyle="bold"
-                            android:text="Floxy, 33"
                             android:textColor="@color/edit_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -107,7 +106,6 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_marginTop="23dp"
-                    android:paddingHorizontal="15dp"
                     android:orientation="horizontal"
                     android:gravity="center_horizontal"
                     android:layout_marginHorizontal="11dp"
