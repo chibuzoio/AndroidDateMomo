@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -31,11 +32,13 @@ import java.io.IOException
 
 class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
+    private var leastRootViewHeight: Int = 0
     private lateinit var requestProcess: String
     private lateinit var originalRequestProcess: String
     private lateinit var binding: ActivityMessageBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var viewRootHeightArray: MutableSet<Int>
     private lateinit var messageResponseArray: Array<MessageResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -48,6 +51,8 @@ class MessageActivity : AppCompatActivity() {
         hideSystemUI()
 
         bundle = intent.extras!!
+
+        viewRootHeightArray = mutableSetOf()
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
@@ -90,13 +95,29 @@ class MessageActivity : AppCompatActivity() {
             .into(binding.receiverProfilePicture)
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
-//            Log.e(TAG, "Height of window on window load complete is ${binding.root.height}")
+            viewRootHeightArray.add(binding.root.height)
+
+            if (viewRootHeightArray.size >= 3) {
+                leastRootViewHeight = viewRootHeightArray.elementAt(0)
+
+                for (viewRootHeight in viewRootHeightArray) {
+                    if (viewRootHeight < leastRootViewHeight) {
+                        leastRootViewHeight = viewRootHeight
+                    }
+                }
+            }
+
+            if (binding.root.height > leastRootViewHeight && leastRootViewHeight > 0) {
+                binding.messageInputField.clearFocus()
+                viewRootHeightArray = mutableSetOf()
+                leastRootViewHeight = 0
+                hideSystemUI()
+            }
         }
 
         binding.messageInputField.setOnFocusChangeListener { _, focused ->
             if (focused) {
                 showSystemUI()
-                Log.e(TAG, "Height of window on messageInputField focused is ${binding.root.height}")
             } else {
                 hideSystemUI()
             }
@@ -127,7 +148,18 @@ class MessageActivity : AppCompatActivity() {
         }
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        Log.e(TAG, "The particular key that was pressed here is $keyCode")
+
+        return super.onKeyDown(keyCode, event)
+    }
+
     override fun onBackPressed() {
+        if (binding.messageInputField.isFocused) {
+            Log.e(TAG, "binding.messageInputField is currently focused!!!!!!!!!!!!")
+            binding.messageInputField.clearFocus()
+        }
+
         val mapper = jacksonObjectMapper()
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
