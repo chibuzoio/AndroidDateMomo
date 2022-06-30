@@ -91,7 +91,7 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
             * 3 = Delete for everyone and can only be effected by the sender
             * */
 
-            // Display sub menu that will confirm that you really want to delete the messenger messages
+            messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.GONE
 
             val deleteMessageRequest = DeleteMessageRequest(
                 sharedPreferences.getInt(holder.itemView.context.getString(R.string.member_id), 0),

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +24,11 @@ import com.example.datemomo.adapter.MessageAdapter
 import com.example.datemomo.databinding.ActivityMessageBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.MessageModel
+import com.example.datemomo.model.request.DeleteChatRequest
+import com.example.datemomo.model.request.DeleteMessageRequest
+import com.example.datemomo.model.request.EditMessageRequest
 import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.MessageResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -59,8 +64,45 @@ class MessageActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        binding.messageMenuLayout.setOnClickListener {
+        binding.messengerMenuCancel.setOnClickListener {
+            binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            binding.messengerMenuLayout.visibility = View.GONE
+            binding.messageEditMenu.visibility = View.VISIBLE
+            binding.messageMenuLayout.visibility = View.GONE
+        }
 
+        binding.messageMenuCancel.setOnClickListener {
+            binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            binding.messengerMenuLayout.visibility = View.GONE
+            binding.messageEditMenu.visibility = View.VISIBLE
+            binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        binding.messageMenuLayout.setOnClickListener {
+            binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            binding.messengerMenuLayout.visibility = View.GONE
+            binding.messageEditMenu.visibility = View.VISIBLE
+            binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        binding.messengerMenuLayout.setOnClickListener {
+            binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            binding.messengerMenuLayout.visibility = View.GONE
+            binding.messageEditMenu.visibility = View.VISIBLE
+            binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        binding.messageMenuIcon.setOnClickListener {
+            binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            binding.messageEditMenu.visibility = View.VISIBLE
+
+            if (binding.messengerMenuLayout.isVisible) {
+                binding.messengerMenuLayout.visibility = View.GONE
+                binding.messageMenuLayout.visibility = View.GONE
+            } else {
+                binding.messengerMenuLayout.visibility = View.VISIBLE
+                binding.messageMenuLayout.visibility = View.GONE
+            }
         }
 
         binding.receiverUserName.setOnClickListener {
@@ -139,7 +181,7 @@ class MessageActivity : AppCompatActivity() {
 
             val messageModel = MessageModel(bundle.getInt("senderId"),
                 bundle.getInt("receiverId"), this,
-                binding, this)
+                0, binding, this)
 
             val messageAdapter = MessageAdapter(messageResponseArray, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter
@@ -180,7 +222,61 @@ class MessageActivity : AppCompatActivity() {
             else -> super.onBackPressed()
         }
     }
-    
+
+    @Throws(IOException::class)
+    fun editSingleMessage(editMessageRequest: EditMessageRequest) {
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(editMessageRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_edit_message))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    fun deleteSingleMessage(deleteChatRequest: DeleteChatRequest) {
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(deleteChatRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_delete_message))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+            }
+        })
+    }
+
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()

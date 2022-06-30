@@ -64,9 +64,11 @@
 <!--    <string name="api_web_socket_test">ws://localhost:9090/</string>-->
     <string name="api_image">client/image/</string>
     <string name="api_like_user">service/likeuser.php</string>
+    <string name="api_edit_message">service/editmessage.php</string>
     <string name="api_login_member">service/loginmember.php</string>
     <string name="api_post_message">service/postmessage.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
+    <string name="api_delete_message">service/deletemessage.php</string>
     <string name="api_register_member">service/registermember.php</string>
     <string name="api_user_biometrics">service/userbiometrics.php</string>
     <string name="api_user_likers_data">service/userlikersdata.php</string>

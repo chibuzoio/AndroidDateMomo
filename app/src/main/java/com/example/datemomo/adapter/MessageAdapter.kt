@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerMessageBinding
 import com.example.datemomo.model.MessageModel
+import com.example.datemomo.model.request.DeleteChatRequest
+import com.example.datemomo.model.request.EditMessageRequest
 import com.example.datemomo.model.request.PostMessageRequest
 import com.example.datemomo.model.response.MessageResponse
 import com.example.datemomo.model.response.PostMessageResponse
@@ -19,6 +21,7 @@ import java.io.IOException
 
 class MessageAdapter(private var messageResponses: Array<MessageResponse>, private val messageModel: MessageModel) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
+    private var editMessageMode: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,6 +29,73 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        messageModel.binding.messageEditMenu.setOnClickListener {
+            editMessageMode = true
+
+            messageModel.binding.messageInputField.setText(messageResponses[messageModel.currentPosition].message)
+
+            messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            messageModel.binding.messengerMenuLayout.visibility = View.GONE
+            messageModel.binding.messageEditMenu.visibility = View.VISIBLE
+            messageModel.binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        messageModel.binding.deleteForEveryoneMenu.setOnClickListener {
+            val deleteChatRequest = DeleteChatRequest(messageModel.senderId,
+                messageResponses[messageModel.currentPosition].messageId,
+                messageModel.receiverId, 3)
+            messageModel.messageActivity.deleteSingleMessage(deleteChatRequest)
+            messageResponses = removeAt(messageModel.currentPosition)
+            notifyItemRemoved(messageModel.currentPosition)
+
+            messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            messageModel.binding.messengerMenuLayout.visibility = View.GONE
+            messageModel.binding.messageEditMenu.visibility = View.VISIBLE
+            messageModel.binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        messageModel.binding.deleteForMeMenu.setOnClickListener {
+            val deleteMessageType = if (messageModel.senderId ==
+                messageResponses[messageModel.currentPosition].messenger) {
+                1
+            } else {
+                2
+            }
+
+            val deleteChatRequest = DeleteChatRequest(messageModel.senderId,
+                messageResponses[messageModel.currentPosition].messageId,
+                messageModel.receiverId, deleteMessageType)
+            messageModel.messageActivity.deleteSingleMessage(deleteChatRequest)
+            messageResponses = removeAt(messageModel.currentPosition)
+            notifyItemRemoved(messageModel.currentPosition)
+
+            messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            messageModel.binding.messengerMenuLayout.visibility = View.GONE
+            messageModel.binding.messageEditMenu.visibility = View.VISIBLE
+            messageModel.binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        messageModel.binding.messageCopyMenu.setOnClickListener {
+            messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
+            messageModel.binding.messengerMenuLayout.visibility = View.GONE
+            messageModel.binding.messageEditMenu.visibility = View.VISIBLE
+            messageModel.binding.messageMenuLayout.visibility = View.GONE
+        }
+
+        holder.binding.senderMessageLayout.setOnLongClickListener {
+            messageModel.binding.messageMenuLayout.visibility = View.VISIBLE
+            messageModel.currentPosition = position
+            return@setOnLongClickListener true
+        }
+
+        holder.binding.receiverMessageLayout.setOnLongClickListener {
+            messageModel.binding.deleteForEveryoneMenu.visibility = View.GONE
+            messageModel.binding.messageMenuLayout.visibility = View.VISIBLE
+            messageModel.binding.messageEditMenu.visibility = View.GONE
+            messageModel.currentPosition = position
+            return@setOnLongClickListener true
+        }
+
         when (messageResponses[position].messenger) {
             messageModel.senderId -> {
                 holder.binding.senderMessageLayout.visibility = View.VISIBLE
@@ -48,23 +118,47 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
         messageModel.binding.messageSenderLayout.setOnClickListener {
             val senderMessage = messageModel.binding.messageInputField.text.toString()
 
+            messageModel.binding.messageInputField.setText("")
+
             if (senderMessage.isNotEmpty()) {
-                val messageResponse = MessageResponse(
-                    0, messageModel.senderId, senderMessage,
-                    0, 0, 0, "")
+                if (editMessageMode) {
+                    editMessageMode = false
+                    val editMessageRequest = EditMessageRequest(messageModel.senderId,
+                        messageResponses[messageModel.currentPosition].messageId,
+                        senderMessage, messageModel.receiverId)
 
-                val insertPosition = itemCount
+                    val messageResponse = messageResponses[messageModel.currentPosition]
+                    messageResponse.message = senderMessage
 
-                messageResponses = append(messageResponses, messageResponse)
-                notifyItemInserted(insertPosition)
+                    messageResponses = replace(messageResponse, messageModel.currentPosition)
 
-                messageModel.binding.messageRecyclerView.layoutManager!!.scrollToPosition(messageResponses.size - 1)
-                messageModel.binding.welcomeMessageLayout.visibility = View.GONE
+                    notifyItemChanged(messageModel.currentPosition)
 
-                val postMessageRequest = PostMessageRequest(messageModel.senderId,
-                    messageModel.receiverId, insertPosition, senderMessage)
+                    messageModel.messageActivity.editSingleMessage(editMessageRequest)
+                } else {
+                    val messageResponse = MessageResponse(
+                        0, messageModel.senderId, senderMessage,
+                        0, 0, 0, ""
+                    )
 
-                postSenderMessage(messageModel.context, postMessageRequest)
+                    val insertPosition = itemCount
+
+                    messageResponses = append(messageResponse)
+                    notifyItemInserted(insertPosition)
+
+                    messageModel.binding.messageRecyclerView.layoutManager!!.scrollToPosition(
+                        messageResponses.size - 1
+                    )
+                    messageModel.binding.welcomeMessageLayout.visibility = View.GONE
+                    messageModel.binding.messageInputField.setText("")
+
+                    val postMessageRequest = PostMessageRequest(
+                        messageModel.senderId,
+                        messageModel.receiverId, insertPosition, senderMessage
+                    )
+
+                    postSenderMessage(messageModel.context, postMessageRequest)
+                }
             }
         }
 
@@ -123,9 +217,21 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
         })
     }
 
-    private fun append(messageResponses: Array<MessageResponse>, messageResponse: MessageResponse): Array<MessageResponse> {
-        val messageResponseList: MutableList<MessageResponse> = messageResponses.toMutableList()
+    private fun append(messageResponse: MessageResponse): Array<MessageResponse> {
+        val messageResponseList = messageResponses.toMutableList()
         messageResponseList.add(messageResponse)
+        return messageResponseList.toTypedArray()
+    }
+
+    private fun replace(messageResponse: MessageResponse, position: Int): Array<MessageResponse> {
+        val messageResponseList = messageResponses.toMutableList()
+        messageResponseList.add(position, messageResponse)
+        return messageResponseList.toTypedArray()
+    }
+
+    private fun removeAt(position: Int): Array<MessageResponse> {
+        val messageResponseList = messageResponses.toMutableList()
+        messageResponseList.removeAt(position)
         return messageResponseList.toTypedArray()
     }
 
