@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -157,7 +158,7 @@ class UserInformationActivity : AppCompatActivity() {
         binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
         binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
 
-        if (bundle.getString(getString(R.string.full_name)) != "") {
+        if (homeDisplayResponse.fullName != "") {
             binding.userFullName.text = getString(R.string.name_and_age_text,
                 homeDisplayResponse.fullName, homeDisplayResponse.age
             )

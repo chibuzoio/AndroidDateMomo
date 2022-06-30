@@ -58,6 +58,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 messageResponses = append(messageResponses, messageResponse)
                 notifyItemInserted(insertPosition)
 
+                messageModel.binding.messageRecyclerView.layoutManager!!.scrollToPosition(messageResponses.size - 1)
                 messageModel.binding.welcomeMessageLayout.visibility = View.GONE
 
                 val postMessageRequest = PostMessageRequest(messageModel.senderId,

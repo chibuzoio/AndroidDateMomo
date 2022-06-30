@@ -76,6 +76,11 @@ class MessengerActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        binding.confirmMessengerDelete.dialogRetryButton.text = "Delete"
+        binding.confirmMessengerDelete.doubleButtonTitle.text = "Delete Chats"
+        binding.confirmMessengerDelete.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+        binding.confirmMessengerDelete.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE

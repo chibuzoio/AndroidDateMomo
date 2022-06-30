@@ -32,6 +32,14 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
                 .itemView.context.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        if (messengerResponses[position].fullName.isEmpty()) {
+            messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
+                "Delete chats with ${messengerResponses[position].userName}?"
+        } else {
+            messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
+                "Delete chats with ${messengerResponses[position].fullName}?"
+        }
+
         val messengerPropertyLeftPadding = holder.binding.messengerPropertyLayout.paddingLeft
         val imageLayoutHeight = ((messengerModel.deviceWidth - messengerPropertyLeftPadding) * 16) / 100
         val imageHeight = imageLayoutHeight - ((imageLayoutHeight * 5) / 100)
@@ -67,18 +75,23 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
             return@setOnLongClickListener true
         }
 
-        messengerModel.binding.userInfoMenu.setOnClickListener {
-            messengerModel.messengerActivity.fetchUserInformation(messengerResponses[messengerModel.currentPosition].chatmateId)
-            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+        messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.setOnClickListener {
+            messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.GONE
         }
 
-        messengerModel.binding.deleteChatsMenu.setOnClickListener {
+        messengerModel.binding.confirmMessengerDelete.dialogCancelButton.setOnClickListener {
+            messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.GONE
+        }
+
+        messengerModel.binding.confirmMessengerDelete.dialogRetryButton.setOnClickListener {
             /*
             * 0 = None deleted the message
             * 1 = Sender deleted the message
             * 2 = Receiver Deleted the message
             * 3 = Delete for everyone and can only be effected by the sender
             * */
+
+            // Display sub menu that will confirm that you really want to delete the messenger messages
 
             val deleteMessageRequest = DeleteMessageRequest(
                 sharedPreferences.getInt(holder.itemView.context.getString(R.string.member_id), 0),
@@ -89,7 +102,21 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
             notifyItemRemoved(messengerModel.currentPosition)
         }
 
+        messengerModel.binding.userInfoMenu.setOnClickListener {
+            messengerModel.messengerActivity.fetchUserInformation(messengerResponses[messengerModel.currentPosition].chatmateId)
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+        }
+
+        messengerModel.binding.deleteChatsMenu.setOnClickListener {
+            messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.VISIBLE
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+        }
+
         messengerModel.binding.cancelMenu.setOnClickListener {
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+        }
+
+        messengerModel.binding.messengerMenuLayout.setOnClickListener {
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
         }
 

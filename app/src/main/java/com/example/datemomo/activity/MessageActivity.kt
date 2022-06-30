@@ -143,6 +143,8 @@ class MessageActivity : AppCompatActivity() {
 
             val messageAdapter = MessageAdapter(messageResponseArray, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter
+
+            (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
         } catch (exception: IOException) {
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
