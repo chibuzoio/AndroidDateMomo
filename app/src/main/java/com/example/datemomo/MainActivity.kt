@@ -667,6 +667,11 @@ class MainActivity : AppCompatActivity() {
         }, 2000)
     }
 
+    override fun onStart() {
+        super.onStart()
+        hideSystemUI()
+    }
+
     override fun onBackPressed() {
         when {
             binding.pictureUploadLayout.isVisible -> {

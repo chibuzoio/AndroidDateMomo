@@ -149,9 +149,12 @@ class MessageActivity : AppCompatActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.e(TAG, "The particular key that was pressed here is $keyCode")
-
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        hideSystemUI()
     }
 
     override fun onBackPressed() {

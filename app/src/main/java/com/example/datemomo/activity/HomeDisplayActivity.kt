@@ -187,6 +187,8 @@ class HomeDisplayActivity : AppCompatActivity() {
         super.onStart()
         isActivityActive = true
 
+        hideSystemUI()
+
         if (sharedPreferences.getBoolean(getString(R.string.authenticated), false)) {
 //            Log.e(TAG, "User was truly authenticated!!!!!!!!!!!!")
 //            establishSystemSocket()

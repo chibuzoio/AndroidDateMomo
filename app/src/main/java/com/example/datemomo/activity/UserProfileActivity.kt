@@ -430,6 +430,11 @@ class UserProfileActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        hideSystemUI()
+    }
+
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         val activityStackModel: ActivityStackModel =

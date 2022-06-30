@@ -284,6 +284,11 @@ class UserInformationActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        hideSystemUI()
+    }
+
     private fun triggerRequestProcess() {
 
     }
