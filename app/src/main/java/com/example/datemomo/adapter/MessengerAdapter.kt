@@ -84,13 +84,6 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
         }
 
         messengerModel.binding.confirmMessengerDelete.dialogRetryButton.setOnClickListener {
-            /*
-            * 0 = None deleted the message
-            * 1 = Sender deleted the message
-            * 2 = Receiver Deleted the message
-            * 3 = Delete for everyone and can only be effected by the sender
-            * */
-
             messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.GONE
 
             val deleteMessageRequest = DeleteMessageRequest(

@@ -3,6 +3,8 @@ package com.example.datemomo.activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.location.Address
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -26,6 +28,7 @@ import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
+import com.example.datemomo.service.LocationTracker
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -35,7 +38,10 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.IndexOutOfBoundsException
+import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -163,6 +169,53 @@ class HomeDisplayActivity : AppCompatActivity() {
             redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
             requestProcess = getString(R.string.request_fetch_user_likers)
             fetchUserLikers()
+        }
+
+        if (LocationTracker(this).canGetLocation) {
+            // Initialize location here and send it to the server if the user hasn't updated his
+            // location for the first time. But, if the gotten location is different from the
+            // user's saved location, request the user to update his location
+
+            val latitude = LocationTracker(this).getLatitude()
+            val longitude = LocationTracker(this).getLongitude()
+
+            val addresses: List<Address>
+            val geocoder = Geocoder(this, Locale.getDefault())
+
+            try {
+                addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    1
+                ) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                val address: String =
+                    addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+
+                val city = addresses[0].locality
+                val state = addresses[0].adminArea
+                val country = addresses[0].countryName
+                val postalCode = addresses[0].postalCode
+                val knownName = addresses[0].featureName
+
+                Log.e(
+                    TAG, "Current location properties here are city = $city, " +
+                            "state = $state, country = $country, postal code = $postalCode " +
+                            "and known name = $knownName"
+                )
+            } catch (exception: Exception) {
+                when (exception) {
+                    is IOException -> {
+                        Log.e(TAG, "IOException was caught, with message = ${exception.message}")
+                    }
+                    is IndexOutOfBoundsException -> {
+                        Log.e(TAG, "IndexOutOfBoundsException was caught, with message = ${exception.message}")
+                    }
+                    else -> {
+                        Log.e(TAG, "Error message from here is ${exception.message}")
+                    }
+                }
+            }
         }
 
         try {

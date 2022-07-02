@@ -24,6 +24,7 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserProfileBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.UserInformationRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.utility.Utility
@@ -41,6 +42,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userInformationRequest: UserInformationRequest
     private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -198,6 +200,40 @@ class UserProfileActivity : AppCompatActivity() {
         binding.sixthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
+
+        binding.sixthLikerFrameLayout.setOnClickListener {
+            if (userLikerResponseArray.size > 6) {
+                // Navigate to all likers' activity by clicking on this layout
+            } else {
+                userInformationRequest = UserInformationRequest(userLikerResponseArray[5].memberId)
+                fetchUserInformation()
+            }
+        }
+
+        binding.fifthLikerFrameLayout.setOnClickListener {
+            userInformationRequest = UserInformationRequest(userLikerResponseArray[4].memberId)
+            fetchUserInformation()
+        }
+
+        binding.fourthLikerFrameLayout.setOnClickListener {
+            userInformationRequest = UserInformationRequest(userLikerResponseArray[3].memberId)
+            fetchUserInformation()
+        }
+
+        binding.thirdLikerFrameLayout.setOnClickListener {
+            userInformationRequest = UserInformationRequest(userLikerResponseArray[2].memberId)
+            fetchUserInformation()
+        }
+
+        binding.secondLikerFrameLayout.setOnClickListener {
+            userInformationRequest = UserInformationRequest(userLikerResponseArray[1].memberId)
+            fetchUserInformation()
+        }
+
+        binding.firstLikerFrameLayout.setOnClickListener {
+            userInformationRequest = UserInformationRequest(userLikerResponseArray[0].memberId)
+            fetchUserInformation()
+        }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -600,6 +636,51 @@ class UserProfileActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserInformation() {
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_information))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_user_information))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                val intent = Intent(baseContext, UserInformationActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
