@@ -54,7 +54,6 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     private var userAge = 0
@@ -1196,7 +1195,7 @@ class MainActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 var authenticationResponse = AuthenticationResponse(0, 0, "",
                     "", "", "", "", "", "",
-                    "", "", false, "",
+                    false, "", "",
                     "", 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0, 0,
@@ -1215,9 +1214,7 @@ class MainActivity : AppCompatActivity() {
                 if (authenticationResponse.authenticated) {
                     sharedPreferencesEditor.putInt(getString(R.string.age), authenticationResponse.age)
                     sharedPreferencesEditor.putString(getString(R.string.sex), authenticationResponse.sex)
-                    sharedPreferencesEditor.putString(getString(R.string.state), authenticationResponse.state)
                     sharedPreferencesEditor.putInt(getString(R.string.member_id), authenticationResponse.memberId)
-                    sharedPreferencesEditor.putString(getString(R.string.country), authenticationResponse.country)
                     sharedPreferencesEditor.putString(getString(R.string.full_name), authenticationResponse.fullName)
                     sharedPreferencesEditor.putString(getString(R.string.user_name), authenticationResponse.userName)
                     sharedPreferencesEditor.putString(getString(R.string.user_role), authenticationResponse.userRole)
@@ -1226,6 +1223,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.email_address), authenticationResponse.emailAddress)
                     sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), authenticationResponse.authenticated)
                     sharedPreferencesEditor.putString(getString(R.string.profile_picture), authenticationResponse.profilePicture)
+                    sharedPreferencesEditor.putString(getString(R.string.current_location), authenticationResponse.currentLocation)
                     sharedPreferencesEditor.putString(getString(R.string.registration_date), authenticationResponse.registrationDate)
 
                     sharedPreferencesEditor.putInt(getString(R.string.bisexual_category), authenticationResponse.bisexualCategory)

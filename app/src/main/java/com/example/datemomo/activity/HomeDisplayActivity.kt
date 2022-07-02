@@ -26,6 +26,7 @@ import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.MessageRequest
+import com.example.datemomo.model.request.UpdateLocationRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.service.LocationTracker
@@ -42,13 +43,13 @@ import java.lang.IndexOutOfBoundsException
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
     private var isActivityActive: Boolean = true
+    private lateinit var userCurrentLocation: String
     private lateinit var messageRequest: MessageRequest
     private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -198,11 +199,21 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val postalCode = addresses[0].postalCode
                 val knownName = addresses[0].featureName
 
-                Log.e(
-                    TAG, "Current location properties here are city = $city, " +
-                            "state = $state, country = $country, postal code = $postalCode " +
-                            "and known name = $knownName"
-                )
+                if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
+                    if (knownName.isNullOrEmpty()) {
+                        userCurrentLocation = city
+                        sharedPreferencesEditor.putString(getString(R.string.current_location), city)
+                        sharedPreferencesEditor.apply()
+                    } else {
+                        userCurrentLocation = knownName
+                        sharedPreferencesEditor.putString(getString(R.string.current_location), knownName)
+                        sharedPreferencesEditor.apply()
+                    }
+
+                    requestProcess = getString(R.string.request_update_current_location)
+
+                    updateCurrentLocation()
+                }
             } catch (exception: Exception) {
                 when (exception) {
                     is IOException -> {
@@ -380,6 +391,48 @@ class HomeDisplayActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_messages) -> fetchUserMessages(messageRequest)
             getString(R.string.request_fetch_matched_users) -> fetchUserLikers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun updateCurrentLocation() {
+        val mapper = jacksonObjectMapper()
+        val updateLocationRequest =
+            UpdateLocationRequest(sharedPreferences.getInt(getString(R.string.member_id), 0),
+                userCurrentLocation)
+
+        val jsonObjectString = mapper.writeValueAsString(updateLocationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_update_location))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+            }
+        })
     }
 
     @Throws(IOException::class)

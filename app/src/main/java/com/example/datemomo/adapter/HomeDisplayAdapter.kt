@@ -140,6 +140,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             .transform(CenterCrop(), RoundedCorners(33))
             .into(holder.binding.userImage)
 
+        holder.binding.userLocation.text = homeDisplayResponses[position].currentLocation
+
         if (homeDisplayResponses[position].fullName.isEmpty()) {
             holder.binding.userFullName.text =
                 holder.itemView.context.getString(R.string.name_and_age_text,
@@ -191,6 +193,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
 
         homeDisplayModel.binding.userStatusText.text = context.getString(R.string.status_default)
+
+        homeDisplayModel.binding.userLocation.text = homeDisplayResponses[position].currentLocation
 
         val userFullName = homeDisplayResponses[position].fullName.ifEmpty {
             homeDisplayResponses[position].userName

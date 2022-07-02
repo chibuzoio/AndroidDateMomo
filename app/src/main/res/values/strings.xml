@@ -53,6 +53,7 @@
     <string name="request_fetch_user_messages">fetchUserMessages</string>
     <string name="request_fetch_user_messengers">fetchUserMessengers</string>
     <string name="request_skip_sexuality_interest">skipSexualityInterest</string>
+    <string name="request_update_current_location">updateCurrentLocation</string>
     <string name="request_submit_sexuality_interest">submitSexualityInterest</string>
 
     <string name="level_upload_profile_picture">uploadProfilePicture</string>
@@ -70,6 +71,7 @@
     <string name="api_post_picture">service/postpicture.php</string>
     <string name="api_delete_message">service/deletemessage.php</string>
     <string name="api_register_member">service/registermember.php</string>
+    <string name="api_update_location">service/updatelocation.php</string>
     <string name="api_user_biometrics">service/userbiometrics.php</string>
     <string name="api_user_likers_data">service/userlikersdata.php</string>
     <string name="api_user_information">service/userinformation.php</string>
@@ -83,8 +85,6 @@
     <!-- Shared Preferences Keys -->
     <string name="age">age</string>
     <string name="sex">sex</string>
-    <string name="state">state</string>
-    <string name="country">country</string>
     <string name="full_name">fullName</string>
     <string name="member_id">memberId</string>
     <string name="user_name">userName</string>
@@ -100,6 +100,7 @@
     <string name="profile_picture">profilePicture</string>
     <string name="toy_boy_category">toyBoyCategory</string>
     <string name="toy_boy_interest">toyBoyInterest</string>
+    <string name="current_location">currentLocation</string>
     <string name="lesbian_category">lesbianCategory</string>
     <string name="lesbian_interest">lesbianInterest</string>
     <string name="toy_girl_category">toyGirlCategory</string>

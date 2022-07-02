@@ -86,7 +86,6 @@
                             android:id="@+id/userLocation"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            android:text="Minarelikoy"
                             android:textColor="@color/edit_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>

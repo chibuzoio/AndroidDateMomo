@@ -158,6 +158,8 @@ class UserInformationActivity : AppCompatActivity() {
         binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
         binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
 
+        binding.userLocation.text = homeDisplayResponse.currentLocation
+
         if (homeDisplayResponse.fullName != "") {
             binding.userFullName.text = getString(R.string.name_and_age_text,
                 homeDisplayResponse.fullName, homeDisplayResponse.age

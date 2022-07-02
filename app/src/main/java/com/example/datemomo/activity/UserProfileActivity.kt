@@ -335,6 +335,8 @@ class UserProfileActivity : AppCompatActivity() {
         binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
         binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
 
+        binding.userLocation.text = sharedPreferences.getString(getString(R.string.current_location), "")
+
         if (sharedPreferences.getString(getString(R.string.full_name), "") != "") {
             binding.userFullName.text = getString(
                 R.string.name_and_age_text,
