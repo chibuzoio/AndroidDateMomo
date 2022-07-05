@@ -80,6 +80,7 @@
     <string name="api_user_status_update">service/userstatusupdate.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
+    <string name="api_user_likers_composite">service/userlikerscomposite.php</string>
     <string name="api_delete_messenger_messages">service/deletemessengermessages.php</string>
 
     <!-- Shared Preferences Keys -->
