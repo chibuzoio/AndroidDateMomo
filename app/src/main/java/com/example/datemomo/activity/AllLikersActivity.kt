@@ -18,7 +18,7 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.AllLikersAdapter
 import com.example.datemomo.databinding.ActivityAllLikersBinding
 import com.example.datemomo.model.AllLikersModel
-import com.example.datemomo.model.response.AllLikersResponse
+import com.example.datemomo.model.response.UserLikerResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
@@ -32,7 +32,7 @@ class AllLikersActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAllLikersBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var allLikersResponseArray: Array<AllLikersResponse>
+    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +66,7 @@ class AllLikersActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
-            allLikersResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.allLikersRecyclerView.layoutManager = layoutManager
@@ -74,7 +74,7 @@ class AllLikersActivity : AppCompatActivity() {
 
             val allLikersModel = AllLikersModel(this, deviceWidth)
 
-            val allLikersAdapter = AllLikersAdapter(allLikersResponseArray, allLikersModel)
+            val allLikersAdapter = AllLikersAdapter(userLikerResponseArray, allLikersModel)
             binding.allLikersRecyclerView.adapter = allLikersAdapter
         } catch (exception: IOException) {
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")

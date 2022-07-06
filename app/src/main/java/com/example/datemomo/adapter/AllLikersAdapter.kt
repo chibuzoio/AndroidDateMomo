@@ -9,7 +9,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerAllLikersBinding
 import com.example.datemomo.model.AllLikersModel
-import com.example.datemomo.model.response.AllLikersResponse
 
 class AllLikersAdapter(private var allLikersResponses: Array<AllLikersResponse>, private var allLikersModel: AllLikersModel) :
     RecyclerView.Adapter<AllLikersAdapter.MyViewHolder>() {
