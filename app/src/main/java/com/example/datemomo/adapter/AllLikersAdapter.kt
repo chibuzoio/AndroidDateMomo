@@ -9,8 +9,9 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerAllLikersBinding
 import com.example.datemomo.model.AllLikersModel
+import com.example.datemomo.model.response.UserLikerResponse
 
-class AllLikersAdapter(private var allLikersResponses: Array<AllLikersResponse>, private var allLikersModel: AllLikersModel) :
+class AllLikersAdapter(private var userLikerResponses: Array<UserLikerResponse>, private var allLikersModel: AllLikersModel) :
     RecyclerView.Adapter<AllLikersAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -19,7 +20,7 @@ class AllLikersAdapter(private var allLikersResponses: Array<AllLikersResponse>,
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val imageLayoutWidth = (allLikersModel.deviceWidth * 30) / 100;
+        val imageLayoutWidth = (allLikersModel.deviceWidth * 20) / 100;
         val informationLayoutWidth = allLikersModel.deviceWidth - imageLayoutWidth
 
         holder.binding.profilePictureLayout.layoutParams.width = imageLayoutWidth
@@ -30,25 +31,45 @@ class AllLikersAdapter(private var allLikersResponses: Array<AllLikersResponse>,
         Glide.with(holder.itemView.context)
             .load(holder.itemView.context.getString(R.string.date_momo_api)
                     + holder.itemView.context.getString(R.string.api_image)
-                    + allLikersResponses[position].profilePicture)
+                    + userLikerResponses[position].profilePicture)
             .transform(CircleCrop(), CenterCrop())
             .into(holder.binding.likerProfilePicture)
 
-        if (allLikersResponses[position].fullName.isEmpty()) {
+/*
+        val imageId = when (userLikerResponses[position].profilePicture) {
+            "image1.jpg" -> R.drawable.image1
+            "image2.jpg" -> R.drawable.image2
+            "image3.jpg" -> R.drawable.image3
+            "image4.jpg" -> R.drawable.image4
+            "image5.jpg" -> R.drawable.image5
+            "image6.jpg" -> R.drawable.image6
+            else -> R.drawable.image1
+        }
+
+        Glide.with(holder.itemView.context)
+            .load(ContextCompat.getDrawable(holder.itemView.context, imageId))
+            .transform(CircleCrop(), CenterCrop())
+            .into(holder.binding.likerProfilePicture)
+*/
+
+        if (userLikerResponses[position].fullName.isEmpty()) {
             holder.binding.likerUserFullName.text =
                 allLikersModel.context.getString(R.string.name_and_age_text,
-                    allLikersResponses[position].fullName, allLikersResponses[position].age)
+                    userLikerResponses[position].userName, userLikerResponses[position].age)
         } else {
             holder.binding.likerUserFullName.text =
                 allLikersModel.context.getString(R.string.name_and_age_text,
-                    allLikersResponses[position].userName, allLikersResponses[position].age)
+                    userLikerResponses[position].fullName, userLikerResponses[position].age)
         }
 
-        holder.binding.likerCurrentLocation.text = allLikersResponses[position].currentLocation
+        holder.binding.likerCurrentLocation.text = userLikerResponses[position].currentLocation
+
+/*        holder.binding.likerCurrentLocation.text =
+            userLikerResponses[position].currentLocation.ifEmpty { "Minarelikoy" }*/
     }
 
     override fun getItemCount(): Int {
-        return allLikersResponses.size
+        return userLikerResponses.size
     }
 
     class MyViewHolder(val binding: RecyclerAllLikersBinding) :

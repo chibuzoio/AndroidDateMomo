@@ -68,6 +68,28 @@ class AllLikersActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
+/*
+            userLikerResponseArray = emptyArray()
+            userLikerResponseArray = append(UserLikerResponse(1, 34, "male",
+                "", "solution", "", "",
+                "image1.jpg", "", "2022-05-21 10:53:08"))
+            userLikerResponseArray = append(UserLikerResponse(2, 32, "female",
+                "", "melas", "", "",
+                "image2.jpg", "", "2022-05-21 11:07:06"))
+            userLikerResponseArray = append(UserLikerResponse(3, 35, "female",
+                "", "chiomzy", "", "",
+                "image3.jpg", "", "2022-05-24 06:43:09"))
+            userLikerResponseArray = append(UserLikerResponse(4, 35, "female",
+                "", "frenzy", "", "",
+                "image4.jpg", "", "2022-05-24 06:51:47"))
+            userLikerResponseArray = append(UserLikerResponse(5, 33, "female",
+                "", "floxy", "", "",
+                "image5.jpg", "", "2022-05-24 08:24:24"))
+            userLikerResponseArray = append(UserLikerResponse(6, 32, "female",
+                "", "millicent", "", "",
+                "image6.jpg", "", "2022-05-29 21:29:16"))
+*/
+
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.allLikersRecyclerView.layoutManager = layoutManager
             binding.allLikersRecyclerView.itemAnimator = DefaultItemAnimator()
@@ -79,6 +101,12 @@ class AllLikersActivity : AppCompatActivity() {
         } catch (exception: IOException) {
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
+    }
+
+    private fun append(userLikerResponse: UserLikerResponse): Array<UserLikerResponse> {
+        val userLikerResponseList = userLikerResponseArray.toMutableList()
+        userLikerResponseList.add(userLikerResponse)
+        return userLikerResponseList.toTypedArray()
     }
 
     private fun hideSystemUI() {

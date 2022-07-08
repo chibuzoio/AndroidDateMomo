@@ -21,7 +21,7 @@
 
             <ImageView
                 android:id="@+id/likerProfilePicture"
-                android:layout_margin="11dp"
+                android:layout_margin="7dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
@@ -33,8 +33,13 @@
             android:paddingStart="3dp"
             android:orientation="vertical"
             android:gravity="center_vertical"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <View
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
 
             <TextView
                 android:id="@+id/likerUserFullName"
@@ -44,12 +49,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <View
+                android:layout_weight="0.5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
             <TextView
                 android:id="@+id/likerCurrentLocation"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textColor="@color/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
