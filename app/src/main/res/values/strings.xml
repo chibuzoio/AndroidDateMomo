@@ -70,6 +70,7 @@
     <string name="api_login_member">service/loginmember.php</string>
     <string name="api_post_message">service/postmessage.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
+    <string name="api_user_picture">service/userpicture.php</string>
     <string name="api_delete_message">service/deletemessage.php</string>
     <string name="api_update_picture">service/updatepicture.php</string>
     <string name="api_register_member">service/registermember.php</string>

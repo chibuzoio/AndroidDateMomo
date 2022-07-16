@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
+import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -15,6 +17,10 @@ import com.example.datemomo.adapter.ImageSliderAdapter
 import com.example.datemomo.control.ZoomOutPageTransformer
 import com.example.datemomo.databinding.ActivityImageSliderBinding
 import com.example.datemomo.model.UserPictureModel
+import com.example.datemomo.model.response.UserPictureResponse
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import java.io.IOException
 
 
 class ImageSliderActivity : AppCompatActivity() {
@@ -26,6 +32,7 @@ class ImageSliderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityImageSliderBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private lateinit var userPictureComposite: ArrayList<UserPictureResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,16 +63,15 @@ class ImageSliderActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        // pass user all picture composite through bundle to this activity
-        // to be read and mapped to UserPictureModel array list
+        try {
+            val mapper = jacksonObjectMapper()
+            userPictureComposite = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-        // On fetching user all pictures from the server, make sure his current profile picture
-        // stays in the first array list position (i.e. position zero (0)) so that it will be
-        // displayed first in the ImageSliderActivity
-        val userPictureComposite = arrayListOf<UserPictureModel>()
-
-        binding.genericPicturePager.adapter = ImageSliderAdapter(this, userPictureComposite)
-        binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())
+            binding.genericPicturePager.adapter = ImageSliderAdapter(this, userPictureComposite)
+            binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())
+        } catch (exception: IOException) {
+            Log.e(UserProfileActivity.TAG, "Error message from here is ${exception.message}")
+        }
     }
 
     override fun onStart() {

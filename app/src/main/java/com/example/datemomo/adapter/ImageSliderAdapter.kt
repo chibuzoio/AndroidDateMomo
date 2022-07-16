@@ -5,10 +5,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.datemomo.fragment.ImageSliderFragment
-import com.example.datemomo.model.UserPictureModel
+import com.example.datemomo.model.response.UserPictureResponse
 
 class ImageSliderAdapter(fragmentActivity: FragmentActivity,
-                         var userPictureComposite: ArrayList<UserPictureModel>) :
+                         var userPictureComposite: ArrayList<UserPictureResponse>) :
     FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {
