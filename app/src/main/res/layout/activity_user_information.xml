@@ -55,14 +55,6 @@
 
                         </FrameLayout>
 
-                        <ImageView
-                            android:layout_marginEnd="7dp"
-                            android:layout_marginBottom="7dp"
-                            android:layout_gravity="bottom|end"
-                            android:src="@drawable/icon_camera_blue"
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"/>
-
                     </FrameLayout>
 
                     <androidx.appcompat.widget.LinearLayoutCompat

@@ -35,12 +35,15 @@
         <entry key="app/src/main/res/drawable/transparent_gradient.xml" value="0.141" />
         <entry key="app/src/main/res/layout/activity_all_likers.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/activity_image_display.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/activity_image_slider.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_message.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_messenger.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_bio.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_user_information.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_image_slider.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/generic_input_field.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_blue_button.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/include_bottom_navigation_layout.xml" value="0.18958333333333333" />

@@ -1,11 +1,16 @@
 package com.example.datemomo.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -24,21 +29,28 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserProfileBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.PictureUpdateRequest
 import com.example.datemomo.model.request.UserInformationRequest
 import com.example.datemomo.model.request.UserLikerRequest
+import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
+import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.IOException
 
 class UserProfileActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private var photoFile: File? = null
+    private val PICK_IMAGE_REQUEST = 200
+    private var theBitmap: Bitmap? = null
+    private val CAPTURE_IMAGE_REQUEST = 100
     private lateinit var requestProcess: String
-    private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var sharedPreferences: SharedPreferences
@@ -81,8 +93,6 @@ class UserProfileActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-            // check if it's up to six, less than six or greater than six
-            // get the total count and set it
             if (userLikerResponseArray.size > 1) {
                 binding.allLikesCount.text = getString(R.string.many_likers_count, userLikerResponseArray.size)
             }
@@ -200,6 +210,16 @@ class UserProfileActivity : AppCompatActivity() {
         binding.sixthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
+
+        binding.profilePictureCover.setOnClickListener {
+            // View profile picture in general picture viewing activity
+
+        }
+
+        binding.profilePictureChanger.setOnClickListener {
+            // Change profile picture here
+            pickImageFromGallery()
+        }
 
         binding.sixthLikerFrameLayout.setOnClickListener {
             if (userLikerResponseArray.size > 6) {
@@ -494,6 +514,104 @@ class UserProfileActivity : AppCompatActivity() {
             getString(R.string.activity_messenger) -> fetchUserMessengers()
             else -> super.onBackPressed()
         }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CAPTURE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            theBitmap = BitmapFactory.decodeFile(photoFile!!.absolutePath)
+
+            Glide.with(this)
+                .load(theBitmap)
+                .transform(CircleCrop(), CenterCrop())
+                .into(binding.accountProfilePicture)
+        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            Glide.with(this)
+                .load(data?.data)
+                .transform(CircleCrop(), CenterCrop())
+                .into(binding.accountProfilePicture)
+
+            theBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val source = ImageDecoder.createSource(contentResolver, data?.data!!)
+                ImageDecoder.decodeBitmap(source)
+            } else{
+                MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
+            }
+        }
+
+        updateProfilePicture()
+    }
+
+    @Throws(IOException::class)
+    fun updateProfilePicture() {
+        val imageWidth = theBitmap!!.width
+        val imageHeight = theBitmap!!.height
+
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        val base64Picture =
+            android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+
+        val mapper = jacksonObjectMapper()
+        val pictureUpdateRequest = PictureUpdateRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            imageWidth,
+            imageHeight,
+            base64Picture
+        )
+
+        val jsonObjectString = mapper.writeValueAsString(pictureUpdateRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_update_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                var committedResponse = CommittedResponse(false)
+
+                try {
+                    committedResponse = mapper.readValue(myResponse)
+                } catch (exception: IOException) {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+
+                if (committedResponse.committed) {
+                    Log.e(TAG, "Profile picture just got updated!!!!!!")
+                } else {
+                    Log.e(TAG, "Profile picture update failed!!!!!!")
+                }
+            }
+        })
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
     private fun initializeSixthLikerLayout() {

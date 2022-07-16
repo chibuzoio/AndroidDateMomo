@@ -1065,8 +1065,8 @@ class MainActivity : AppCompatActivity() {
             userAge,
             imageWidth,
             imageHeight,
-            base64Picture,
-            getString(R.string.level_select_sexuality_interest)
+            getString(R.string.level_select_sexuality_interest),
+            base64Picture
         )
 
         val jsonObjectString = mapper.writeValueAsString(pictureUploadRequest)
