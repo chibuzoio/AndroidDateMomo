@@ -80,13 +80,14 @@ class ImageSliderActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val genericPicturePager = binding.genericPicturePager
+        super.onBackPressed()
 
-        if (genericPicturePager.currentItem == 0) {
+        /*if (binding.genericPicturePager.currentItem == 0) {
             super.onBackPressed()
         } else {
-            genericPicturePager.currentItem = genericPicturePager.currentItem - 1
-        }
+            binding.genericPicturePager.currentItem =
+                binding.genericPicturePager.currentItem - 1
+        }*/
     }
 
     private fun hideSystemUI() {

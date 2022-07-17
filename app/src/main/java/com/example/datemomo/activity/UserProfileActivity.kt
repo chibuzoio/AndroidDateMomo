@@ -30,6 +30,7 @@ import com.example.datemomo.databinding.ActivityUserProfileBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.request.*
 import com.example.datemomo.model.response.CommittedResponse
+import com.example.datemomo.model.response.PictureUpdateResponse
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.model.response.UserPictureResponse
 import com.example.datemomo.utility.Utility
@@ -214,7 +215,6 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
         binding.profilePictureChanger.setOnClickListener {
-            // Change profile picture here
             pickImageFromGallery()
         }
 
@@ -538,7 +538,9 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        updateProfilePicture()
+        if (theBitmap != null) {
+            updateProfilePicture()
+        }
     }
 
     @Throws(IOException::class)
@@ -621,27 +623,33 @@ class UserProfileActivity : AppCompatActivity() {
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
-                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                    displaySingleButtonDialog(
+                        getString(R.string.poor_internet_title),
+                        getString(R.string.poor_internet_message)
+                    )
                 } else {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                    displaySingleButtonDialog(
+                        getString(R.string.server_error_title),
+                        getString(R.string.server_error_message)
+                    )
                 }
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                var committedResponse = CommittedResponse(false)
+                var pictureUpdateResponse = PictureUpdateResponse("")
 
                 try {
-                    committedResponse = mapper.readValue(myResponse)
+                    pictureUpdateResponse = mapper.readValue(myResponse)
+                    sharedPreferencesEditor.putString(getString(R.string.profile_picture),
+                        pictureUpdateResponse.profilePicture)
+                    sharedPreferencesEditor.apply()
                 } catch (exception: IOException) {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }
-
-                if (committedResponse.committed) {
-                    Log.e(TAG, "Profile picture just got updated!!!!!!")
-                } else {
-                    Log.e(TAG, "Profile picture update failed!!!!!!")
+                    displaySingleButtonDialog(
+                        getString(R.string.server_error_title),
+                        getString(R.string.server_error_message)
+                    )
                 }
             }
         })
