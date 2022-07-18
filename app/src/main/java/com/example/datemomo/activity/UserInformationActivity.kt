@@ -1,6 +1,7 @@
 package com.example.datemomo.activity
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
@@ -19,9 +20,12 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserInformationBinding
+import com.example.datemomo.model.request.UserPictureRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
+import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import okhttp3.*
 import java.io.IOException
 
 class UserInformationActivity : AppCompatActivity() {
@@ -64,6 +68,10 @@ class UserInformationActivity : AppCompatActivity() {
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        binding.profilePictureCover.setOnClickListener {
+            fetchUserPictures()
+        }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -294,6 +302,48 @@ class UserInformationActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
 
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserPictures() {
+        val mapper = jacksonObjectMapper()
+        val userPictureRequest = UserPictureRequest(
+            homeDisplayResponse.memberId
+        )
+
+        val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, ImageSliderActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     private fun hideSystemUI() {

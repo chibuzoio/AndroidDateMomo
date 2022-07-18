@@ -325,6 +325,10 @@ class UserProfileActivity : AppCompatActivity() {
         binding.photoGalleryButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
         binding.photoGalleryButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
 
+        binding.profileEditorButton.iconHollowButtonText.text = "Edit Profile"
+        binding.profileEditorButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_edit_blue))
+        binding.profileEditorButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
+
         binding.userGay.blueButtonText.text = "Gay"
         binding.userToyBoy.blueButtonText.text = "Toy Boy"
         binding.userLesbian.blueButtonText.text = "Lesbian"

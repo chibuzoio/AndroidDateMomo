@@ -36,6 +36,7 @@
                         android:layout_height="wrap_content">
 
                         <FrameLayout
+                            android:id="@+id/profilePictureCover"
                             android:foregroundGravity="center"
                             android:background="@drawable/profile_picture_cover"
                             android:layout_width="125dp"
