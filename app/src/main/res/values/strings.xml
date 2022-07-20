@@ -31,11 +31,14 @@
     <string name="more_likers_count">+%1$d</string>
     <string name="name_and_age_text">%1$s, %2$d</string>
     <string name="sexuality">Your Sexual Category</string>
+    <string name="edit_sexuality">Edit Your Sexuality</string>
     <string name="sexual_interest">You are interested in</string>
     <string name="single_liker_count">1 Person Likes You</string>
     <string name="many_likers_count">%1$d People Like You</string>
     <string name="decimal_formatter">###,###,###,###,##0.00</string>
     <string name="user_bio_header">Meet The Right People You Seek!</string>
+    <string name="edit_sexual_interest">Edit Your Sexual Interests</string>
+    <string name="edit_experience_level">Edit Your Sexual Experiences</string>
     <string name="experience_level">Things you have tried or can do in sex</string>
 
     <string name="poor_internet_title">Poor Connectivity</string>
