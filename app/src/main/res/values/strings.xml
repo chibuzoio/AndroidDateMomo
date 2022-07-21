@@ -96,6 +96,7 @@
     <string name="user_name">userName</string>
     <string name="user_role">userRole</string>
     <string name="user_level">userLevel</string>
+    <string name="user_status">userStatus</string>
     <string name="gay_category">gayCategory</string>
     <string name="gay_interest">gayInterest</string>
     <string name="phone_number">phoneNumber</string>

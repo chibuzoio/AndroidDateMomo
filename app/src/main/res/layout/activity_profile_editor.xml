@@ -81,6 +81,7 @@
                 </FrameLayout>
 
                 <View
+                    android:id="@+id/locationUpdaterSeparator"
                     android:layout_marginVertical="5dp"
                     android:layout_marginHorizontal="11dp"
                     android:background="@color/edit_text_grey"
@@ -95,6 +96,53 @@
 
                 <!-- Your location -->
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/currentLocationHeader"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="25sp"
+                        android:text="Current Location"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:text="Update"
+                        android:textSize="14sp"
+                        android:textColor="@color/blue"
+                        android:layout_gravity="top|end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <TextView
+                    android:id="@+id/currentLocationValue"
+                    android:textSize="23sp"
+                    android:text="Minarelikoy"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/userLocationHeader"
+                    android:textSize="25sp"
+                    android:text="Former Location"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/userLocationValue"
+                    android:textSize="23sp"
+                    android:text="Magusa"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <View
                     android:layout_marginVertical="5dp"
                     android:layout_marginHorizontal="11dp"
@@ -103,6 +151,38 @@
                     android:layout_height="1dp"/>
 
                 <!-- Update user status here -->
+
+                <TextView
+                    android:text="Edit"
+                    android:textSize="14sp"
+                    android:layout_gravity="end"
+                    android:textColor="@color/blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/currentUserStatus"
+                    android:textSize="23sp"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/userStatusUpdater"
+                    android:lines="3"
+                    android:minLines="1"
+                    android:maxLines="3"
+                    android:hint="My Bio"
+                    android:visibility="visible"
+                    android:scrollbars="vertical"
+                    android:paddingVertical="11dp"
+                    android:paddingHorizontal="11dp"
+                    android:inputType="textMultiLine"
+                    android:scrollHorizontally="false"
+                    android:textColor="@color/edit_text"
+                    android:background="@drawable/normal_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
                 <View
                     android:layout_marginVertical="5dp"
@@ -438,6 +518,14 @@
                     android:background="@color/edit_text_grey"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"/>
+
+                <include
+                    android:id="@+id/profileEditorSubmitButton"
+                    android:layout_marginBottom="15dp"
+                    layout="@layout/include_blue_button"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

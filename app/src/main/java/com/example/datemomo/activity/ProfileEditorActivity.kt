@@ -58,6 +58,8 @@ class ProfileEditorActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        binding.profileEditorSubmitButton.blueButtonText.text = "Submit Update"
+
         binding.userGay.hollowButtonText.text = "Gay"
         binding.userToyBoy.hollowButtonText.text = "Toy Boy"
         binding.userLesbian.hollowButtonText.text = "Lesbian"
@@ -91,7 +93,9 @@ class ProfileEditorActivity : AppCompatActivity() {
         binding.oneNightStandExperience.hollowButtonText.text = "One-night Stand"
 
         profileEditorRequest = ProfileEditorRequest(
-            sharedPreferences.getInt("memberId", 0),
+            memberId = sharedPreferences.getInt("memberId", 0),
+            userStatus = "",
+            currentLocation = "",
             bisexualCategory = 0,
             gayCategory = 0,
             lesbianCategory = 0,
@@ -122,6 +126,15 @@ class ProfileEditorActivity : AppCompatActivity() {
             sexToyExperience = 0,
             videoSexExperience = 0
         )
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + sharedPreferences.getString(getString(R.string.profile_picture), ""))
+            .transform(CircleCrop(), CenterCrop())
+            .into(binding.accountProfilePicture)
+
+        binding.currentUserStatus.text = sharedPreferences.getString(getString(R.string.status_default), "")
+        binding.userStatusUpdater.setText(sharedPreferences.getString(getString(R.string.status_default), ""))
 
         binding.profilePictureChanger.setOnClickListener {
             pickImageFromGallery()

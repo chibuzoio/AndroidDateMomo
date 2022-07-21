@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProfileEditorRequest(var memberId: Int,
+                                var userStatus: String,
+                                var currentLocation: String,
                                 var bisexualCategory: Int,
                                 var gayCategory: Int,
                                 var lesbianCategory: Int,
