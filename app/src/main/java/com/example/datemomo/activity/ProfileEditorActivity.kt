@@ -58,7 +58,7 @@ class ProfileEditorActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        binding.profileEditorSubmitButton.blueButtonText.text = "Submit Update"
+        binding.profileEditorCompleteButton.blueButtonText.text = "Done"
 
         binding.userGay.hollowButtonText.text = "Gay"
         binding.userToyBoy.hollowButtonText.text = "Toy Boy"
@@ -133,8 +133,8 @@ class ProfileEditorActivity : AppCompatActivity() {
             .transform(CircleCrop(), CenterCrop())
             .into(binding.accountProfilePicture)
 
-        binding.currentUserStatus.text = sharedPreferences.getString(getString(R.string.status_default), "")
-        binding.userStatusUpdater.setText(sharedPreferences.getString(getString(R.string.status_default), ""))
+//        binding.currentUserStatus.text = sharedPreferences.getString(getString(R.string.status_default), "")
+//        binding.userStatusUpdater.setText(sharedPreferences.getString(getString(R.string.status_default), ""))
 
         binding.profilePictureChanger.setOnClickListener {
             pickImageFromGallery()
@@ -577,118 +577,147 @@ class ProfileEditorActivity : AppCompatActivity() {
 
         if (sharedPreferences.getInt(getString(R.string.bisexual_category), 0) > 0) {
             binding.userBisexual.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userBisexual.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.gay_category), 0) > 0) {
             binding.userGay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userGay.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.lesbian_category), 0) > 0) {
             binding.userLesbian.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userLesbian.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.straight_category), 0) > 0) {
             binding.userStraight.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userStraight.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.sugar_daddy_category), 0) > 0) {
             binding.userSugarDaddy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userSugarDaddy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.sugar_mommy_category), 0) > 0) {
             binding.userSugarMommy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userSugarMommy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.toy_boy_category), 0) > 0) {
             binding.userToyBoy.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userToyBoy.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.toy_girl_category), 0) > 0) {
             binding.userToyGirl.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.userToyGirl.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.bisexual_interest), 0) > 0) {
             binding.bisexualInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.bisexualInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.gay_interest), 0) > 0) {
             binding.gayInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.gayInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.straight_interest), 0) > 0) {
             binding.straightInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.straightInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.lesbian_interest), 0) > 0) {
             binding.lesbianInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.lesbianInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0) > 0) {
             binding.sugarDaddyInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.sugarDaddyInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0) > 0) {
             binding.sugarMommyInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.sugarMommyInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0) > 0) {
             binding.toyBoyInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.toyBoyInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0) > 0) {
             binding.toyGirlInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.toyGirlInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0) > 0) {
             binding.analSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.analSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0) > 0) {
             binding.sixtyNineExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.sixtyNineExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.camera_sex_experience), 0) > 0) {
             binding.cameraSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.cameraSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.car_sex_experience), 0) > 0) {
             binding.carSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.carSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.threesome_experience), 0) > 0) {
             binding.threesomeExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.threesomeExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.given_head_experience), 0) > 0) {
             binding.givenHeadExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.givenHeadExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.received_head_experience), 0) > 0) {
             binding.receivedHeadExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.receivedHeadExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0) > 0) {
             binding.oneNightStandExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.oneNightStandExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.orgy_experience), 0) > 0) {
             binding.orgySexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.orgySexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0) > 0) {
             binding.poolSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.poolSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0) > 0) {
             binding.sexToyExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.sexToyExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.video_sex_experience), 0) > 0) {
             binding.videoSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.videoSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.public_sex_experience), 0) > 0) {
             binding.publicSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.publicSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
     }
 
