@@ -3,7 +3,7 @@ package com.example.datemomo.utility
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.datemomo.R
-import com.example.datemomo.model.request.UpdateStatusRequest
+import com.example.datemomo.model.request.UpdateActiveStatusRequest
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.*
 import java.io.IOException
@@ -16,11 +16,11 @@ class OkHttpUtility {
         fun updateUserStatus(context: Context,
                              sharedPreferences: SharedPreferences, isActivityActive: Boolean) {
             val mapper = jacksonObjectMapper()
-            val updateStatusRequest = UpdateStatusRequest(
+            val updateActiveStatusRequest = UpdateActiveStatusRequest(
                 sharedPreferences.getInt(context.getString(R.string.member_id), 0),
                 if (isActivityActive) 1 else 0)
 
-            val jsonObjectString = mapper.writeValueAsString(updateStatusRequest)
+            val jsonObjectString = mapper.writeValueAsString(updateActiveStatusRequest)
             val requestBody: RequestBody = RequestBody.create(
                 MediaType.parse("application/json"),
                 jsonObjectString

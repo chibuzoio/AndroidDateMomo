@@ -86,6 +86,7 @@
 
                 <View
                     android:id="@+id/locationUpdaterSeparator"
+                    android:visibility="gone"
                     android:layout_marginVertical="5dp"
                     android:layout_marginHorizontal="11dp"
                     android:background="@color/light_grey"
@@ -102,6 +103,7 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/currentLocationHeader"
+                    android:visibility="gone"
                     android:orientation="horizontal"
                     android:layout_marginHorizontal="11dp"
                     android:layout_width="match_parent"
@@ -121,6 +123,7 @@
                         android:layout_height="wrap_content"/>
 
                     <TextView
+                        android:id="@+id/locationUpdaterButton"
                         android:text="Update"
                         android:textSize="17sp"
                         android:textColor="@color/blue"
@@ -132,7 +135,7 @@
                 <TextView
                     android:id="@+id/currentLocationValue"
                     android:textSize="15sp"
-                    android:text="Minarelikoy"
+                    android:visibility="gone"
                     android:layout_marginBottom="7dp"
                     android:textColor="@color/edit_text"
                     android:layout_marginHorizontal="11dp"
@@ -143,6 +146,7 @@
                     android:id="@+id/userLocationHeader"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     android:text="Former Location"
                     android:textColor="@color/edit_text"
                     android:layout_marginHorizontal="11dp"
@@ -151,8 +155,8 @@
 
                 <TextView
                     android:id="@+id/userLocationValue"
-                    android:text="Magusa"
                     android:textSize="15sp"
+                    android:visibility="gone"
                     android:textColor="@color/edit_text"
                     android:layout_marginHorizontal="11dp"
                     android:layout_width="match_parent"
@@ -168,6 +172,7 @@
                 <!-- Update user status here -->
 
                 <TextView
+                    android:id="@+id/statusEditorButton"
                     android:text="Edit"
                     android:textSize="17sp"
                     android:layout_gravity="end"
@@ -179,7 +184,6 @@
                 <TextView
                     android:id="@+id/currentUserStatus"
                     android:textSize="17sp"
-                    android:text="Welcome to my profile! Feel free to crush on me!!"
                     android:layout_marginVertical="7dp"
                     android:textColor="@color/edit_text"
                     android:layout_marginHorizontal="11dp"
@@ -191,10 +195,9 @@
                     android:lines="3"
                     android:minLines="1"
                     android:maxLines="3"
-                    android:text="Welcome to my profile! Feel free to crush on me!!"
-                    android:hint="My Bio"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:scrollbars="vertical"
+                    android:hint="Add Your Status"
                     android:paddingVertical="11dp"
                     android:paddingHorizontal="11dp"
                     android:inputType="textMultiLine"
@@ -206,16 +209,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
+                <TextView
+                    android:id="@+id/statusUpdaterButton"
+                    android:text="Done"
+                    android:gravity="end"
+                    android:textSize="17sp"
+                    android:visibility="gone"
+                    android:textColor="@color/blue"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <View
                     android:layout_marginVertical="5dp"
                     android:layout_marginHorizontal="11dp"
                     android:background="@color/light_grey"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"/>
-
-
-                <!-- Start update user sexuality components here -->
-
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/userSexualityLayout"

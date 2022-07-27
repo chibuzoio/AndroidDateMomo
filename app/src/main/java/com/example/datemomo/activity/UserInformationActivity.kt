@@ -69,6 +69,16 @@ class UserInformationActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {
+            binding.userMessageButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+
+        }
+
+        binding.photoGalleryButton.iconHollowButtonLayout.setOnClickListener {
+            binding.photoGalleryButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+
+        }
+
         binding.profilePictureCover.setOnClickListener {
             fetchUserPictures()
         }
@@ -166,6 +176,7 @@ class UserInformationActivity : AppCompatActivity() {
         binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
         binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
 
+        binding.userStatusText.text = homeDisplayResponse.userStatus
         binding.userLocation.text = homeDisplayResponse.currentLocation
 
         if (homeDisplayResponse.fullName != "") {

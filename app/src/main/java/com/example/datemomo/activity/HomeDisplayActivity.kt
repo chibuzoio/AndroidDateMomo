@@ -49,7 +49,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
     private var isActivityActive: Boolean = true
-    private lateinit var userCurrentLocation: String
+    private lateinit var userUpdatedLocation: String
     private lateinit var messageRequest: MessageRequest
     private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -201,11 +201,11 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                 if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
                     if (knownName.isNullOrEmpty()) {
-                        userCurrentLocation = city
+                        userUpdatedLocation = city
                         sharedPreferencesEditor.putString(getString(R.string.current_location), city)
                         sharedPreferencesEditor.apply()
                     } else {
-                        userCurrentLocation = knownName
+                        userUpdatedLocation = knownName
                         sharedPreferencesEditor.putString(getString(R.string.current_location), knownName)
                         sharedPreferencesEditor.apply()
                     }
@@ -213,6 +213,16 @@ class HomeDisplayActivity : AppCompatActivity() {
                     requestProcess = getString(R.string.request_update_current_location)
 
                     updateCurrentLocation()
+                } else {
+                    if (knownName.isNullOrEmpty()) {
+                        sharedPreferencesEditor.putString(getString(R.string.updated_location), city)
+                        sharedPreferencesEditor.apply()
+                    } else {
+                        sharedPreferencesEditor.putString(getString(R.string.updated_location), knownName)
+                        sharedPreferencesEditor.apply()
+                    }
+
+                    // notify user of location change here
                 }
             } catch (exception: Exception) {
                 when (exception) {
@@ -398,7 +408,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         val mapper = jacksonObjectMapper()
         val updateLocationRequest =
             UpdateLocationRequest(sharedPreferences.getInt(getString(R.string.member_id), 0),
-                userCurrentLocation)
+                userUpdatedLocation)
 
         val jsonObjectString = mapper.writeValueAsString(updateLocationRequest)
         val requestBody: RequestBody = RequestBody.create(

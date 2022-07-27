@@ -192,8 +192,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
         homeDisplayModel.binding.userImagePlaceholder.layoutParams.height = imageHeight
         homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
 
-        homeDisplayModel.binding.userStatusText.text = context.getString(R.string.status_default)
-
+        homeDisplayModel.binding.userStatusText.text = homeDisplayResponses[position].userStatus
         homeDisplayModel.binding.userLocation.text = homeDisplayResponses[position].currentLocation
 
         val userFullName = homeDisplayResponses[position].fullName.ifEmpty {

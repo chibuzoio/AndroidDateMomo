@@ -24,6 +24,8 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityProfileEditorBinding
 import com.example.datemomo.model.request.PictureUpdateRequest
 import com.example.datemomo.model.request.ProfileEditorRequest
+import com.example.datemomo.model.request.StatusUpdateRequest
+import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.PictureUpdateResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -38,6 +40,7 @@ class ProfileEditorActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 200
     private var theBitmap: Bitmap? = null
     private val CAPTURE_IMAGE_REQUEST = 100
+    private lateinit var updatedStatus: String
     private lateinit var requestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
@@ -133,8 +136,46 @@ class ProfileEditorActivity : AppCompatActivity() {
             .transform(CircleCrop(), CenterCrop())
             .into(binding.accountProfilePicture)
 
-//        binding.currentUserStatus.text = sharedPreferences.getString(getString(R.string.status_default), "")
-//        binding.userStatusUpdater.setText(sharedPreferences.getString(getString(R.string.status_default), ""))
+        if (sharedPreferences.getString(getString(R.string.updated_location), "")
+                .equals(sharedPreferences.getString(getString(R.string.current_location), ""))
+            && sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
+            binding.locationUpdaterSeparator.visibility = View.GONE
+            binding.currentLocationHeader.visibility = View.GONE
+            binding.currentLocationValue.visibility = View.GONE
+            binding.userLocationHeader.visibility = View.GONE
+            binding.userLocationValue.visibility = View.GONE
+        } else {
+            binding.locationUpdaterSeparator.visibility = View.VISIBLE
+            binding.currentLocationHeader.visibility = View.VISIBLE
+            binding.currentLocationValue.visibility = View.VISIBLE
+            binding.userLocationHeader.visibility = View.VISIBLE
+            binding.userLocationValue.visibility = View.VISIBLE
+        }
+
+        binding.userStatusUpdater.setText(sharedPreferences.getString(getString(R.string.user_status), ""))
+        binding.userLocationValue.text = sharedPreferences.getString(getString(R.string.current_location), "")
+        binding.currentLocationValue.text = sharedPreferences.getString(getString(R.string.updated_location), "")
+        binding.currentUserStatus.text = sharedPreferences.getString(getString(R.string.user_status), "").toString().ifEmpty { "Add Your Status" }
+
+        binding.locationUpdaterButton.setOnClickListener {
+
+        }
+
+        binding.profileEditorCompleteButton.blueButtonLayout.setOnClickListener {
+
+        }
+
+        binding.statusUpdaterButton.setOnClickListener {
+            updatedStatus = binding.userStatusUpdater.text.toString().trim()
+            updateDateMomoStatus()
+        }
+
+        binding.statusEditorButton.setOnClickListener {
+            binding.statusUpdaterButton.visibility = View.VISIBLE
+            binding.userStatusUpdater.visibility = View.VISIBLE
+            binding.statusEditorButton.visibility = View.GONE
+            binding.currentUserStatus.visibility = View.GONE
+        }
 
         binding.profilePictureChanger.setOnClickListener {
             pickImageFromGallery()
@@ -755,6 +796,38 @@ class ProfileEditorActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+
+    @Throws(IOException::class)
+    fun updateDateMomoStatus() {
+        val statusUpdateRequest = StatusUpdateRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            updatedStatus
+        )
+
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(statusUpdateRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_update_status))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+            }
+        })
     }
 
     @Throws(IOException::class)

@@ -1196,7 +1196,7 @@ class MainActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 var authenticationResponse = AuthenticationResponse(0, 0, "",
                     "", "", "", "", "", "",
-                    false, "", "",
+                    "", false, "", "",
                     "", 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0, 0,
@@ -1220,6 +1220,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.user_name), authenticationResponse.userName)
                     sharedPreferencesEditor.putString(getString(R.string.user_role), authenticationResponse.userRole)
                     sharedPreferencesEditor.putString(getString(R.string.user_level), authenticationResponse.userLevel)
+                    sharedPreferencesEditor.putString(getString(R.string.user_status), authenticationResponse.userStatus)
                     sharedPreferencesEditor.putString(getString(R.string.phone_number), authenticationResponse.phoneNumber)
                     sharedPreferencesEditor.putString(getString(R.string.email_address), authenticationResponse.emailAddress)
                     sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), authenticationResponse.authenticated)
@@ -1303,7 +1304,8 @@ class MainActivity : AppCompatActivity() {
         val registrationRequest = RegistrationRequest(
             registerUserName,
             registerPassword,
-            getString(R.string.level_upload_profile_picture)
+            getString(R.string.level_upload_profile_picture),
+            getString(R.string.status_default)
         )
 
         val jsonObjectString = mapper.writeValueAsString(registrationRequest)
@@ -1340,7 +1342,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 var registrationResponse = RegistrationResponse(
-                    0, "", "", "", false, "")
+                    0, "", "", "", "", false, "")
 
                 try {
                     registrationResponse = mapper.readValue(myResponse)
@@ -1353,6 +1355,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.user_name), registrationResponse.userName)
                     sharedPreferencesEditor.putString(getString(R.string.user_role), registrationResponse.userRole)
                     sharedPreferencesEditor.putString(getString(R.string.user_level), registrationResponse.userLevel)
+                    sharedPreferencesEditor.putString(getString(R.string.user_status), registrationResponse.userStatus)
                     sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), registrationResponse.authenticated)
                     sharedPreferencesEditor.putString(getString(R.string.registration_date), registrationResponse.registrationDate)
                     sharedPreferencesEditor.apply()

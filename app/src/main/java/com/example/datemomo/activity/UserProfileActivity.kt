@@ -8,6 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.graphics.drawable.ColorDrawable
+import android.location.Address
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -33,6 +35,7 @@ import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.PictureUpdateResponse
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.model.response.UserPictureResponse
+import com.example.datemomo.service.LocationTracker
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -40,6 +43,8 @@ import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.lang.IndexOutOfBoundsException
+import java.util.*
 
 class UserProfileActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -50,6 +55,7 @@ class UserProfileActivity : AppCompatActivity() {
     private var theBitmap: Bitmap? = null
     private val CAPTURE_IMAGE_REQUEST = 100
     private lateinit var requestProcess: String
+    private lateinit var userUpdatedLocation: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var sharedPreferences: SharedPreferences
@@ -87,6 +93,53 @@ class UserProfileActivity : AppCompatActivity() {
         sharedPreferencesEditor = sharedPreferences.edit()
 
         redrawBottomMenuIcons(getString(R.string.clicked_account_menu))
+
+        if (LocationTracker(this).canGetLocation) {
+            val latitude = LocationTracker(this).getLatitude()
+            val longitude = LocationTracker(this).getLongitude()
+
+            val addresses: List<Address>
+            val geocoder = Geocoder(this, Locale.getDefault())
+
+            try {
+                addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    1
+                ) // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                val address: String =
+                    addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+
+                val city = addresses[0].locality
+                val state = addresses[0].adminArea
+                val country = addresses[0].countryName
+                val postalCode = addresses[0].postalCode
+                val knownName = addresses[0].featureName
+
+                if (knownName.isNullOrEmpty()) {
+                    sharedPreferencesEditor.putString(getString(R.string.updated_location), city)
+                    sharedPreferencesEditor.apply()
+                } else {
+                    sharedPreferencesEditor.putString(getString(R.string.updated_location), knownName)
+                    sharedPreferencesEditor.apply()
+                }
+
+                // notify user of location change here
+            } catch (exception: Exception) {
+                when (exception) {
+                    is IOException -> {
+                        Log.e(TAG, "IOException was caught, with message = ${exception.message}")
+                    }
+                    is IndexOutOfBoundsException -> {
+                        Log.e(TAG, "IndexOutOfBoundsException was caught, with message = ${exception.message}")
+                    }
+                    else -> {
+                        Log.e(TAG, "Error message from here is ${exception.message}")
+                    }
+                }
+            }
+        }
 
         try {
             val mapper = jacksonObjectMapper()
@@ -209,6 +262,18 @@ class UserProfileActivity : AppCompatActivity() {
         binding.sixthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
+
+        binding.profileEditorButton.iconHollowButtonLayout.setOnClickListener {
+            binding.profileEditorButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+
+            val intent = Intent(baseContext, ProfileEditorActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.photoGalleryButton.iconHollowButtonLayout.setOnClickListener {
+            binding.photoGalleryButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
+
+        }
 
         binding.profilePictureCover.setOnClickListener {
             fetchUserPictures()
@@ -376,6 +441,8 @@ class UserProfileActivity : AppCompatActivity() {
                 sharedPreferences.getInt(getString(R.string.age), 0)
             )
         }
+
+        binding.userStatusText.text = sharedPreferences.getString(getString(R.string.user_status), "")
 
         if (sharedPreferences.getInt(getString(R.string.bisexual_category), 0) > 0) {
             binding.userBisexual.blueButtonLayout.visibility = View.VISIBLE

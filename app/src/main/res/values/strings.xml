@@ -74,6 +74,7 @@
     <string name="api_post_message">service/postmessage.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
     <string name="api_user_picture">service/userpicture.php</string>
+    <string name="api_update_status">service/updatestatus.php</string>
     <string name="api_delete_message">service/deletemessage.php</string>
     <string name="api_update_picture">service/updatepicture.php</string>
     <string name="api_register_member">service/registermember.php</string>
@@ -110,6 +111,7 @@
     <string name="current_location">currentLocation</string>
     <string name="lesbian_category">lesbianCategory</string>
     <string name="lesbian_interest">lesbianInterest</string>
+    <string name="updated_location">updatedLocation</string>
     <string name="toy_girl_category">toyGirlCategory</string>
     <string name="toy_girl_interest">toyGirlInterest</string>
     <string name="bisexual_category">bisexualCategory</string>
