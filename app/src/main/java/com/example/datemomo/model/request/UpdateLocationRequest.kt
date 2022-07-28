@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateLocationRequest(var memberId: Int,
-                                 var currentLocation: String)
+                                 var updatedLocation: String)
 
 
