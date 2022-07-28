@@ -1,14 +1,12 @@
 package com.example.datemomo.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.datemomo.R
 import com.example.datemomo.databinding.FragmentImageSliderBinding
 
@@ -26,6 +24,10 @@ class ImageSliderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.pictureCompositeCounter.text = getString(R.string.picture_composite_counter,
+            requireArguments().getInt("itemPosition") + 1,
+            requireArguments().getInt("itemCount"))
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)

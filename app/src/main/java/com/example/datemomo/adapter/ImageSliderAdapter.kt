@@ -18,6 +18,8 @@ class ImageSliderAdapter(fragmentActivity: FragmentActivity,
     override fun createFragment(position: Int): Fragment {
         val imageSliderFragment = ImageSliderFragment()
         val bundle = Bundle()
+        bundle.putInt("itemCount", itemCount)
+        bundle.putInt("itemPosition", position)
         bundle.putInt("imageId", userPictureComposite[position].imageId)
         bundle.putInt("imageWidth", userPictureComposite[position].imageWidth)
         bundle.putString("imageName", userPictureComposite[position].imageName)

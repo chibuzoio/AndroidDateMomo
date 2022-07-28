@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
@@ -16,7 +15,6 @@ import com.example.datemomo.R
 import com.example.datemomo.adapter.ImageSliderAdapter
 import com.example.datemomo.control.ZoomOutPageTransformer
 import com.example.datemomo.databinding.ActivityImageSliderBinding
-import com.example.datemomo.model.UserPictureModel
 import com.example.datemomo.model.response.UserPictureResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
