@@ -939,6 +939,8 @@ class ProfileEditorActivity : AppCompatActivity() {
             .post(requestBody)
             .build()
 
+        finish()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()

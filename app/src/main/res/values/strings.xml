@@ -90,6 +90,8 @@
     <string name="api_user_status_update">service/userstatusupdate.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
+    <string name="api_change_profile_picture">service/changeprofilepicture.php</string>
+    <string name="api_delete_profile_picture">service/deleteprofilepicture.php</string>
     <string name="api_delete_messenger_messages">service/deletemessengermessages.php</string>
 
     <!-- Shared Preferences Keys -->

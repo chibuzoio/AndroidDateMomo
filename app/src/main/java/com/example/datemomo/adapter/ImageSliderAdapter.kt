@@ -24,6 +24,11 @@ class ImageSliderAdapter(fragmentActivity: FragmentActivity,
         bundle.putInt("imageWidth", userPictureComposite[position].imageWidth)
         bundle.putString("imageName", userPictureComposite[position].imageName)
         bundle.putInt("imageHeight", userPictureComposite[position].imageHeight)
+
+        val secondPicture = if (itemCount > 1) { userPictureComposite[1].imageName } else { "" }
+
+        bundle.putString("secondPicture", secondPicture)
+
         imageSliderFragment.arguments = bundle
         return imageSliderFragment
     }
