@@ -17,6 +17,7 @@ import com.example.datemomo.model.request.ChangeProfilePictureRequest
 import com.example.datemomo.model.request.DeletePictureRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.CommittedResponse
+import com.example.datemomo.model.response.PictureOwnerResponse
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -29,6 +30,7 @@ class ImageSliderFragment : Fragment() {
     private lateinit var fragmentObject: ImageSliderFragment
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var deletePictureRequest: DeletePictureRequest
+    private lateinit var pictureOwnerResponse: PictureOwnerResponse
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var changeProfilePictureRequest: ChangeProfilePictureRequest
 
@@ -40,6 +42,11 @@ class ImageSliderFragment : Fragment() {
         sharedPreferences =
             requireActivity().getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        deletePictureRequest =
+            DeletePictureRequest(requireArguments().getString("imageName").toString())
+
+        profilePictureOwnerId()
     }
 
     override fun onCreateView(
@@ -88,11 +95,14 @@ class ImageSliderFragment : Fragment() {
         }
 
         binding.photoMenuIconLayout.setOnClickListener {
-            binding.pictureMenuLayout.visibility = View.VISIBLE
+            if (sharedPreferences.getInt(getString(R.string.member_id), 0) ==
+                pictureOwnerResponse.memberId) {
+                binding.pictureMenuLayout.visibility = View.VISIBLE
 
-            binding.makeProfilePictureMenu.visibility =
-                if (requireArguments().getInt("itemPosition") > 0) {
-                    View.VISIBLE } else { View.GONE }
+                binding.makeProfilePictureMenu.visibility =
+                    if (requireArguments().getInt("itemPosition") > 0) {
+                        View.VISIBLE } else { View.GONE }
+            }
         }
 
         binding.pictureCompositeCounter.text = getString(R.string.picture_composite_counter,
@@ -104,6 +114,33 @@ class ImageSliderFragment : Fragment() {
                     + requireArguments().getString("imageName"))
             .transform(FitCenter())
             .into(binding.genericImageSlider)
+    }
+
+    @Throws(IOException::class)
+    fun profilePictureOwnerId() {
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(deletePictureRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_picture_owner))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                pictureOwnerResponse = mapper.readValue(myResponse)
+            }
+        })
     }
 
     @Throws(IOException::class)
