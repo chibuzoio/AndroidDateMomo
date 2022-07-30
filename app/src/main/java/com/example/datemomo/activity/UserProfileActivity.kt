@@ -55,6 +55,7 @@ class UserProfileActivity : AppCompatActivity() {
     private var theBitmap: Bitmap? = null
     private val CAPTURE_IMAGE_REQUEST = 100
     private lateinit var requestProcess: String
+    private lateinit var requestedActivity: String
     private lateinit var userUpdatedLocation: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
@@ -272,7 +273,8 @@ class UserProfileActivity : AppCompatActivity() {
 
         binding.photoGalleryButton.iconHollowButtonLayout.setOnClickListener {
             binding.photoGalleryButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
-
+            requestedActivity = getString(R.string.activity_image_display)
+            fetchUserPictures()
         }
 
         binding.profilePictureCover.setOnClickListener {
@@ -649,7 +651,15 @@ class UserProfileActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val intent = Intent(baseContext, ImageSliderActivity::class.java)
+
+                val intent = if (requestedActivity == getString(R.string.activity_image_display)) {
+                    Intent(baseContext, ImageDisplayActivity::class.java)
+                } else {
+                    Intent(baseContext, ImageSliderActivity::class.java)
+                }
+
+                requestedActivity = ""
+
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
             }

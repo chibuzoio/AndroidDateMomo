@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,33 +14,32 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
-import com.example.datemomo.adapter.AllLikersAdapter
-import com.example.datemomo.databinding.ActivityAllLikersBinding
+import com.example.datemomo.adapter.ImageDisplayAdapter
+import com.example.datemomo.databinding.ActivityImageDisplayBinding
 import com.example.datemomo.model.AllLikersModel
-import com.example.datemomo.model.response.UserLikerResponse
+import com.example.datemomo.model.PictureCompositeModel
+import com.example.datemomo.model.response.UserPictureResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
 
-class AllLikersActivity : AppCompatActivity() {
+class ImageDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private var leastRootViewHeight: Int = 0
     private lateinit var requestProcess: String
-    private lateinit var binding: ActivityAllLikersBinding
-    private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var binding: ActivityImageDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
+    private lateinit var pictureCompositeModel: PictureCompositeModel
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private lateinit var userPictureResponseArray: ArrayList<UserPictureResponse>
+    private lateinit var pictureCompositeModelArray: ArrayList<PictureCompositeModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityAllLikersBinding.inflate(layoutInflater)
+        binding = ActivityImageDisplayBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        hideSystemUI()
 
         val displayMetrics = DisplayMetrics()
 
@@ -59,54 +57,47 @@ class AllLikersActivity : AppCompatActivity() {
 
         bundle = intent.extras!!
 
-        buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
         try {
             val mapper = jacksonObjectMapper()
-            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            userPictureResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-/*
-            userLikerResponseArray = emptyArray()
-            userLikerResponseArray = append(UserLikerResponse(1, 34, "male",
-                "", "solution", "", "",
-                "image1.jpg", "", "2022-05-21 10:53:08"))
-            userLikerResponseArray = append(UserLikerResponse(2, 32, "female",
-                "", "melas", "", "",
-                "image2.jpg", "", "2022-05-21 11:07:06"))
-            userLikerResponseArray = append(UserLikerResponse(3, 35, "female",
-                "", "chiomzy", "", "",
-                "image3.jpg", "", "2022-05-24 06:43:09"))
-            userLikerResponseArray = append(UserLikerResponse(4, 35, "female",
-                "", "frenzy", "", "",
-                "image4.jpg", "", "2022-05-24 06:51:47"))
-            userLikerResponseArray = append(UserLikerResponse(5, 33, "female",
-                "", "floxy", "", "",
-                "image5.jpg", "", "2022-05-24 08:24:24"))
-            userLikerResponseArray = append(UserLikerResponse(6, 32, "female",
-                "", "millicent", "", "",
-                "image6.jpg", "", "2022-05-29 21:29:16"))
-*/
+            pictureCompositeModelArray = ArrayList()
+            pictureCompositeModel = PictureCompositeModel(ArrayList())
+
+            userPictureResponseArray.forEachIndexed { index, userPictureResponse ->
+                pictureCompositeModel.userPictureResponses.add(userPictureResponse)
+
+                if (((index + 1) % 3) == 0) {
+                    pictureCompositeModelArray.add(pictureCompositeModel)
+
+                    pictureCompositeModel = PictureCompositeModel(ArrayList())
+                }
+
+                if ((index == (userPictureResponseArray.size - 1)) && ((userPictureResponseArray.size % 3) != 0)) {
+                    pictureCompositeModelArray.add(pictureCompositeModel)
+                }
+            }
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            binding.allLikersRecyclerView.layoutManager = layoutManager
-            binding.allLikersRecyclerView.itemAnimator = DefaultItemAnimator()
+            binding.imageDisplayRecyclerView.layoutManager = layoutManager
+            binding.imageDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
             val allLikersModel = AllLikersModel(deviceWidth)
 
-            val allLikersAdapter = AllLikersAdapter(userLikerResponseArray, allLikersModel)
-            binding.allLikersRecyclerView.adapter = allLikersAdapter
+            val imageDisplayAdapter = ImageDisplayAdapter(pictureCompositeModelArray, allLikersModel)
+            binding.imageDisplayRecyclerView.adapter = imageDisplayAdapter
         } catch (exception: IOException) {
-            Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
+            Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }
 
-    private fun append(userLikerResponse: UserLikerResponse): Array<UserLikerResponse> {
-        val userLikerResponseList = userLikerResponseArray.toMutableList()
-        userLikerResponseList.add(userLikerResponse)
-        return userLikerResponseList.toTypedArray()
+    override fun onStart() {
+        super.onStart()
+        hideSystemUI()
     }
 
     private fun hideSystemUI() {
@@ -123,7 +114,7 @@ class AllLikersActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "AllLikersActivity"
+        const val TAG = "ImageDisplayActivity"
     }
 }
 

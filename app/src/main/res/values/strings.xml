@@ -11,6 +11,7 @@
     <string name="activity_messenger">MessengerActivity</string>
     <string name="activity_home_display">HomeDisplayActivity</string>
     <string name="activity_user_profile">UserProfileActivity</string>
+    <string name="activity_image_display">ImageDisplayActivity</string>
     <string name="activity_user_information">UserInformationActivity</string>
 
     <string name="clicked_home_menu">clickedHomeMenu</string>
