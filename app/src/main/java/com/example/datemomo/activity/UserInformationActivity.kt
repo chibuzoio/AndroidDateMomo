@@ -94,6 +94,7 @@ class UserInformationActivity : AppCompatActivity() {
         }
 
         binding.profilePictureCover.setOnClickListener {
+            requestedActivity = getString(R.string.activity_image_slider)
             fetchUserPictures()
         }
 
@@ -428,7 +429,9 @@ class UserInformationActivity : AppCompatActivity() {
 
                 requestedActivity = ""
 
+                intent.putExtra("memberId", homeDisplayResponse.memberId)
                 intent.putExtra("jsonResponse", myResponse)
+                intent.putExtra("currentPosition", 0)
                 startActivity(intent)
             }
         })

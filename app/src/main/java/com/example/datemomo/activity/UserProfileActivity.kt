@@ -31,10 +31,8 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserProfileBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.request.*
-import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.PictureUpdateResponse
 import com.example.datemomo.model.response.UserLikerResponse
-import com.example.datemomo.model.response.UserPictureResponse
 import com.example.datemomo.service.LocationTracker
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -43,7 +41,6 @@ import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.lang.IndexOutOfBoundsException
 import java.util.*
 
 class UserProfileActivity : AppCompatActivity() {
@@ -278,6 +275,7 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
         binding.profilePictureCover.setOnClickListener {
+            requestedActivity = getString(R.string.activity_image_slider)
             fetchUserPictures()
         }
 
@@ -660,7 +658,9 @@ class UserProfileActivity : AppCompatActivity() {
 
                 requestedActivity = ""
 
+                intent.putExtra("memberId", sharedPreferences.getInt(getString(R.string.member_id), 0))
                 intent.putExtra("jsonResponse", myResponse)
+                intent.putExtra("currentPosition", 0)
                 startActivity(intent)
             }
         })

@@ -86,7 +86,7 @@ class ImageDisplayActivity : AppCompatActivity() {
             binding.imageDisplayRecyclerView.layoutManager = layoutManager
             binding.imageDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val allLikersModel = AllLikersModel(deviceWidth)
+            val allLikersModel = AllLikersModel(bundle.getInt("memberId"), deviceWidth)
 
             val imageDisplayAdapter = ImageDisplayAdapter(pictureCompositeModelArray, allLikersModel)
             binding.imageDisplayRecyclerView.adapter = imageDisplayAdapter

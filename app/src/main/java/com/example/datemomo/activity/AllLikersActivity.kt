@@ -94,7 +94,8 @@ class AllLikersActivity : AppCompatActivity() {
             binding.allLikersRecyclerView.layoutManager = layoutManager
             binding.allLikersRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val allLikersModel = AllLikersModel(deviceWidth)
+            val allLikersModel =
+                AllLikersModel(sharedPreferences.getInt(getString(R.string.member_id), 0), deviceWidth)
 
             val allLikersAdapter = AllLikersAdapter(userLikerResponseArray, allLikersModel)
             binding.allLikersRecyclerView.adapter = allLikersAdapter

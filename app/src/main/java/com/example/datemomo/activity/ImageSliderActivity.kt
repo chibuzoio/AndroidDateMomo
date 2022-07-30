@@ -67,6 +67,7 @@ class ImageSliderActivity : AppCompatActivity() {
 
             binding.genericPicturePager.adapter = ImageSliderAdapter(this, userPictureComposite)
             binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())
+            binding.genericPicturePager.setCurrentItem(bundle.getInt("currentPosition"), true)
         } catch (exception: IOException) {
             Log.e(UserProfileActivity.TAG, "Error message from here is ${exception.message}")
         }

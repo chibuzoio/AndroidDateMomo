@@ -1,5 +1,8 @@
 package com.example.datemomo.adapter
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,14 +10,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.example.datemomo.R
+import com.example.datemomo.activity.ImageSliderActivity
 import com.example.datemomo.databinding.RecyclerImageDisplayBinding
 import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.PictureCompositeModel
-import kotlin.math.roundToInt
+import com.example.datemomo.model.request.UserPictureRequest
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import okhttp3.*
+import java.io.IOException
 
 class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureCompositeModel>,
                           private var allLikersModel: AllLikersModel) :
     RecyclerView.Adapter<ImageDisplayAdapter.MyViewHolder>() {
+    private var currentPosition = 0
+    private lateinit var context: Context
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerImageDisplayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,13 +33,15 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        context = holder.itemView.context
+
+        sharedPreferences =
+            context.getSharedPreferences(context.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
+        sharedPreferencesEditor = sharedPreferences.edit()
+
         val pictureSeparatorWidth = (((3 / 100F) * allLikersModel.deviceWidth) / 4).toInt() // look into this
         val pictureDisplayWidth = ((allLikersModel.deviceWidth - ((3 / 100F) * allLikersModel.deviceWidth)) / 3).toInt()
         val pictureDisplayHeight = (1.1 * pictureDisplayWidth).toInt()
-
-        Log.e(TAG, "pictureSeparatorWidth value here is $pictureSeparatorWidth")
-        Log.e(TAG, "pictureDisplayWidth value here is $pictureDisplayWidth")
-        Log.e(TAG, "pictureDisplayHeight value here is $pictureDisplayHeight")
 
         holder.binding.firstSeparator.layoutParams.width = pictureSeparatorWidth
         holder.binding.thirdSeparator.layoutParams.width = pictureSeparatorWidth
@@ -54,6 +67,21 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
         val thirdPictureViewMarginLayoutParams =
             holder.binding.thirdPictureView.layoutParams as ViewGroup.MarginLayoutParams
         thirdPictureViewMarginLayoutParams.topMargin = pictureSeparatorWidth
+
+        holder.binding.firstPictureView.setOnClickListener {
+            currentPosition = position * 3
+            fetchUserPictures()
+        }
+
+        holder.binding.secondPictureView.setOnClickListener {
+            currentPosition = (position * 3) + 1
+            fetchUserPictures()
+        }
+
+        holder.binding.thirdPictureView.setOnClickListener {
+            currentPosition = (position * 3) + 2
+            fetchUserPictures()
+        }
 
         try {
             Glide.with(holder.itemView.context)
@@ -93,6 +121,50 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
 
     class MyViewHolder(val binding: RecyclerImageDisplayBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    @Throws(IOException::class)
+    fun fetchUserPictures() {
+        val mapper = jacksonObjectMapper()
+        val userPictureRequest = UserPictureRequest(
+            allLikersModel.memberId
+        )
+
+        val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(context.getString(R.string.date_momo_api) +
+                    context.getString(R.string.api_user_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+/*                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }*/
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(context, ImageSliderActivity::class.java)
+                intent.putExtra("currentPosition", currentPosition)
+                intent.putExtra("jsonResponse", myResponse)
+                context.startActivity(intent)
+            }
+        })
+    }
 
     companion object {
         const val TAG = "ImageDisplayAdapter"
