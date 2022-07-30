@@ -22,19 +22,18 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val pictureSeparatorWidth: Float =
-            (((20 / 100) * allLikersModel.deviceWidth) / 4).toFloat() // look into this
-        val pictureDisplayWidth = (allLikersModel.deviceWidth - ((20 / 100) * allLikersModel.deviceWidth)) / 3
-        val pictureDisplayHeight = (1.1 * pictureDisplayWidth).roundToInt()
+        val pictureSeparatorWidth = (((3 / 100F) * allLikersModel.deviceWidth) / 4).toInt() // look into this
+        val pictureDisplayWidth = ((allLikersModel.deviceWidth - ((3 / 100F) * allLikersModel.deviceWidth)) / 3).toInt()
+        val pictureDisplayHeight = (1.1 * pictureDisplayWidth).toInt()
 
         Log.e(TAG, "pictureSeparatorWidth value here is $pictureSeparatorWidth")
         Log.e(TAG, "pictureDisplayWidth value here is $pictureDisplayWidth")
         Log.e(TAG, "pictureDisplayHeight value here is $pictureDisplayHeight")
 
-        holder.binding.firstSeparator.layoutParams.width = pictureSeparatorWidth.toInt()
-        holder.binding.thirdSeparator.layoutParams.width = pictureSeparatorWidth.toInt()
-        holder.binding.fourthSeparator.layoutParams.width = pictureSeparatorWidth.toInt()
-        holder.binding.secondSeparator.layoutParams.width = pictureSeparatorWidth.toInt()
+        holder.binding.firstSeparator.layoutParams.width = pictureSeparatorWidth
+        holder.binding.thirdSeparator.layoutParams.width = pictureSeparatorWidth
+        holder.binding.fourthSeparator.layoutParams.width = pictureSeparatorWidth
+        holder.binding.secondSeparator.layoutParams.width = pictureSeparatorWidth
 
         holder.binding.firstPictureView.layoutParams.width = pictureDisplayWidth
         holder.binding.thirdPictureView.layoutParams.width = pictureDisplayWidth
@@ -43,6 +42,18 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
         holder.binding.firstPictureView.layoutParams.height = pictureDisplayHeight
         holder.binding.thirdPictureView.layoutParams.height = pictureDisplayHeight
         holder.binding.secondPictureView.layoutParams.height = pictureDisplayHeight
+
+        val firstPictureViewMarginLayoutParams =
+            holder.binding.firstPictureView.layoutParams as ViewGroup.MarginLayoutParams
+        firstPictureViewMarginLayoutParams.topMargin = pictureSeparatorWidth
+
+        val secondPictureViewMarginLayoutParams =
+            holder.binding.secondPictureView.layoutParams as ViewGroup.MarginLayoutParams
+        secondPictureViewMarginLayoutParams.topMargin = pictureSeparatorWidth
+
+        val thirdPictureViewMarginLayoutParams =
+            holder.binding.thirdPictureView.layoutParams as ViewGroup.MarginLayoutParams
+        thirdPictureViewMarginLayoutParams.topMargin = pictureSeparatorWidth
 
         try {
             Glide.with(holder.itemView.context)
