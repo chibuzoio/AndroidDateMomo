@@ -3,6 +3,7 @@ package com.example.datemomo.activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -10,15 +11,25 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
+import com.example.datemomo.adapter.NotificationAdapter
 import com.example.datemomo.databinding.ActivityNotificationBinding
+import com.example.datemomo.model.response.NotificationResponse
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import java.io.IOException
 
 class NotificationActivity : AppCompatActivity() {
+    private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityNotificationBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private lateinit var notificationResponseArray: ArrayList<NotificationResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +38,8 @@ class NotificationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         hideSystemUI()
+
+        bundle = intent.extras!!
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
@@ -90,6 +103,20 @@ class NotificationActivity : AppCompatActivity() {
         binding.bottomNavigationLayout.bottomGenericMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_generic_menu))
 
+        }
+
+        try {
+            val mapper = jacksonObjectMapper()
+            notificationResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+
+            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            binding.notificationRecyclerView.layoutManager = layoutManager
+            binding.notificationRecyclerView.itemAnimator = DefaultItemAnimator()
+
+            val notificationAdapter = NotificationAdapter(notificationResponseArray)
+            binding.notificationRecyclerView.adapter = notificationAdapter
+        } catch (exception: IOException) {
+            Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }
 
