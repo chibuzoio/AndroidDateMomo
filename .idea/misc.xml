@@ -34,6 +34,7 @@
         <entry key="app/src/main/res/drawable/profile_picture_placeholder.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/selected_bottom_menu.xml" value="0.142" />
         <entry key="app/src/main/res/drawable/transparent_gradient.xml" value="0.141" />
+        <entry key="app/src/main/res/layout/activity_account_manager.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/activity_all_likers.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_image_display.xml" value="0.19375" />
@@ -64,6 +65,7 @@
         <entry key="app/src/main/res/layout/recycler_image_display.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/recycler_message.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/recycler_messenger.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/recycler_notification.xml" value="0.19375" />
         <entry key="app/src/main/res/layout/splash_screen.xml" value="0.1796875" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.1796875" />
       </map>
