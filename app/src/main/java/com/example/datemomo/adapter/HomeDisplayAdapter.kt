@@ -17,6 +17,7 @@ import com.example.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.LikeUserRequest
 import com.example.datemomo.model.request.MessageRequest
+import com.example.datemomo.model.request.NotifyUserRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
@@ -337,6 +338,54 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
     }
 
     @Throws(IOException::class)
+    private fun notifyLikedUser(context: Context, position: Int) {
+        val notifierName =
+            sharedPreferences.getString(context.getString(R.string.full_name), "").toString().ifEmpty {
+                sharedPreferences.getString(context.getString(R.string.user_name), "")
+            }
+
+        val genericNotification = "$notifierName reacted to your profile picture"
+
+        val mapper = jacksonObjectMapper()
+        val notifyUserRequest = NotifyUserRequest(
+            context.getString(R.string.profile_picture_like),
+            homeDisplayResponses[position].memberId,
+            genericNotification,
+            sharedPreferences.getInt(context.getString(R.string.member_id), 0),
+            "")
+
+        val jsonObjectString = mapper.writeValueAsString(notifyUserRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(context.getString(R.string.date_momo_api) +
+                    context.getString(R.string.api_notify_profile_picture_owner))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                var committedResponse = CommittedResponse(false)
+
+                try {
+                    committedResponse = mapper.readValue(myResponse)
+                } catch (exception: IOException) {
+                    Log.e(TAG, "Exception from processLikeUser is ${exception.message}")
+                }
+            }
+        })
+    }
+
+    @Throws(IOException::class)
     private fun processUserLike(context: Context, position: Int) {
         val mapper = jacksonObjectMapper()
         val likeUserRequest = LikeUserRequest(
@@ -367,6 +416,10 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
                 try {
                     committedResponse = mapper.readValue(myResponse)
+
+                    if (committedResponse.committed) {
+                        notifyLikedUser(context, position)
+                    }
                 } catch (exception: IOException) {
                     Log.e(TAG, "Exception from processLikeUser is ${exception.message}")
                 }

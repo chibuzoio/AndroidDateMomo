@@ -11,7 +11,8 @@ import com.example.datemomo.databinding.RecyclerNotificationBinding
 import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.response.NotificationResponse
 
-class NotificationAdapter(private var notificationResponses: ArrayList<NotificationResponse>, private var allLikersModel: AllLikersModel) :
+class NotificationAdapter(private var notificationResponses: ArrayList<NotificationResponse>,
+                          private var allLikersModel: AllLikersModel) :
     RecyclerView.Adapter<NotificationAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

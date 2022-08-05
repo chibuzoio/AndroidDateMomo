@@ -2,7 +2,9 @@ package com.example.datemomo.activity
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -17,12 +19,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.datemomo.R
 import com.example.datemomo.adapter.NotificationAdapter
 import com.example.datemomo.databinding.ActivityNotificationBinding
+import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.response.NotificationResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
 
 class NotificationActivity : AppCompatActivity() {
+    private var deviceWidth: Int = 0
+    private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -38,6 +43,20 @@ class NotificationActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         hideSystemUI()
+
+        val displayMetrics = DisplayMetrics()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display?.getRealMetrics(displayMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            val display = windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getMetrics(displayMetrics)
+        }
+
+        deviceWidth = displayMetrics.widthPixels
+        deviceHeight = displayMetrics.heightPixels
 
         bundle = intent.extras!!
 
@@ -109,11 +128,16 @@ class NotificationActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             notificationResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
+            val allLikersModel = AllLikersModel(
+                sharedPreferences.getInt(getString(R.string.member_id), 0),
+                deviceWidth
+            )
+
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.notificationRecyclerView.layoutManager = layoutManager
             binding.notificationRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val notificationAdapter = NotificationAdapter(notificationResponseArray)
+            val notificationAdapter = NotificationAdapter(notificationResponseArray, allLikersModel)
             binding.notificationRecyclerView.adapter = notificationAdapter
         } catch (exception: IOException) {
             Log.e(TAG, "Error message from here is ${exception.message}")
