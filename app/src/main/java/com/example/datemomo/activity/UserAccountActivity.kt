@@ -11,19 +11,19 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.datemomo.R
-import com.example.datemomo.databinding.ActivityAccountManagerBinding
+import com.example.datemomo.databinding.ActivityUserAccountBinding
 
-class AccountManagerActivity : AppCompatActivity() {
+class UserAccountActivity : AppCompatActivity() {
     private lateinit var requestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var binding: ActivityUserAccountBinding
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var binding: ActivityAccountManagerBinding
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityAccountManagerBinding.inflate(layoutInflater)
+        binding = ActivityUserAccountBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         hideSystemUI()
@@ -201,7 +201,7 @@ class AccountManagerActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "AccountManagerActivity"
+        const val TAG = "UserAccountActivity"
     }
 }
 

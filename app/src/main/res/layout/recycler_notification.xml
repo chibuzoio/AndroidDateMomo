@@ -15,7 +15,6 @@
         android:layout_height="wrap_content">
 
         <View
-            android:id="@+id/profilePicturePlaceholder"
             android:layout_margin="7dp"
             android:layout_gravity="center"
             android:foregroundGravity="center"
@@ -48,7 +47,7 @@
             android:layout_height="0dp"/>
 
         <TextView
-            android:id="@+id/notifierUserFullName"
+            android:id="@+id/genericNotification"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="@color/edit_text"
@@ -61,7 +60,7 @@
             android:layout_height="0dp"/>
 
         <TextView
-            android:id="@+id/notifierCurrentLocation"
+            android:id="@+id/notificationDate"
             android:textSize="15sp"
             android:textColor="@color/edit_text"
             android:layout_width="match_parent"

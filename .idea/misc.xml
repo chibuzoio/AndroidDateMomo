@@ -43,6 +43,7 @@
         <entry key="app/src/main/res/layout/activity_message.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_messenger.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_profile_editor.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/activity_user_account.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_user_bio.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_user_information.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.1" />

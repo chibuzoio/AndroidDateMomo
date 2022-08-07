@@ -10,6 +10,7 @@ import com.example.datemomo.R
 import com.example.datemomo.databinding.RecyclerNotificationBinding
 import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.response.NotificationResponse
+import com.example.datemomo.utility.Utility
 
 class NotificationAdapter(private var notificationResponses: ArrayList<NotificationResponse>,
                           private var allLikersModel: AllLikersModel) :
@@ -36,8 +37,10 @@ class NotificationAdapter(private var notificationResponses: ArrayList<Notificat
             .transform(CircleCrop(), CenterCrop())
             .into(holder.binding.notifierProfilePicture)
 
-        // fill notification textview and notificationDate textview here
-        
+        holder.binding.genericNotification.text =
+            notificationResponses[position].genericNotification
+        holder.binding.notificationDate.text =
+            Utility.getTimeDifference(notificationResponses[position].notificationDate.toLong())
     }
 
     override fun getItemCount(): Int {
