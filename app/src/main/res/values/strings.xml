@@ -32,6 +32,7 @@
     <string name="status_message">Just send me a message</string>
     <string name="status_busy">Busy</string>
 
+    <string name="more_liked_count">+%1$d</string>
     <string name="more_likers_count">+%1$d</string>
     <string name="name_and_age_text">%1$s, %2$d</string>
     <string name="sexuality">Your Sexual Category</string>
@@ -56,6 +57,7 @@
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
 
     <string name="request_register_user">registerUser</string>
+    <string name="request_fetch_user_liked">fetchUserLiked</string>
     <string name="request_fetch_user_likers">fetchUserLikers</string>
     <string name="request_post_user_picture">postUserPicture</string>
     <string name="request_authenticate_user">authenticateUser</string>
