@@ -57,7 +57,7 @@
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
 
     <string name="request_register_user">registerUser</string>
-    <string name="request_fetch_user_liked">fetchUserLiked</string>
+    <string name="request_fetch_liked_users">fetchLikedUsers</string>
     <string name="request_fetch_user_likers">fetchUserLikers</string>
     <string name="request_post_user_picture">postUserPicture</string>
     <string name="request_authenticate_user">authenticateUser</string>
@@ -93,6 +93,7 @@
     <string name="api_register_member">service/registermember.php</string>
     <string name="api_update_location">service/updatelocation.php</string>
     <string name="api_user_biometrics">service/userbiometrics.php</string>
+    <string name="api_liked_users_data">service/likedusersdata.php</string>
     <string name="api_user_likers_data">service/userlikersdata.php</string>
     <string name="api_update_sexuality">service/updatesexuality.php</string>
     <string name="api_user_information">service/userinformation.php</string>

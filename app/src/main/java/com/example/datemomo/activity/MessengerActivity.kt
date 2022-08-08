@@ -17,12 +17,10 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.datemomo.MainActivity
 import com.example.datemomo.R
 import com.example.datemomo.adapter.MessengerAdapter
 import com.example.datemomo.databinding.ActivityMessengerBinding
 import com.example.datemomo.model.ActivityStackModel
-import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.MessengerModel
 import com.example.datemomo.model.request.*
 import com.example.datemomo.model.response.CommittedResponse
@@ -32,7 +30,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
-import java.util.*
 
 class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -131,7 +128,8 @@ class MessengerActivity : AppCompatActivity() {
 
         binding.bottomNavigationLayout.bottomGenericMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_generic_menu))
-
+            requestProcess = getString(R.string.request_fetch_liked_users)
+            fetchLikedUsers()
         }
 
         try {
@@ -443,6 +441,57 @@ class MessengerActivity : AppCompatActivity() {
     }
 
     @Throws(IOException::class)
+    fun fetchLikedUsers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_liked_users_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                val intent = Intent(baseContext, UserAccountActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
+    }
+
+    @Throws(IOException::class)
     fun fetchUserLikers() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
@@ -499,6 +548,7 @@ class MessengerActivity : AppCompatActivity() {
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
             getString(R.string.request_fetch_user_messages) -> fetchUserMessages(messageRequest)
             getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
+            getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
         }
     }
 
