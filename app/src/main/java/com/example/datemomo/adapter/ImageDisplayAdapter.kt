@@ -111,6 +111,7 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
                 .transform(CenterCrop())
                 .into(holder.binding.thirdPictureView)
         } catch (exception: IndexOutOfBoundsException) {
+            exception.printStackTrace()
             Log.e(TAG, "IndexOutOfBoundsException was caught, with message = ${exception.message}")
         }
     }

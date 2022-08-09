@@ -1125,6 +1125,7 @@ class ProfileEditorActivity : AppCompatActivity() {
                         pictureUpdateResponse.profilePicture)
                     sharedPreferencesEditor.apply()
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     displaySingleButtonDialog(
                         getString(R.string.server_error_title),
                         getString(R.string.server_error_message)

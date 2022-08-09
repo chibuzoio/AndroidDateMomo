@@ -149,6 +149,7 @@ class NotificationActivity : AppCompatActivity() {
             val notificationAdapter = NotificationAdapter(notificationResponseArray, allLikersModel)
             binding.notificationRecyclerView.adapter = notificationAdapter
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }

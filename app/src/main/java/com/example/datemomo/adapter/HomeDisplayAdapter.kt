@@ -379,6 +379,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
                 try {
                     committedResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     Log.e(TAG, "Exception from processLikeUser is ${exception.message}")
                 }
             }
@@ -421,6 +422,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
                         notifyLikedUser(context, position)
                     }
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     Log.e(TAG, "Exception from processLikeUser is ${exception.message}")
                 }
             }

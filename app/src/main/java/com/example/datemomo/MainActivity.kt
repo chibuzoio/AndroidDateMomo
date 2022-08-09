@@ -1109,6 +1109,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     pictureUploadResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
 
@@ -1209,6 +1210,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     authenticationResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
 
@@ -1347,7 +1349,9 @@ class MainActivity : AppCompatActivity() {
                 try {
                     registrationResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                    Log.e(TAG, "Error message from registration response here is ${exception.message}")
                 }
 
                 if (registrationResponse.authenticated) {

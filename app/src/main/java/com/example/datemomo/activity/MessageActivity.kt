@@ -188,6 +188,7 @@ class MessageActivity : AppCompatActivity() {
 
             (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
     }

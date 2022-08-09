@@ -100,6 +100,7 @@ class AllLikersActivity : AppCompatActivity() {
             val allLikersAdapter = AllLikersAdapter(userLikerResponseArray, allLikersModel)
             binding.allLikersRecyclerView.adapter = allLikersAdapter
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
     }

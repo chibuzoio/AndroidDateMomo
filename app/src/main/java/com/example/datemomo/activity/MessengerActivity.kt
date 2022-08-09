@@ -146,6 +146,7 @@ class MessengerActivity : AppCompatActivity() {
             val messengerAdapter = MessengerAdapter(messengerResponseArray, messengerModel)
             binding.messengerRecyclerView.adapter = messengerAdapter
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
         }
     }

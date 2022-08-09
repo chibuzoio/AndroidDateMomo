@@ -91,6 +91,7 @@ class ImageDisplayActivity : AppCompatActivity() {
             val imageDisplayAdapter = ImageDisplayAdapter(pictureCompositeModelArray, allLikersModel)
             binding.imageDisplayRecyclerView.adapter = imageDisplayAdapter
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }

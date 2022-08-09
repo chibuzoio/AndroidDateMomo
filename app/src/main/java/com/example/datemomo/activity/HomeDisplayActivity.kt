@@ -237,6 +237,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // notify user of location change here
                 }
             } catch (exception: Exception) {
+                exception.printStackTrace()
+
                 when (exception) {
                     is IOException -> {
                         Log.e(TAG, "IOException was caught, with message = ${exception.message}")
@@ -265,6 +267,7 @@ class HomeDisplayActivity : AppCompatActivity() {
             val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, homeDisplayModel)
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }
@@ -322,8 +325,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 try {
                     jsonObject.put("messengerTableName", "messengerTableName")
                     jsonObject.put("notificationTableName", "notificationTableName")
-                } catch (e: JSONException) {
-                    e.printStackTrace()
+                } catch (exception: JSONException) {
+                    exception.printStackTrace()
                 }
 
                 Log.e(TAG, "Execution got here in establishSystemSocket 1")
@@ -346,8 +349,8 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                 try {
                     Thread.sleep(1000)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
+                } catch (exception: InterruptedException) {
+                    exception.printStackTrace()
                 }
 
                 val jsonObject = JSONObject()
@@ -355,8 +358,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 try {
                     jsonObject.put("messengerTableName", "messengerTableName")
                     jsonObject.put("notificationTableName", "notificationTableName")
-                } catch (e: JSONException) {
-                    e.printStackTrace()
+                } catch (exception: JSONException) {
+                    exception.printStackTrace()
                 }
 
                 if (isActivityActive) {

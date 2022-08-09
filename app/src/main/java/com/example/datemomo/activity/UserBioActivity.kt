@@ -851,6 +851,7 @@ class UserBioActivity : AppCompatActivity() {
                 try {
                     userBioResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
 

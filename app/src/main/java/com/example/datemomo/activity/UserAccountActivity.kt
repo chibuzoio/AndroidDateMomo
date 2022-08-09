@@ -162,6 +162,7 @@ class UserAccountActivity : AppCompatActivity() {
                 }
             }
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
         }
 

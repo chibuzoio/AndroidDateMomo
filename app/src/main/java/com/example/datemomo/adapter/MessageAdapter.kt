@@ -211,6 +211,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                         notifyItemChanged(postMessageResponse.messagePosition)
                     }
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     Log.e(TAG, "Exception from postSenderMessage is ${exception.message}")
                 }
             }

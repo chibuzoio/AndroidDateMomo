@@ -125,6 +125,8 @@ class UserProfileActivity : AppCompatActivity() {
 
                 // notify user of location change here
             } catch (exception: Exception) {
+                exception.printStackTrace()
+
                 when (exception) {
                     is IOException -> {
                         Log.e(TAG, "IOException was caught, with message = ${exception.message}")
@@ -191,6 +193,7 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
         } catch (exception: IOException) {
+            exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
         }
 
@@ -739,6 +742,7 @@ class UserProfileActivity : AppCompatActivity() {
                         pictureUpdateResponse.profilePicture)
                     sharedPreferencesEditor.apply()
                 } catch (exception: IOException) {
+                    exception.printStackTrace()
                     displaySingleButtonDialog(
                         getString(R.string.server_error_title),
                         getString(R.string.server_error_message)

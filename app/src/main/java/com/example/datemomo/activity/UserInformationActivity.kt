@@ -132,6 +132,7 @@ class UserInformationActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             homeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
         } catch (exception: IOException) {
+            exception.printStackTrace()
             finish()
         }
 
