@@ -1195,17 +1195,17 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                var authenticationResponse = AuthenticationResponse(0, 0, "",
-                    "", "", "", "", "", "",
-                    "", false, "", "",
-                    "", 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0, 0,
+                var authenticationResponse = AuthenticationResponse(0, 0,
+                    "", "", "", "", 0, "",
+                    "", "", "", false,
+                    "", "", "", 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0,
-                    0)
+                    0, 0, 0, 0,
+                    0, 0, 0, 0,
+                    0, 0, 0, 0)
 
                 try {
                     authenticationResponse = mapper.readValue(myResponse)
@@ -1222,6 +1222,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.user_name), authenticationResponse.userName)
                     sharedPreferencesEditor.putString(getString(R.string.user_role), authenticationResponse.userRole)
                     sharedPreferencesEditor.putString(getString(R.string.user_level), authenticationResponse.userLevel)
+                    sharedPreferencesEditor.putInt(getString(R.string.impact_count), authenticationResponse.impactCount)
                     sharedPreferencesEditor.putString(getString(R.string.user_status), authenticationResponse.userStatus)
                     sharedPreferencesEditor.putString(getString(R.string.phone_number), authenticationResponse.phoneNumber)
                     sharedPreferencesEditor.putString(getString(R.string.email_address), authenticationResponse.emailAddress)
@@ -1344,7 +1345,7 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 var registrationResponse = RegistrationResponse(
-                    0, "", "", "", "", false, "")
+                    0, "", "", 0, "", "", false, "")
 
                 try {
                     registrationResponse = mapper.readValue(myResponse)
@@ -1359,6 +1360,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.user_name), registrationResponse.userName)
                     sharedPreferencesEditor.putString(getString(R.string.user_role), registrationResponse.userRole)
                     sharedPreferencesEditor.putString(getString(R.string.user_level), registrationResponse.userLevel)
+                    sharedPreferencesEditor.putInt(getString(R.string.impact_count), registrationResponse.impactCount)
                     sharedPreferencesEditor.putString(getString(R.string.user_status), registrationResponse.userStatus)
                     sharedPreferencesEditor.putBoolean(getString(R.string.authenticated), registrationResponse.authenticated)
                     sharedPreferencesEditor.putString(getString(R.string.registration_date), registrationResponse.registrationDate)

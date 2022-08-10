@@ -119,6 +119,7 @@
     <string name="user_status">userStatus</string>
     <string name="gay_category">gayCategory</string>
     <string name="gay_interest">gayInterest</string>
+    <string name="impact_count">impactCount</string>
     <string name="phone_number">phoneNumber</string>
     <string name="email_address">emailAddress</string>
     <string name="authenticated">authenticated</string>
