@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -69,14 +70,15 @@
 
                         <TextView
                             android:text="Impact"
-                            android:textSize="15sp"
+                            android:textSize="16sp"
+                            android:layout_marginTop="33dp"
                             android:textColor="@color/edit_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
                         <TextView
                             android:id="@+id/userImpactCounter"
-                            android:textSize="23sp"
+                            android:textSize="35sp"
                             android:textStyle="bold"
                             android:textColor="@color/edit_text"
                             android:layout_width="wrap_content"
@@ -132,10 +134,9 @@
 
                             <TextView
                                 android:id="@+id/firstLikedUsername"
-                                android:padding="7dp"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
+                                android:textSize="11sp"
                                 android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
                                 android:textColor="@color/white"
                                 android:gravity="center_vertical"
                                 android:background="@drawable/likers_layout_username"
@@ -168,10 +169,9 @@
 
                             <TextView
                                 android:id="@+id/secondLikedUsername"
-                                android:padding="7dp"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
+                                android:textSize="11sp"
                                 android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
                                 android:textColor="@color/white"
                                 android:gravity="center_vertical"
                                 android:background="@drawable/likers_layout_username"
@@ -204,10 +204,9 @@
 
                             <TextView
                                 android:id="@+id/thirdLikedUsername"
-                                android:padding="7dp"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
+                                android:textSize="11sp"
                                 android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
                                 android:textColor="@color/white"
                                 android:gravity="center_vertical"
                                 android:background="@drawable/likers_layout_username"
@@ -240,10 +239,9 @@
 
                             <TextView
                                 android:id="@+id/fourthLikedUsername"
-                                android:padding="7dp"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
+                                android:textSize="11sp"
                                 android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
                                 android:textColor="@color/white"
                                 android:gravity="center_vertical"
                                 android:background="@drawable/likers_layout_username"
@@ -274,6 +272,26 @@
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"/>
+
+                <include
+                    android:id="@+id/suggestionMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/helpAndSupportMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/termsAndConditionsMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/logoutMenu"
+                    layout="@layout/include_menu_layout"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

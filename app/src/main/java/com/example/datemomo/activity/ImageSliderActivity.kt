@@ -66,7 +66,7 @@ class ImageSliderActivity : AppCompatActivity() {
             userPictureComposite = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             binding.genericPicturePager.adapter = ImageSliderAdapter(this, userPictureComposite)
-            binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())
+            /*binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())*/
             binding.genericPicturePager.setCurrentItem(bundle.getInt("currentPosition"), true)
         } catch (exception: IOException) {
             exception.printStackTrace()

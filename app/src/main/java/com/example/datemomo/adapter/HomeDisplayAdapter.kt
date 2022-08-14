@@ -18,6 +18,7 @@ import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.LikeUserRequest
 import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.NotifyUserRequest
+import com.example.datemomo.model.request.UserInformationRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
@@ -30,6 +31,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
     RecyclerView.Adapter<HomeDisplayAdapter.MyViewHolder>() {
     private lateinit var messageRequest: MessageRequest
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userInformationRequest: UserInformationRequest
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -62,6 +64,11 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
 
         // Add profilePicture properties to homeDisplayResponses
         // Then, add collection of all user images, with their properties to homeDisplayResponses
+
+        homeDisplayModel.binding.userImageContainer.setOnClickListener {
+            homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_information)
+            homeDisplayModel.homeDisplayActivity.fetchUserInformation(userInformationRequest)
+        }
 
         homeDisplayModel.binding.userMessageButton.setOnClickListener {
             // Use user messengerTableName to fetch requested user messageTableName
@@ -169,6 +176,9 @@ class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResp
             homeDisplayResponses[position].fullName,
             homeDisplayResponses[position].userName, "",
             homeDisplayResponses[position].profilePicture)
+        this.userInformationRequest = UserInformationRequest(
+            homeDisplayResponses[position].memberId
+        )
 
         for ((index, userPictureModel) in homeDisplayResponses[position].userPictureModels.withIndex()) {
             if (userPictureModel.imageName == homeDisplayResponses[position].profilePicture) {

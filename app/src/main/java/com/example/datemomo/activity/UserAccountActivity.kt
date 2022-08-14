@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.datemomo.MainActivity
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserAccountBinding
 import com.example.datemomo.model.ActivityStackModel
@@ -36,6 +37,7 @@ class UserAccountActivity : AppCompatActivity() {
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private lateinit var requestProcess: String
+    private lateinit var dialogDisplayType: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserAccountBinding
     private lateinit var sharedPreferences: SharedPreferences
@@ -66,6 +68,8 @@ class UserAccountActivity : AppCompatActivity() {
 
         bundle = intent.extras!!
 
+        dialogDisplayType = getString(R.string.dialog_network_retry)
+
         buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
@@ -88,8 +92,10 @@ class UserAccountActivity : AppCompatActivity() {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
 
-            if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
+            if (dialogDisplayType == getString(R.string.dialog_network_retry)) {
                 triggerRequestProcess()
+            } else {
+                userApplicationLogout()
             }
         }
 
@@ -214,6 +220,54 @@ class UserAccountActivity : AppCompatActivity() {
         binding.fourthLikedUsername.layoutParams.height = eachUsernameHeight
         binding.secondLikedUsername.layoutParams.height = eachUsernameHeight
 
+        binding.logoutMenu.genericIconMenuLayout.setOnClickListener {
+            displayDoubleButtonLogoutDialog()
+        }
+
+        binding.suggestionMenu.genericIconMenuLayout.setOnClickListener {
+            // implement a suggestion activity where user will be
+            // posting user experience related tips
+
+        }
+
+        binding.helpAndSupportMenu.genericIconMenuLayout.setOnClickListener {
+            // Implement an activity for frequently asked questions
+            // And for option to support the project
+
+        }
+
+        binding.termsAndConditionsMenu.genericIconMenuLayout.setOnClickListener {
+            // Implement a terms and conditions layout or activity for documenting the
+            // terms and conditions users most abide by in the course of using the application
+
+        }
+
+        binding.userImpactCounter.text =
+            sharedPreferences.getInt(getString(R.string.impact_count), 0).toString()
+
+        binding.logoutMenu.genericIconMenuText.text = getString(R.string.menu_logout)
+        binding.suggestionMenu.genericIconMenuText.text = getString(R.string.menu_suggestion)
+        binding.helpAndSupportMenu.genericIconMenuText.text = getString(R.string.menu_help_and_support)
+        binding.termsAndConditionsMenu.genericIconMenuText.text = getString(R.string.menu_terms_and_conditions)
+
+        binding.logoutMenu.genericIconMenuSeparator.visibility = View.GONE
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_logout))
+            .into(binding.logoutMenu.genericIconMenuIcon)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_terms_and_conditions))
+            .into(binding.termsAndConditionsMenu.genericIconMenuIcon)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_help_and_support))
+            .into(binding.helpAndSupportMenu.genericIconMenuIcon)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_suggestion))
+            .into(binding.suggestionMenu.genericIconMenuIcon)
+
         Glide.with(this)
             .asGif()
             .load(R.drawable.loading_puzzle)
@@ -224,6 +278,51 @@ class UserAccountActivity : AppCompatActivity() {
                     + sharedPreferences.getString(getString(R.string.profile_picture), ""))
             .transform(CircleCrop(), CenterCrop())
             .into(binding.accountProfilePicture)
+    }
+
+    @Throws(IOException::class)
+    fun userApplicationLogout() {
+        sharedPreferencesEditor.clear().apply()
+
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_logout_member))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(baseContext, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -662,10 +761,24 @@ class UserAccountActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
     }
 
+    fun displayDoubleButtonLogoutDialog() {
+        dialogDisplayType = getString(R.string.dialog_user_logout)
+        binding.doubleButtonDialog.dialogRetryButton.text = "Logout"
+        binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.user_logout_title)
+        binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.user_logout_message)
+        binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+        binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+        binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+    }
+
     fun displayDoubleButtonDialog() {
         runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Retry"
+            dialogDisplayType = getString(R.string.dialog_network_retry)
             binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
     }

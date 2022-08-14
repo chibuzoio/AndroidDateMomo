@@ -27,6 +27,7 @@ import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.HomeDisplayModel
 import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UpdateLocationRequest
+import com.example.datemomo.model.request.UserInformationRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.service.LocationTracker
@@ -418,6 +419,55 @@ class HomeDisplayActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
             getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserInformation(userInformationRequest: UserInformationRequest) {
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_information))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_user_information))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                runOnUiThread {
+                    binding.userInformationLayout.visibility = View.GONE
+                }
+
+                val intent = Intent(baseContext, UserInformationActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)

@@ -48,13 +48,19 @@
     <string name="edit_experience_level">Edit Your Sexual Experiences</string>
     <string name="experience_level">Things you have tried or can do in sex</string>
 
-    <string name="poor_internet_title">Poor Connectivity</string>
-    <string name="user_category_error">Choose at least one of the options in the categories</string>
-    <string name="poor_internet_message">Your device is experiencing poor internet connection. Check your network or connect to a WiFi network</string>
-    <string name="network_error_title">Network Error</string>
-    <string name="network_error_message">Check your internet connection or connect your device to a WiFi network</string>
+    <!-- DIALOG DISPLAY TYPE -->
+    <string name="dialog_user_logout">userLogoutDialog</string>
+    <string name="dialog_network_retry">networkRetryDialog</string>
+
+    <string name="user_logout_title">Logout</string>
     <string name="server_error_title">Server Error</string>
+    <string name="network_error_title">Network Error</string>
+    <string name="poor_internet_title">Poor Connectivity</string>
+    <string name="user_logout_message">Do you really want to logout from DateMomo?</string>
+    <string name="user_category_error">Choose at least one of the options in the categories</string>
+    <string name="network_error_message">Check your internet connection or connect your device to a WiFi network</string>
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
+    <string name="poor_internet_message">Your device is experiencing poor internet connection. Check your network or connect to a WiFi network</string>
 
     <string name="request_register_user">registerUser</string>
     <string name="request_fetch_liked_users">fetchLikedUsers</string>
@@ -65,6 +71,7 @@
     <string name="request_fetch_user_messages">fetchUserMessages</string>
     <string name="request_fetch_notifications">fetchNotifications</string>
     <string name="request_fetch_user_messengers">fetchUserMessengers</string>
+    <string name="request_fetch_user_information">fetchUserInformation</string>
     <string name="request_skip_sexuality_interest">skipSexualityInterest</string>
     <string name="request_update_current_location">updateCurrentLocation</string>
     <string name="request_submit_sexuality_interest">submitSexualityInterest</string>
@@ -76,6 +83,12 @@
     <string name="level_select_sexuality_interest">selectSexualityInterest</string>
     <string name="level_display_matched_users">displayMatchedUsers</string>
 
+    <!-- MENU LABELS -->
+    <string name="menu_logout">Logout</string>
+    <string name="menu_suggestion">Suggestion</string>
+    <string name="menu_help_and_support">Help And Support</string>
+    <string name="menu_terms_and_conditions">Terms And Conditions</string>
+
     <!-- APIs -->
     <string name="api_web_socket_test">ws://10.0.3.2:9090/service/socketclient.php</string>
 <!--    <string name="api_web_socket_test">ws://localhost:9090/</string> -->
@@ -86,6 +99,7 @@
     <string name="api_post_message">service/postmessage.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
     <string name="api_user_picture">service/userpicture.php</string>
+    <string name="api_logout_member">service/logoutmember.php</string>
     <string name="api_picture_owner">service/pictureowner.php</string>
     <string name="api_update_status">service/updatestatus.php</string>
     <string name="api_delete_message">service/deletemessage.php</string>
