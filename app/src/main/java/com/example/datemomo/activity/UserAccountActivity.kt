@@ -23,7 +23,7 @@ import com.example.datemomo.MainActivity
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserAccountBinding
 import com.example.datemomo.model.ActivityStackModel
-import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.OuterHomeDisplayRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.utility.Utility
@@ -224,6 +224,10 @@ class UserAccountActivity : AppCompatActivity() {
             displayDoubleButtonLogoutDialog()
         }
 
+        binding.referFriendMenu.genericIconMenuLayout.setOnClickListener {
+
+        }
+
         binding.suggestionMenu.genericIconMenuLayout.setOnClickListener {
             // implement a suggestion activity where user will be
             // posting user experience related tips
@@ -247,10 +251,15 @@ class UserAccountActivity : AppCompatActivity() {
 
         binding.logoutMenu.genericIconMenuText.text = getString(R.string.menu_logout)
         binding.suggestionMenu.genericIconMenuText.text = getString(R.string.menu_suggestion)
+        binding.referFriendMenu.genericIconMenuText.text = getString(R.string.menu_refer_friend)
         binding.helpAndSupportMenu.genericIconMenuText.text = getString(R.string.menu_help_and_support)
         binding.termsAndConditionsMenu.genericIconMenuText.text = getString(R.string.menu_terms_and_conditions)
 
         binding.logoutMenu.genericIconMenuSeparator.visibility = View.GONE
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_announcement))
+            .into(binding.referFriendMenu.genericIconMenuIcon)
 
         Glide.with(this)
             .load(ContextCompat.getDrawable(this, R.drawable.icon_logout))
@@ -439,7 +448,7 @@ class UserAccountActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(
+        val homeDisplayRequest = OuterHomeDisplayRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0),
             sharedPreferences.getInt(getString(R.string.age), 0),
             sharedPreferences.getString(getString(R.string.sex), "")!!,

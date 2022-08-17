@@ -278,6 +278,10 @@
                     android:layout_height="21dp"/>
 
                 <include
+                    android:id="@+id/referFriendMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
                     android:id="@+id/suggestionMenu"
                     layout="@layout/include_menu_layout"/>
 

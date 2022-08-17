@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
-import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.OuterHomeDisplayRequest
 import com.example.datemomo.model.request.UserBioRequest
 import com.example.datemomo.model.response.UserBioResponse
 import com.example.datemomo.utility.Utility
@@ -732,7 +732,7 @@ class UserBioActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(
+        val homeDisplayRequest = OuterHomeDisplayRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0),
             sharedPreferences.getInt(getString(R.string.age), 0),
             sharedPreferences.getString(getString(R.string.sex), "")!!,

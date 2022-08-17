@@ -39,10 +39,7 @@ import com.example.datemomo.activity.UserBioActivity
 import com.example.datemomo.databinding.ActivityMainBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.UserNameModel
-import com.example.datemomo.model.request.AuthenticationRequest
-import com.example.datemomo.model.request.HomeDisplayRequest
-import com.example.datemomo.model.request.PictureUploadRequest
-import com.example.datemomo.model.request.RegistrationRequest
+import com.example.datemomo.model.request.*
 import com.example.datemomo.model.response.AuthenticationResponse
 import com.example.datemomo.model.response.PictureUploadResponse
 import com.example.datemomo.model.response.RegistrationResponse
@@ -961,7 +958,7 @@ class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(
+        val outerHomeDisplayRequest = OuterHomeDisplayRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0),
             sharedPreferences.getInt(getString(R.string.age), 0),
             sharedPreferences.getString(getString(R.string.sex), "")!!,
@@ -996,7 +993,7 @@ class MainActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
             sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
 
-        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
+        val jsonObjectString = mapper.writeValueAsString(outerHomeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
             jsonObjectString

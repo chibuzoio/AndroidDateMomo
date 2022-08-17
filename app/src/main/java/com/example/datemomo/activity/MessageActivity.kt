@@ -25,9 +25,8 @@ import com.example.datemomo.databinding.ActivityMessageBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.MessageModel
 import com.example.datemomo.model.request.DeleteChatRequest
-import com.example.datemomo.model.request.DeleteMessageRequest
 import com.example.datemomo.model.request.EditMessageRequest
-import com.example.datemomo.model.request.HomeDisplayRequest
+import com.example.datemomo.model.request.OuterHomeDisplayRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.MessageResponse
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -281,7 +280,7 @@ class MessageActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(
+        val homeDisplayRequest = OuterHomeDisplayRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0),
             sharedPreferences.getInt(getString(R.string.age), 0),
             sharedPreferences.getString(getString(R.string.sex), "")!!,

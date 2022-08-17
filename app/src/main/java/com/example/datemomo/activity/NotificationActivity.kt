@@ -22,8 +22,7 @@ import com.example.datemomo.adapter.NotificationAdapter
 import com.example.datemomo.databinding.ActivityNotificationBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.AllLikersModel
-import com.example.datemomo.model.request.HomeDisplayRequest
-import com.example.datemomo.model.request.MessageRequest
+import com.example.datemomo.model.request.OuterHomeDisplayRequest
 import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.NotificationResponse
 import com.example.datemomo.utility.Utility
@@ -178,7 +177,7 @@ class NotificationActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchMatchedUsers() {
         val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = HomeDisplayRequest(
+        val homeDisplayRequest = OuterHomeDisplayRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0),
             sharedPreferences.getInt(getString(R.string.age), 0),
             sharedPreferences.getString(getString(R.string.sex), "")!!,

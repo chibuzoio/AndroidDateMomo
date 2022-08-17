@@ -25,11 +25,9 @@ import com.example.datemomo.adapter.HomeDisplayAdapter
 import com.example.datemomo.databinding.ActivityHomeDisplayBinding
 import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.HomeDisplayModel
-import com.example.datemomo.model.request.MessageRequest
-import com.example.datemomo.model.request.UpdateLocationRequest
-import com.example.datemomo.model.request.UserInformationRequest
-import com.example.datemomo.model.request.UserLikerRequest
+import com.example.datemomo.model.request.*
 import com.example.datemomo.model.response.HomeDisplayResponse
+import com.example.datemomo.model.response.OuterHomeDisplayResponse
 import com.example.datemomo.service.LocationTracker
 import com.example.datemomo.utility.Utility
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -40,15 +38,17 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.IndexOutOfBoundsException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private var lastDisplayPage: Int = 0
     private var requestProcess: String = ""
+    private var totalAvailablePages: Int = 0
     private var isActivityActive: Boolean = true
     private lateinit var userUpdatedLocation: String
     private lateinit var messageRequest: MessageRequest
@@ -58,7 +58,8 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var homeDisplayResponseArray: Array<HomeDisplayResponse>
+    private lateinit var outerHomeDisplayResponse: OuterHomeDisplayResponse
+    private lateinit var homeDisplayResponseArray: ArrayList<HomeDisplayResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -256,7 +257,10 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
-            homeDisplayResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            outerHomeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
+
+            lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
+            totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.homeDisplayRecyclerView.layoutManager = layoutManager
@@ -265,8 +269,21 @@ class HomeDisplayActivity : AppCompatActivity() {
             homeDisplayModel = HomeDisplayModel(deviceWidth, requestProcess,
                 buttonClickEffect, binding, this)
 
-            val homeDisplayAdapter = HomeDisplayAdapter(homeDisplayResponseArray, homeDisplayModel)
+            val homeDisplayAdapter =
+                HomeDisplayAdapter(outerHomeDisplayResponse.homeDisplayResponses, homeDisplayModel)
             binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
+
+            binding.homeDisplayRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
+//                        if (currentPage <= totalAvailablePages) {
+                            fetchMoreMatchedUsers()
+//                        }
+                    }
+                }
+            })
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
@@ -419,6 +436,91 @@ class HomeDisplayActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
             getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
         }
+    }
+
+    private fun toggleProgressBar() {
+        if (lastDisplayPage <= 0) {
+            if (binding.defaultProgress.isShown) {
+                binding.defaultProgress.visibility = View.GONE
+            } else {
+                binding.defaultProgress.visibility = View.VISIBLE
+            }
+        } else {
+            if (binding.loadMoreProgress.isShown) {
+                binding.loadMoreProgress.visibility = View.GONE
+            } else {
+                binding.loadMoreProgress.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    fun fetchMoreMatchedUsers() {
+        toggleProgressBar()
+
+        var tenIterationCounter = 0
+        val homeDisplayRequest = HomeDisplayRequest(arrayListOf())
+
+        for (index in outerHomeDisplayResponse.thousandRandomCounter.indices) {
+            if (index > lastDisplayPage) {
+                homeDisplayRequest.nextMatchedUsersIdArray.add(outerHomeDisplayResponse.thousandRandomCounter[index])
+                tenIterationCounter++
+
+                if (tenIterationCounter >= 10) {
+                    break
+                }
+            }
+        }
+
+        val mapper = jacksonObjectMapper()
+        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_more_matched_user_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+
+                runOnUiThread {
+                    toggleProgressBar()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                homeDisplayResponseArray = mapper.readValue(myResponse)
+
+                Log.e(TAG, "Response from fetchMoreMatchedUsers here is $homeDisplayResponseArray")
+
+                runOnUiThread {
+                    outerHomeDisplayResponse.homeDisplayResponses.addAll(homeDisplayResponseArray)
+                    totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                    binding.homeDisplayRecyclerView.adapter!!.notifyItemRangeInserted(
+                        lastDisplayPage + 1, outerHomeDisplayResponse.homeDisplayResponses.size)
+
+                    lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
+
+                    toggleProgressBar()
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)

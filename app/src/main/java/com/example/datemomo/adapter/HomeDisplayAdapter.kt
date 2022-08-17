@@ -27,7 +27,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 
-class HomeDisplayAdapter(private val homeDisplayResponses: Array<HomeDisplayResponse>, private val homeDisplayModel: HomeDisplayModel) :
+class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplayResponse>, private val homeDisplayModel: HomeDisplayModel) :
     RecyclerView.Adapter<HomeDisplayAdapter.MyViewHolder>() {
     private lateinit var messageRequest: MessageRequest
     private lateinit var sharedPreferences: SharedPreferences

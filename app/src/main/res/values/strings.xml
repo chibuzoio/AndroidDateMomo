@@ -86,6 +86,7 @@
     <!-- MENU LABELS -->
     <string name="menu_logout">Logout</string>
     <string name="menu_suggestion">Suggestion</string>
+    <string name="menu_refer_friend">Refer A Friend</string>
     <string name="menu_help_and_support">Help And Support</string>
     <string name="menu_terms_and_conditions">Terms And Conditions</string>
 
@@ -117,6 +118,7 @@
     <string name="api_user_notifications">service/usernotifications.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
+    <string name="api_more_matched_user_data">service/morematcheduserdata.php</string>
     <string name="api_change_profile_picture">service/changeprofilepicture.php</string>
     <string name="api_delete_profile_picture">service/deleteprofilepicture.php</string>
     <string name="api_delete_messenger_messages">service/deletemessengermessages.php</string>
