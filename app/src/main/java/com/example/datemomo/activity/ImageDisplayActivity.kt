@@ -19,6 +19,7 @@ import com.example.datemomo.databinding.ActivityImageDisplayBinding
 import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.PictureCompositeModel
 import com.example.datemomo.model.response.UserPictureResponse
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
@@ -63,6 +64,7 @@ class ImageDisplayActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             userPictureResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             pictureCompositeModelArray = ArrayList()

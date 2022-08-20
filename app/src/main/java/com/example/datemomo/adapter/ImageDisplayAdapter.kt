@@ -15,6 +15,7 @@ import com.example.datemomo.databinding.RecyclerImageDisplayBinding
 import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.PictureCompositeModel
 import com.example.datemomo.model.request.UserPictureRequest
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.*
 import java.io.IOException
@@ -129,6 +130,8 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
         val userPictureRequest = UserPictureRequest(
             allLikersModel.memberId
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
         val requestBody: RequestBody = RequestBody.create(

@@ -22,6 +22,7 @@ import com.example.datemomo.model.request.UserInformationRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -364,6 +365,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             sharedPreferences.getInt(context.getString(R.string.member_id), 0),
             "")
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(notifyUserRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -403,6 +406,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             sharedPreferences.getInt(context.getString(R.string.member_id), 0),
             homeDisplayResponses[position].liked,
             homeDisplayResponses[position].memberId)
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(likeUserRequest)
         val requestBody: RequestBody = RequestBody.create(

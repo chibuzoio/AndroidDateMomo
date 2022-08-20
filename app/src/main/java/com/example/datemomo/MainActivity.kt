@@ -44,6 +44,7 @@ import com.example.datemomo.model.response.AuthenticationResponse
 import com.example.datemomo.model.response.PictureUploadResponse
 import com.example.datemomo.model.response.RegistrationResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity() {
     private var loginPasswordValid = false
     private var loginUserNameValid = false
     private val CAPTURE_IMAGE_REQUEST = 100
+    private var leastRootViewHeight: Int = 0
     private var registerPasswordValid = false
     private var registerUserNameValid = false
     private lateinit var loginPassword: String
@@ -74,18 +76,14 @@ class MainActivity : AppCompatActivity() {
     private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
-    private var registrationInnerLayoutTopPadding: Int = 0
-    private var pictureUploadInnerLayoutTopPadding: Int = 0
-    private var authenticationInnerLayoutTopPadding: Int = 0
     private lateinit var sharedPreferences: SharedPreferences
-    private var registrationInnerLayoutBottomPadding: Int = 0
-    private var pictureUploadInnerLayoutBottomPadding: Int = 0
-    private var authenticationInnerLayoutBottomPadding: Int = 0
+    private lateinit var viewRootHeightArray: MutableSet<Int>
     private var userNameArray: Array<UserNameModel> = emptyArray()
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.splash_screen)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
@@ -94,11 +92,11 @@ class MainActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        setContentView(R.layout.splash_screen)
-
         hideSystemUI()
 
         fetchUserNames()
+
+        viewRootHeightArray = mutableSetOf()
 
         Handler(Looper.getMainLooper()).postDelayed({
             setContentView(binding.root)
@@ -152,13 +150,29 @@ class MainActivity : AppCompatActivity() {
                 .load(R.drawable.loading_puzzle)
                 .into(binding.uploadProgressIcon)
 
-            binding.authenticationInnerLayout.viewTreeObserver.addOnGlobalLayoutListener {
-                registrationInnerLayoutTopPadding = binding.registrationInnerLayout.paddingTop
-                pictureUploadInnerLayoutTopPadding = binding.pictureUploadInnerLayout.paddingTop
-                authenticationInnerLayoutTopPadding = binding.authenticationInnerLayout.paddingTop
-                registrationInnerLayoutBottomPadding = binding.registrationInnerLayout.paddingBottom
-                pictureUploadInnerLayoutBottomPadding = binding.pictureUploadInnerLayout.paddingBottom
-                authenticationInnerLayoutBottomPadding = binding.authenticationInnerLayout.paddingBottom
+            binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+                viewRootHeightArray.add(binding.root.height)
+
+                if (viewRootHeightArray.size >= 3) {
+                    leastRootViewHeight = viewRootHeightArray.elementAt(0)
+
+                    for (viewRootHeight in viewRootHeightArray) {
+                        if (viewRootHeight < leastRootViewHeight) {
+                            leastRootViewHeight = viewRootHeight
+                        }
+                    }
+                }
+
+                if (binding.root.height > leastRootViewHeight && leastRootViewHeight > 0) {
+                    binding.userNameInput.leftIconInputField.genericInputField.clearFocus()
+                    binding.loginPassword.leftIconInputField.genericInputField.clearFocus()
+                    binding.passwordInput.leftIconInputField.genericInputField.clearFocus()
+                    binding.loginUserName.leftIconInputField.genericInputField.clearFocus()
+                    binding.userAgeInput.genericInputField.clearFocus()
+                    viewRootHeightArray = mutableSetOf()
+                    leastRootViewHeight = 0
+                    hideSystemUI()
+                }
             }
 
             binding.userAgeInput.genericInputField.hint = "Age"
@@ -559,12 +573,14 @@ class MainActivity : AppCompatActivity() {
                 })
 
             binding.userAgeInput.genericInputField.setOnFocusChangeListener { _, focused ->
-                setGravityOnFieldFocus(focused)
+                if (focused) {
+                    showSystemUI()
+                } else {
+                    hideSystemUI()
+                }
             }
 
             binding.loginUserName.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
-                setGravityOnFieldFocus(focused)
-
                 if (focused) {
                     binding.loginUserName.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -575,6 +591,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     binding.loginUserNameError.visibility = View.GONE
+
+                    showSystemUI()
                 } else {
                     binding.loginUserName.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
@@ -584,12 +602,12 @@ class MainActivity : AppCompatActivity() {
                             R.drawable.icon_person
                         )
                     )
+
+                    hideSystemUI()
                 }
             }
 
             binding.userNameInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
-                setGravityOnFieldFocus(focused)
-
                 if (focused) {
                     binding.userNameInput.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -600,6 +618,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     binding.userNameInputError.visibility = View.GONE
+
+                    showSystemUI()
                 } else {
                     binding.userNameInput.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
@@ -609,12 +629,12 @@ class MainActivity : AppCompatActivity() {
                             R.drawable.icon_person
                         )
                     )
+
+                    hideSystemUI()
                 }
             }
 
             binding.loginPassword.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
-                setGravityOnFieldFocus(focused)
-
                 if (focused) {
                     binding.loginPassword.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -625,6 +645,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     binding.loginPasswordError.visibility = View.GONE
+
+                    showSystemUI()
                 } else {
                     binding.loginPassword.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
@@ -634,12 +656,12 @@ class MainActivity : AppCompatActivity() {
                             R.drawable.icon_password
                         )
                     )
+
+                    hideSystemUI()
                 }
             }
 
             binding.passwordInput.leftIconInputField.genericInputField.setOnFocusChangeListener { _, focused ->
-                setGravityOnFieldFocus(focused)
-
                 if (focused) {
                     binding.passwordInput.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.focused_edit_text)
@@ -650,6 +672,8 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     binding.passwordInputError.visibility = View.GONE
+
+                    showSystemUI()
                 } else {
                     binding.passwordInput.leftIconInputLayout.background =
                         ContextCompat.getDrawable(this, R.drawable.normal_edit_text)
@@ -659,9 +683,11 @@ class MainActivity : AppCompatActivity() {
                             R.drawable.icon_password
                         )
                     )
+
+                    hideSystemUI()
                 }
             }
-        }, 2000)
+        }, 1000)
     }
 
     override fun onStart() {
@@ -706,44 +732,6 @@ class MainActivity : AppCompatActivity() {
 
         val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(binding.loginUserName.leftIconInputField.genericInputField.windowToken, 0)
-    }
-
-    private fun setGravityOnFieldFocus(focused: Boolean) {
-        if (focused) {
-            binding.authenticationInnerLayout.setPadding(0, 0, 0, 0)
-            binding.pictureUploadInnerLayout.setPadding(0, 0, 0, 0)
-            binding.registrationInnerLayout.setPadding(0, 0, 0, 0)
-
-            binding.activityFrameLayout.foregroundGravity = Gravity.NO_GRAVITY
-
-            val genericLayoutParams = FrameLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.NO_GRAVITY
-            }
-
-            binding.authenticationLayout.layoutParams = genericLayoutParams
-            binding.pictureUploadLayout.layoutParams = genericLayoutParams
-            binding.registrationLayout.layoutParams = genericLayoutParams
-        } else {
-            binding.authenticationInnerLayout.setPadding(0, authenticationInnerLayoutTopPadding, 0, authenticationInnerLayoutBottomPadding)
-            binding.pictureUploadInnerLayout.setPadding(0, pictureUploadInnerLayoutTopPadding, 0, pictureUploadInnerLayoutBottomPadding)
-            binding.registrationInnerLayout.setPadding(0, registrationInnerLayoutTopPadding, 0, registrationInnerLayoutBottomPadding)
-
-            binding.activityFrameLayout.foregroundGravity = Gravity.CENTER_VERTICAL
-
-            val genericLayoutParams = FrameLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                gravity = Gravity.CENTER_VERTICAL
-            }
-
-            binding.authenticationLayout.layoutParams = genericLayoutParams
-            binding.pictureUploadLayout.layoutParams = genericLayoutParams
-            binding.registrationLayout.layoutParams = genericLayoutParams
-        }
     }
 
     private fun triggerRequestProcess() {
@@ -993,6 +981,8 @@ class MainActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
             sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(outerHomeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -1067,6 +1057,8 @@ class MainActivity : AppCompatActivity() {
             base64Picture
         )
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(pictureUploadRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -1138,6 +1130,8 @@ class MainActivity : AppCompatActivity() {
             .url(getString(R.string.date_momo_api) + getString(R.string.api_user_name_composite))
             .build()
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
@@ -1159,6 +1153,8 @@ class MainActivity : AppCompatActivity() {
             loginUserName,
             loginPassword
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(authenticationRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -1307,6 +1303,8 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.level_upload_profile_picture),
             getString(R.string.status_default)
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(registrationRequest)
         val requestBody: RequestBody = RequestBody.create(

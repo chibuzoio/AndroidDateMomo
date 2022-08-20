@@ -29,6 +29,7 @@ import com.example.datemomo.model.request.EditMessageRequest
 import com.example.datemomo.model.request.OuterHomeDisplayRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.MessageResponse
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -166,6 +167,7 @@ class MessageActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             messageResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             if (messageResponseArray.isEmpty()) {
@@ -208,6 +210,7 @@ class MessageActivity : AppCompatActivity() {
         }
 
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
@@ -226,6 +229,7 @@ class MessageActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun editSingleMessage(editMessageRequest: EditMessageRequest) {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(editMessageRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -253,6 +257,7 @@ class MessageActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun deleteSingleMessage(deleteChatRequest: DeleteChatRequest) {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(deleteChatRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -314,6 +319,8 @@ class MessageActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.threesome_experience), 0),
             sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
             sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(

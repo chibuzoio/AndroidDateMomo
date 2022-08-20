@@ -13,9 +13,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.datemomo.R
 import com.example.datemomo.adapter.ImageSliderAdapter
-import com.example.datemomo.control.ZoomOutPageTransformer
 import com.example.datemomo.databinding.ActivityImageSliderBinding
 import com.example.datemomo.model.response.UserPictureResponse
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
@@ -63,6 +63,7 @@ class ImageSliderActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             userPictureComposite = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             binding.genericPicturePager.adapter = ImageSliderAdapter(this, userPictureComposite)

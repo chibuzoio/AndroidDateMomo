@@ -39,7 +39,7 @@ class LocationTracker(private val context: Context): Service(), LocationListener
                 .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
             if (!checkGPS && !checkNetwork) {
-                Toast.makeText(context, "No Service Provider is available", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(context, "No Service Provider is available", Toast.LENGTH_SHORT).show()
             } else {
                 canGetLocation = true
 

@@ -35,6 +35,7 @@ import com.example.datemomo.model.response.PictureUpdateResponse
 import com.example.datemomo.model.response.UserLikerResponse
 import com.example.datemomo.service.LocationTracker
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -143,6 +144,7 @@ class UserProfileActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             if (userLikerResponseArray.size > 1) {
@@ -289,6 +291,7 @@ class UserProfileActivity : AppCompatActivity() {
         binding.sixthLikerFrameLayout.setOnClickListener {
             if (userLikerResponseArray.size > 6) {
                 val mapper = jacksonObjectMapper()
+                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 val userLikerResponseString = mapper.writeValueAsString(userLikerResponseArray)
 
                 val intent = Intent(baseContext, AllLikersActivity::class.java)
@@ -583,6 +586,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
@@ -635,6 +639,8 @@ class UserProfileActivity : AppCompatActivity() {
         val userPictureRequest = UserPictureRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0)
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -699,6 +705,8 @@ class UserProfileActivity : AppCompatActivity() {
             imageHeight,
             base64Picture
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(pictureUpdateRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -915,6 +923,8 @@ class UserProfileActivity : AppCompatActivity() {
         val userLikerRequest =
             UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -968,6 +978,7 @@ class UserProfileActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchUserInformation() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -1014,6 +1025,8 @@ class UserProfileActivity : AppCompatActivity() {
     fun fetchLikedUsers() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -1065,6 +1078,8 @@ class UserProfileActivity : AppCompatActivity() {
     fun fetchUserMessengers() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -1149,6 +1164,8 @@ class UserProfileActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.threesome_experience), 0),
             sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
             sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(

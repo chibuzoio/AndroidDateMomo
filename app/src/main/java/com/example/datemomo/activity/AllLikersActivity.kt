@@ -19,6 +19,7 @@ import com.example.datemomo.adapter.AllLikersAdapter
 import com.example.datemomo.databinding.ActivityAllLikersBinding
 import com.example.datemomo.model.AllLikersModel
 import com.example.datemomo.model.response.UserLikerResponse
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
@@ -66,6 +67,7 @@ class AllLikersActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
 /*

@@ -19,6 +19,7 @@ import com.example.datemomo.model.request.UserLikerRequest
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.PictureOwnerResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -119,6 +120,7 @@ class ImageSliderFragment : Fragment() {
     @Throws(IOException::class)
     fun profilePictureOwnerId() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(deletePictureRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -146,6 +148,7 @@ class ImageSliderFragment : Fragment() {
     @Throws(IOException::class)
     fun deleteProfilePicture() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(deletePictureRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -195,6 +198,7 @@ class ImageSliderFragment : Fragment() {
     @Throws(IOException::class)
     fun changeProfilePicture() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(changeProfilePictureRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -231,6 +235,8 @@ class ImageSliderFragment : Fragment() {
     fun fetchUserLikers() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(

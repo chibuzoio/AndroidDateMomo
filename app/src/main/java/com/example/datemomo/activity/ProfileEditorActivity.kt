@@ -27,6 +27,7 @@ import com.example.datemomo.model.request.*
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.PictureUpdateResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -876,6 +877,8 @@ class ProfileEditorActivity : AppCompatActivity() {
             UpdateLocationRequest(sharedPreferences.getInt(getString(R.string.member_id), 0),
                 sharedPreferences.getString(getString(R.string.updated_location), "").toString())
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(updateLocationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -927,6 +930,8 @@ class ProfileEditorActivity : AppCompatActivity() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -970,6 +975,7 @@ class ProfileEditorActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun updateSexualityQualities() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(updateSexualityRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -1035,6 +1041,7 @@ class ProfileEditorActivity : AppCompatActivity() {
         )
 
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(statusUpdateRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -1082,6 +1089,8 @@ class ProfileEditorActivity : AppCompatActivity() {
             imageHeight,
             base64Picture
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(pictureUpdateRequest)
         val requestBody: RequestBody = RequestBody.create(

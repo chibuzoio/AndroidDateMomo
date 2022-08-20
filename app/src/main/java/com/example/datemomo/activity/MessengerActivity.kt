@@ -26,6 +26,7 @@ import com.example.datemomo.model.request.*
 import com.example.datemomo.model.response.CommittedResponse
 import com.example.datemomo.model.response.MessengerResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -134,6 +135,7 @@ class MessengerActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -158,6 +160,7 @@ class MessengerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
@@ -177,6 +180,7 @@ class MessengerActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun deleteMessengerMessages(deleteMessageRequest: DeleteMessageRequest) {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(deleteMessageRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -205,6 +209,8 @@ class MessengerActivity : AppCompatActivity() {
     fun fetchUserInformation(chatmateId: Int) {
         val mapper = jacksonObjectMapper()
         val userInformationRequest = UserInformationRequest(chatmateId)
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -252,6 +258,8 @@ class MessengerActivity : AppCompatActivity() {
     fun fetchUserMessages(messageRequest: MessageRequest) {
         val mapper = jacksonObjectMapper()
         this.messageRequest = messageRequest
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(messageRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -310,6 +318,8 @@ class MessengerActivity : AppCompatActivity() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest =
             UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -399,6 +409,8 @@ class MessengerActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
             sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -445,6 +457,8 @@ class MessengerActivity : AppCompatActivity() {
     fun fetchLikedUsers() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -496,6 +510,8 @@ class MessengerActivity : AppCompatActivity() {
     fun fetchUserLikers() {
         val mapper = jacksonObjectMapper()
         val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
         val requestBody: RequestBody = RequestBody.create(

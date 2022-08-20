@@ -14,14 +14,17 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.example.datemomo.R
 import com.example.datemomo.databinding.ActivityUserBioBinding
+import com.example.datemomo.model.ActivityStackModel
 import com.example.datemomo.model.request.OuterHomeDisplayRequest
 import com.example.datemomo.model.request.UserBioRequest
 import com.example.datemomo.model.response.UserBioResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class UserBioActivity : AppCompatActivity() {
     private lateinit var requestProcess: String
@@ -767,6 +770,8 @@ class UserBioActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
             sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
 
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
         val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -801,6 +806,13 @@ class UserBioActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStack = Stack<String>()
+                activityStack.push(getString(R.string.activity_home_display))
+                val activityStackString = mapper.writeValueAsString(ActivityStackModel(activityStack))
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -811,6 +823,7 @@ class UserBioActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun commitUserBiometrics() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(userBioRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),

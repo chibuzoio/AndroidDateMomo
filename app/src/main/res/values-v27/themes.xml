@@ -5,6 +5,10 @@
         <!-- Primary brand color. -->
         <!-- The three lines below are just useless -->
 <!--        <item name="android:windowIsTranslucent">true</item>-->
+<!--        <item name="android:windowDisablePreview">true</item>-->
+<!--        <item name="android:windowContentOverlay">@null</item>-->
+<!--        <item name="android:backgroundDimEnabled">false</item>-->
+        <item name="android:windowBackground">@android:color/transparent</item>
 <!--        <item name="android:statusBarColor">@color/white</item>-->
 <!--        <item name="android:navigationBarColor">@color/white</item>-->
         <item name="android:textColorHint">@color/edit_text_hint</item>

@@ -25,6 +25,7 @@ import com.example.datemomo.model.request.MessageRequest
 import com.example.datemomo.model.request.UserPictureRequest
 import com.example.datemomo.model.response.HomeDisplayResponse
 import com.example.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -130,6 +131,7 @@ class UserInformationActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             homeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
         } catch (exception: IOException) {
             exception.printStackTrace()
@@ -334,6 +336,7 @@ class UserInformationActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchUserMessages() {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(messageRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -392,6 +395,8 @@ class UserInformationActivity : AppCompatActivity() {
         val userPictureRequest = UserPictureRequest(
             homeDisplayResponse.memberId
         )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
         val requestBody: RequestBody = RequestBody.create(

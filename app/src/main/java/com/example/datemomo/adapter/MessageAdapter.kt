@@ -14,6 +14,7 @@ import com.example.datemomo.model.request.EditMessageRequest
 import com.example.datemomo.model.request.PostMessageRequest
 import com.example.datemomo.model.response.MessageResponse
 import com.example.datemomo.model.response.PostMessageResponse
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -171,6 +172,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
     @Throws(IOException::class)
     private fun postSenderMessage(context: Context, postMessageRequest: PostMessageRequest) {
         val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val jsonObjectString = mapper.writeValueAsString(postMessageRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),

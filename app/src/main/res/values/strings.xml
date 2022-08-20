@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">DateMomo</string>
 
-    <string name="date_momo_api">http://192.168.43.154/</string>
+    <string name="date_momo_api">http://datemomo.com/</string>
+    <!--<string name="date_momo_api">http://192.168.43.154/</string>-->
 <!--    <string name="date_momo_api">http://10.0.3.2/</string>-->
     <string name="shared_preferences">DateMomoPreferences</string>
 

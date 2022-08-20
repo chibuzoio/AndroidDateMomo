@@ -17,7 +17,6 @@
     <application
         android:largeHeap="true"
         android:hardwareAccelerated="false"
-
         android:allowBackup="true"
         android:name=".MainApplication"
         android:icon="@mipmap/ic_launcher"
