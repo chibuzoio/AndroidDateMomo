@@ -9,7 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
-import android.nfc.Tag
+import android.graphics.drawable.Drawable
 import android.os.*
 import android.provider.MediaStore
 import android.text.Editable
@@ -17,12 +17,9 @@ import android.text.InputType
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -51,8 +48,10 @@ import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
     private var userAge = 0
@@ -356,6 +355,15 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     pickImageFromGallery()
                 }
+            }
+
+            try {
+                val inputStream: InputStream = assets.open("logo.ico")
+                val logoIcon = Drawable.createFromStream(inputStream, null)
+//                binding.loginLayoutIcon.setImageDrawable(logoIcon)
+                inputStream.close()
+            } catch (exception: IOException) {
+                exception.printStackTrace()
             }
 
             Glide.with(this)
