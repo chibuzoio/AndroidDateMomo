@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="vertical"
+            android:layout_marginBottom="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Chats"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:paddingTop="7dp"
+                android:paddingBottom="3dp"
+                android:paddingHorizontal="11dp"
+                android:background="@color/white"
+                android:textColor="@color/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/messengerRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="53dp"
+            android:background="@color/edit_text_hint"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <include
+            android:id="@+id/bottomNavigationLayout"
+            layout="@layout/include_bottom_navigation_layout"/>
+
+        <include
+            android:id="@+id/doubleButtonDialog"
+            layout="@layout/include_double_button_dialog"/>
+
+        <include
+            android:id="@+id/singleButtonDialog"
+            layout="@layout/include_single_button_dialog"/>
+
+        <include
+            android:id="@+id/confirmMessengerDelete"
+            layout="@layout/include_double_button_dialog"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/messengerMenuLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/background_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_margin="15dp"
+                android:paddingVertical="7dp"
+                android:orientation="vertical"
+                android:background="@drawable/menu_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/userInfoMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="User Info"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/deleteChatsMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="Delete Chats"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/cancelMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Cancel"
+                        android:textSize="19sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
