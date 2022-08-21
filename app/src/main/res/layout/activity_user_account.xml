@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_marginBottom="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <FrameLayout
+                        android:id="@+id/checkFrameStartMargin"
+                        android:layout_marginTop="11dp"
+                        android:layout_marginStart="11dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <FrameLayout
+                            android:id="@+id/profilePictureCover"
+                            android:foregroundGravity="center"
+                            android:background="@drawable/profile_picture_cover"
+                            android:layout_width="125dp"
+                            android:layout_height="125dp">
+
+                            <View
+                                android:id="@+id/profilePicturePlaceholder"
+                                android:layout_margin="7dp"
+                                android:background="@drawable/profile_picture_placeholder"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                            <ImageView
+                                android:id="@+id/accountProfilePicture"
+                                android:layout_margin="7dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                        </FrameLayout>
+
+                    </FrameLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="11dp"
+                        android:layout_marginStart="11dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:text="Impact"
+                            android:textSize="16sp"
+                            android:layout_marginTop="33dp"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/userImpactCounter"
+                            android:textSize="35sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/userLikedDisplayLayout"
+                    android:orientation="vertical"
+                    android:layout_marginTop="21dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:text="People You Like"
+                        android:layout_marginStart="11dp"
+                        android:layout_marginBottom="7dp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <View
+                            android:id="@+id/firstMargin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <FrameLayout
+                            android:id="@+id/firstLikedFrameLayout"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/firstLikedPlaceholder"
+                                android:background="@drawable/likers_image_placeholder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <ImageView
+                                android:id="@+id/firstLikedImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:id="@+id/firstLikedUsername"
+                                android:textSize="11sp"
+                                android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
+                                android:textColor="@color/white"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/likers_layout_username"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </FrameLayout>
+
+                        <View
+                            android:id="@+id/secondMargin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <FrameLayout
+                            android:id="@+id/secondLikedFrameLayout"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/secondLikedPlaceholder"
+                                android:background="@drawable/likers_image_placeholder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <ImageView
+                                android:id="@+id/secondLikedImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:id="@+id/secondLikedUsername"
+                                android:textSize="11sp"
+                                android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
+                                android:textColor="@color/white"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/likers_layout_username"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </FrameLayout>
+
+                        <View
+                            android:id="@+id/thirdMargin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <FrameLayout
+                            android:id="@+id/thirdLikedFrameLayout"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/thirdLikedPlaceholder"
+                                android:background="@drawable/likers_image_placeholder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <ImageView
+                                android:id="@+id/thirdLikedImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:id="@+id/thirdLikedUsername"
+                                android:textSize="11sp"
+                                android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
+                                android:textColor="@color/white"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/likers_layout_username"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </FrameLayout>
+
+                        <View
+                            android:id="@+id/fourthMargin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <FrameLayout
+                            android:id="@+id/fourthLikedFrameLayout"
+                            android:visibility="gone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <View
+                                android:id="@+id/fourthLikedPlaceholder"
+                                android:background="@drawable/likers_image_placeholder"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <ImageView
+                                android:id="@+id/fourthLikedImage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:id="@+id/fourthLikedUsername"
+                                android:textSize="11sp"
+                                android:layout_gravity="bottom"
+                                android:paddingHorizontal="5dp"
+                                android:textColor="@color/white"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/likers_layout_username"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                            <View
+                                android:id="@+id/moreLikedCover"
+                                android:background="@drawable/more_likers_count_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                            <TextView
+                                android:id="@+id/moreLikedCount"
+                                android:textSize="25sp"
+                                android:gravity="center"
+                                android:textColor="@color/edit_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                        </FrameLayout>
+
+                        <View
+                            android:id="@+id/fifthMargin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"/>
+
+                <include
+                    android:id="@+id/referFriendMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/suggestionMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/helpAndSupportMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/termsAndConditionsMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
+                    android:id="@+id/logoutMenu"
+                    layout="@layout/include_menu_layout"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+        <View
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="53dp"
+            android:background="@color/edit_text_hint"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <include
+            android:id="@+id/bottomNavigationLayout"
+            layout="@layout/include_bottom_navigation_layout"/>
+
+        <include
+            android:id="@+id/doubleButtonDialog"
+            layout="@layout/include_double_button_dialog"/>
+
+        <include
+            android:id="@+id/singleButtonDialog"
+            layout="@layout/include_single_button_dialog"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/progressIconLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:layout_marginBottom="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/progressIconImage"
+                android:layout_width="111dp"
+                android:layout_height="111dp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

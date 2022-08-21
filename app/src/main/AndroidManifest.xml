@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-<<<<<<< HEAD
     xmlns:tools="http://schemas.android.com/tools"
     package="com.chibuzo.datemomo">
-=======
-    xmlns:tools="http://schemas.android.com/tools">
->>>>>>> 135d896a491f5ac6bd2ed9a573cab93ca002ae08
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -21,7 +17,6 @@
 
     <application
         android:largeHeap="true"
-<<<<<<< HEAD
         android:allowBackup="true"
         android:name=".MainApplication"
         android:hardwareAccelerated="false"
@@ -39,22 +34,6 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.chibuzo.datemomo.fileprovider"
-=======
-        android:hardwareAccelerated="false"
-        android:allowBackup="true"
-        android:name=".MainApplication"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:networkSecurityConfig="@xml/network_security_config"
-        android:usesCleartextTraffic="true"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.DateMomo">
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.datemomo.fileprovider"
->>>>>>> 135d896a491f5ac6bd2ed9a573cab93ca002ae08
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

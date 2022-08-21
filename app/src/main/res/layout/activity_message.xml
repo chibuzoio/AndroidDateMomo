@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/backArrowLayout"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_gravity="end"
+                        android:src="@drawable/icon_left_arrow_blue"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <FrameLayout
+                    android:id="@+id/profilePictureLayout"
+                    android:layout_weight="2"
+                    android:foregroundGravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <View
+                        android:layout_gravity="center"
+                        android:background="@drawable/profile_picture_placeholder"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"/>
+
+                    <ImageView
+                        android:id="@+id/receiverProfilePicture"
+                        android:layout_gravity="center"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"/>
+
+                </FrameLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_weight="6"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/receiverUserName"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:id="@+id/lastActiveTime"
+                        android:textSize="15sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messageMenuIcon"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:src="@drawable/icon_menu_blue"
+                        android:layout_width="33dp"
+                        android:layout_height="33dp"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <FrameLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/messageRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/welcomeMessageLayout"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/welcomeHelloMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="171dp"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </FrameLayout>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/messageEditorLayout"
+                android:padding="11dp"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_weight="8.7"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/messageInputField"
+                        android:lines="3"
+                        android:minLines="1"
+                        android:maxLines="3"
+                        android:hint="Message"
+                        android:gravity="top|start"
+                        android:scrollbars="vertical"
+                        android:paddingVertical="11dp"
+                        android:layout_marginEnd="5dp"
+                        android:paddingHorizontal="11dp"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:textColor="@color/edit_text"
+                        android:background="@drawable/normal_edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messageSenderLayout"
+                    android:layout_weight="1.3"
+                    android:orientation="vertical"
+                    android:gravity="top|center_horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:src="@drawable/icon_message_send"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <include
+            android:id="@+id/doubleButtonDialog"
+            layout="@layout/include_double_button_dialog"/>
+
+        <include
+            android:id="@+id/singleButtonDialog"
+            layout="@layout/include_single_button_dialog"/>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/messageMenuLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/background_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_margin="15dp"
+                android:paddingVertical="7dp"
+                android:orientation="vertical"
+                android:background="@drawable/menu_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messageCopyMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Copy"
+                        android:textSize="19sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messageEditMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Edit"
+                        android:textSize="19sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/deleteForMeMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="Delete For Me"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/deleteForEveryoneMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="Delete For Everyone"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messageMenuCancel"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Cancel"
+                        android:textSize="19sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/messengerMenuLayout"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/background_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_margin="15dp"
+                android:paddingVertical="7dp"
+                android:orientation="vertical"
+                android:background="@drawable/menu_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/userInfoMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="User Info"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/deleteChatsMenu"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="Delete Chats"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messengerMenuCancel"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Cancel"
+                        android:textSize="19sp"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
