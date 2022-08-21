@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+<<<<<<< HEAD
     <external-path name="my_images" path="Android/data/com.chibuzo.datemomo/files/Pictures" />
+=======
+    <external-path name="my_images" path="Android/data/com.example.datemomo/files/Pictures" />
+>>>>>>> 135d896a491f5ac6bd2ed9a573cab93ca002ae08
 </paths>
 
 

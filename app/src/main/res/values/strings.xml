@@ -3,7 +3,11 @@
 
     <string name="date_momo_api">http://datemomo.com/</string>
     <!--<string name="date_momo_api">http://192.168.43.154/</string>-->
+<<<<<<< HEAD
     <!--    <string name="date_momo_api">http://10.0.3.2/</string>-->
+=======
+<!--    <string name="date_momo_api">http://10.0.3.2/</string>-->
+>>>>>>> 135d896a491f5ac6bd2ed9a573cab93ca002ae08
     <string name="shared_preferences">DateMomoPreferences</string>
 
     <!-- Intent Activity Origin -->
@@ -26,7 +30,11 @@
     <string name="title_sexuality">%1$s sexuality</string>
     <string name="title_interest">%1$s is looking for</string>
     <string name="title_experience">%1$s sexual fantasies</string>
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 135d896a491f5ac6bd2ed9a573cab93ca002ae08
     <string name="status_default">Hello dear! Welcome to my profile!</string>
     <string name="status_available">Available</string>
     <string name="status_meeting">In a meeting</string>
@@ -93,7 +101,11 @@
 
     <!-- APIs -->
     <string name="api_web_socket_test">ws://10.0.3.2:9090/service/socketclient.php</string>
+<<<<<<< HEAD
     <!--    <string name="api_web_socket_test">ws://localhost:9090/</string> -->
+=======
+<!--    <string name="api_web_socket_test">ws://localhost:9090/</string> -->
+>>>>>>> 135d896a491f5ac6bd2ed9a573cab93ca002ae08
     <string name="api_image">client/image/</string>
     <string name="api_like_user">service/likeuser.php</string>
     <string name="api_edit_message">service/editmessage.php</string>
