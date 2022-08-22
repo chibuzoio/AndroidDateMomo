@@ -123,7 +123,7 @@ class MessageActivity : AppCompatActivity() {
             .into(binding.welcomeHelloMessage)
 
         binding.receiverUserName.text = bundle.getString("fullName")!!.ifEmpty {
-            bundle.getString("userName")
+            bundle.getString("userName").toString().replaceFirstChar { it.uppercase() }
         }
         binding.lastActiveTime.text = bundle.getString("lastActiveTime")!!.ifEmpty {
             "online"

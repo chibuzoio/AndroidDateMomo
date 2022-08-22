@@ -609,7 +609,8 @@ class UserAccountActivity : AppCompatActivity() {
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[3].userName, userLikedResponseArray[3].age
+                userLikedResponseArray[3].userName.replaceFirstChar { it.uppercase() },
+                userLikedResponseArray[3].age
             )
         }
 
@@ -641,7 +642,8 @@ class UserAccountActivity : AppCompatActivity() {
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[2].userName, userLikedResponseArray[2].age
+                userLikedResponseArray[2].userName.replaceFirstChar { it.uppercase() },
+                userLikedResponseArray[2].age
             )
         }
     }
@@ -663,7 +665,8 @@ class UserAccountActivity : AppCompatActivity() {
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[1].userName, userLikedResponseArray[1].age
+                userLikedResponseArray[1].userName.replaceFirstChar { it.uppercase() },
+                userLikedResponseArray[1].age
             )
         }
     }
@@ -685,7 +688,8 @@ class UserAccountActivity : AppCompatActivity() {
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[0].userName, userLikedResponseArray[0].age
+                userLikedResponseArray[0].userName.replaceFirstChar { it.uppercase() },
+                userLikedResponseArray[0].age
             )
         }
     }

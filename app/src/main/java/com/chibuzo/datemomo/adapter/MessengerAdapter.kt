@@ -15,6 +15,7 @@ import com.chibuzo.datemomo.model.MessengerModel
 import com.chibuzo.datemomo.model.request.DeleteMessageRequest
 import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.response.MessengerResponse
+import com.chibuzo.datemomo.utility.Utility
 
 class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
@@ -34,7 +35,7 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
 
         if (messengerResponses[position].fullName.isEmpty()) {
             messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
-                "Delete chats with ${messengerResponses[position].userName}?"
+                "Delete chats with ${messengerResponses[position].userName.replaceFirstChar { it.uppercase() }}?"
         } else {
             messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
                 "Delete chats with ${messengerResponses[position].fullName}?"
@@ -61,12 +62,13 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
 
         if (messengerResponses[position].fullName == "") {
             holder.binding.userFullName.text = messengerResponses[position].userName
+                .replaceFirstChar { it.uppercase() }
         } else {
             holder.binding.userFullName.text = messengerResponses[position].fullName
         }
 
         holder.binding.lastMessage.text = messengerResponses[position].lastMessage
-        holder.binding.messageStatusTime.text = messengerResponses[position].lastMessageDate
+        holder.binding.messageStatusTime.text = Utility.getTimeDifference(messengerResponses[position].lastMessageDate.toLong())
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
 
         holder.binding.messengerPropertyLayout.setOnLongClickListener {

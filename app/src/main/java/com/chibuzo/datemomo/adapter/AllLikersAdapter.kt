@@ -55,7 +55,8 @@ class AllLikersAdapter(private var userLikerResponses: Array<UserLikerResponse>,
         if (userLikerResponses[position].fullName.isEmpty()) {
             holder.binding.likerUserFullName.text =
                 holder.itemView.context.getString(R.string.name_and_age_text,
-                    userLikerResponses[position].userName, userLikerResponses[position].age)
+                    userLikerResponses[position].userName.replaceFirstChar { it.uppercase() },
+                    userLikerResponses[position].age)
         } else {
             holder.binding.likerUserFullName.text =
                 holder.itemView.context.getString(R.string.name_and_age_text,

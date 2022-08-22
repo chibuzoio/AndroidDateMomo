@@ -154,7 +154,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         if (homeDisplayResponses[position].fullName.isEmpty()) {
             holder.binding.userFullName.text =
                 holder.itemView.context.getString(R.string.name_and_age_text,
-                    homeDisplayResponses[position].userName, homeDisplayResponses[position].age)
+                    homeDisplayResponses[position].userName.replaceFirstChar { it.uppercase() },
+                    homeDisplayResponses[position].age)
         } else {
             holder.binding.userFullName.text =
                 holder.itemView.context.getString(R.string.name_and_age_text,
@@ -208,7 +209,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         homeDisplayModel.binding.userLocation.text = homeDisplayResponses[position].currentLocation
 
         val userFullName = homeDisplayResponses[position].fullName.ifEmpty {
-            homeDisplayResponses[position].userName
+            homeDisplayResponses[position].userName.replaceFirstChar { it.uppercase() }
         }
 
         homeDisplayModel.binding.userFullName.text =

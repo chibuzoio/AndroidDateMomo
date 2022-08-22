@@ -1220,7 +1220,8 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.sex), authenticationResponse.sex)
                     sharedPreferencesEditor.putInt(getString(R.string.member_id), authenticationResponse.memberId)
                     sharedPreferencesEditor.putString(getString(R.string.full_name), authenticationResponse.fullName)
-                    sharedPreferencesEditor.putString(getString(R.string.user_name), authenticationResponse.userName)
+                    sharedPreferencesEditor.putString(getString(R.string.user_name),
+                        authenticationResponse.userName.replaceFirstChar { it.uppercase() })
                     sharedPreferencesEditor.putString(getString(R.string.user_role), authenticationResponse.userRole)
                     sharedPreferencesEditor.putString(getString(R.string.user_level), authenticationResponse.userLevel)
                     sharedPreferencesEditor.putInt(getString(R.string.impact_count), authenticationResponse.impactCount)
@@ -1360,7 +1361,8 @@ class MainActivity : AppCompatActivity() {
 
                 if (registrationResponse.authenticated) {
                     sharedPreferencesEditor.putInt(getString(R.string.member_id), registrationResponse.memberId)
-                    sharedPreferencesEditor.putString(getString(R.string.user_name), registrationResponse.userName)
+                    sharedPreferencesEditor.putString(getString(R.string.user_name),
+                        registrationResponse.userName.replaceFirstChar { it.uppercase() })
                     sharedPreferencesEditor.putString(getString(R.string.user_role), registrationResponse.userRole)
                     sharedPreferencesEditor.putString(getString(R.string.user_level), registrationResponse.userLevel)
                     sharedPreferencesEditor.putInt(getString(R.string.impact_count), registrationResponse.impactCount)

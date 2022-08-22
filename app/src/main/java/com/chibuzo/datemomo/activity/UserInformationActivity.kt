@@ -80,7 +80,7 @@ class UserInformationActivity : AppCompatActivity() {
                 sharedPreferences.getInt(getString(R.string.member_id), 0),
                 homeDisplayResponse.memberId,
                 homeDisplayResponse.fullName,
-                homeDisplayResponse.userName,
+                homeDisplayResponse.userName.replaceFirstChar { it.uppercase() },
                 "",
                 homeDisplayResponse.profilePicture)
 
@@ -202,7 +202,8 @@ class UserInformationActivity : AppCompatActivity() {
             )
         } else {
             binding.userFullName.text = getString(R.string.name_and_age_text,
-                homeDisplayResponse.userName, homeDisplayResponse.age
+                homeDisplayResponse.userName.replaceFirstChar { it.uppercase() },
+                homeDisplayResponse.age
             )
         }
 

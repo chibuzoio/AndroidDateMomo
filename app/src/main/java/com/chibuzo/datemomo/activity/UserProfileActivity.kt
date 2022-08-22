@@ -783,7 +783,8 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             binding.sixthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[5].userName, userLikerResponseArray[5].age
+                userLikerResponseArray[5].userName.replaceFirstChar { it.uppercase() },
+                userLikerResponseArray[5].age
             )
         }
 
@@ -815,7 +816,8 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             binding.fifthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[4].userName, userLikerResponseArray[4].age
+                userLikerResponseArray[4].userName.replaceFirstChar { it.uppercase() },
+                userLikerResponseArray[4].age
             )
         }
     }
@@ -837,7 +839,8 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             binding.fourthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[3].userName, userLikerResponseArray[3].age
+                userLikerResponseArray[3].userName.replaceFirstChar { it.uppercase() },
+                userLikerResponseArray[3].age
             )
         }
     }
@@ -859,7 +862,8 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             binding.thirdLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[2].userName, userLikerResponseArray[2].age
+                userLikerResponseArray[2].userName.replaceFirstChar { it.uppercase() },
+                userLikerResponseArray[2].age
             )
         }
     }
@@ -881,7 +885,8 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             binding.secondLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[1].userName, userLikerResponseArray[1].age
+                userLikerResponseArray[1].userName.replaceFirstChar { it.uppercase() },
+                userLikerResponseArray[1].age
             )
         }
     }
@@ -903,7 +908,8 @@ class UserProfileActivity : AppCompatActivity() {
         } else {
             binding.firstLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[0].userName, userLikerResponseArray[0].age
+                userLikerResponseArray[0].userName.replaceFirstChar { it.uppercase() },
+                userLikerResponseArray[0].age
             )
         }
     }

@@ -10,7 +10,9 @@ import java.util.concurrent.TimeUnit
 class Utility {
 
     companion object {
-        fun getTimeDifference(timeInSeconds: Long): String {
+        fun getTimeDifference(timeGottenInSeconds: Long): String {
+            val timeInSeconds = (System.currentTimeMillis() / 1000) - timeGottenInSeconds
+
             return if (timeInSeconds > 59) {
                 val timeInMinutes =
                     TimeUnit.MINUTES.convert(timeInSeconds, TimeUnit.SECONDS).toInt()
