@@ -193,19 +193,20 @@ class UserInformationActivity : AppCompatActivity() {
         binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
         binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
 
+        val userFullName = homeDisplayResponse.fullName.ifEmpty {
+            homeDisplayResponse.userName.replaceFirstChar { it.uppercase() }
+        }
+
+        binding.userInterestTitle.text = getString(R.string.title_interest, userFullName)
+        binding.userSexualityTitle.text = getString(R.string.title_sexuality, userFullName)
+        binding.userExperienceTitle.text = getString(R.string.title_experience, userFullName)
+
         binding.userStatusText.text = homeDisplayResponse.userStatus
         binding.userLocation.text = homeDisplayResponse.currentLocation
 
-        if (homeDisplayResponse.fullName != "") {
-            binding.userFullName.text = getString(R.string.name_and_age_text,
-                homeDisplayResponse.fullName, homeDisplayResponse.age
-            )
-        } else {
-            binding.userFullName.text = getString(R.string.name_and_age_text,
-                homeDisplayResponse.userName.replaceFirstChar { it.uppercase() },
-                homeDisplayResponse.age
-            )
-        }
+        binding.userFullName.text = getString(R.string.name_and_age_text,
+            userFullName, homeDisplayResponse.age
+        )
 
         if (homeDisplayResponse.bisexualCategory > 0) {
             binding.userBisexual.blueButtonLayout.visibility = View.VISIBLE
