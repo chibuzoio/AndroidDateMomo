@@ -2,6 +2,7 @@ package com.chibuzo.datemomo.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -11,6 +12,7 @@ import com.chibuzo.datemomo.databinding.RecyclerNotificationBinding
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.response.NotificationResponse
 import com.chibuzo.datemomo.utility.Utility
+
 
 class NotificationAdapter(private var notificationResponses: ArrayList<NotificationResponse>,
                           private var allLikersModel: AllLikersModel) :
@@ -22,7 +24,7 @@ class NotificationAdapter(private var notificationResponses: ArrayList<Notificat
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val imageLayoutWidth = (allLikersModel.deviceWidth * 25) / 100;
+        val imageLayoutWidth = (allLikersModel.deviceWidth * 23) / 100
         val informationLayoutWidth = allLikersModel.deviceWidth - imageLayoutWidth
 
         holder.binding.profilePictureLayout.layoutParams.width = imageLayoutWidth
@@ -37,8 +39,15 @@ class NotificationAdapter(private var notificationResponses: ArrayList<Notificat
             .transform(CircleCrop(), CenterCrop())
             .into(holder.binding.notifierProfilePicture)
 
-        holder.binding.genericNotification.text =
-            notificationResponses[position].genericNotification
+        // Replace the occurrence of { with <b> and the occurrence of } with </b>
+
+        var notificationString = notificationResponses[position].genericNotification
+        notificationString = notificationString.replace("{", "<b>")
+        notificationString = notificationString.replace("}", "</b>")
+
+        val notificationHtml = HtmlCompat.fromHtml(notificationString, HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+        holder.binding.genericNotification.text = notificationHtml
         holder.binding.notificationDate.text =
             Utility.getTimeDifference(notificationResponses[position].notificationDate.toLong())
     }

@@ -167,7 +167,7 @@ class UserProfileActivity : AppCompatActivity() {
                     initializeFirstLikerLayout()
                 }
 
-                if (userLikerResponseArray.size == 3) {
+                if (userLikerResponseArray.size >= 3) {
                     initializeSecondLikerLayout()
                     initializeFirstLikerLayout()
                     initializeThirdLikerLayout()

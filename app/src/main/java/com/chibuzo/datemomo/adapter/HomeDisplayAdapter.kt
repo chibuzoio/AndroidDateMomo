@@ -356,7 +356,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                 sharedPreferences.getString(context.getString(R.string.user_name), "")
             }
 
-        val genericNotification = "$notifierName reacted to your profile picture"
+        val genericNotification = "{$notifierName} reacted to your profile picture"
 
         val mapper = jacksonObjectMapper()
         val notifyUserRequest = NotifyUserRequest(

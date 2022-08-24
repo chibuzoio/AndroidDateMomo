@@ -49,7 +49,6 @@
         <TextView
             android:id="@+id/genericNotification"
             android:textSize="17sp"
-            android:textStyle="bold"
             android:textColor="@color/edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
