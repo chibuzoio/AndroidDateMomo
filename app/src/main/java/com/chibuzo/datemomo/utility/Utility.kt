@@ -1,15 +1,49 @@
 package com.chibuzo.datemomo.utility
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Base64
 import android.util.DisplayMetrics
+import android.util.Log
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 
 class Utility {
 
     companion object {
+
+        fun encodeUploadImage(bitmap: Bitmap): String {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            val currentBitmapSize = bitmap.allocationByteCount
+
+            if (currentBitmapSize > 174747195) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 30, byteArrayOutputStream)
+            } else if (currentBitmapSize > 109216997) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 40, byteArrayOutputStream)
+            } else if (currentBitmapSize > 65530198) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream)
+            } else if (currentBitmapSize > 43686798) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream)
+            } else if (currentBitmapSize > 32765100) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
+            } else if (currentBitmapSize > 21843400) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+            } else if (currentBitmapSize > 16062577) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream)
+            } else if (currentBitmapSize > 11838951) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            } else if (currentBitmapSize > 7530000) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            } else {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            }
+
+            return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
+        }
+
         fun getTimeDifference(timeGottenInSeconds: Long): String {
             val timeInSeconds = (System.currentTimeMillis() / 1000) - timeGottenInSeconds
 

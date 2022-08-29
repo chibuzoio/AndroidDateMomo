@@ -28,6 +28,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -44,6 +45,11 @@ import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.default
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import okhttp3.*
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -1051,11 +1057,7 @@ class MainActivity : AppCompatActivity() {
         val imageWidth = theBitmap!!.width
         val imageHeight = theBitmap!!.height
 
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        val base64Picture =
-            android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
+        val base64Picture = Utility.encodeUploadImage(theBitmap!!)
 
         val mapper = jacksonObjectMapper()
         val pictureUploadRequest = PictureUploadRequest(
