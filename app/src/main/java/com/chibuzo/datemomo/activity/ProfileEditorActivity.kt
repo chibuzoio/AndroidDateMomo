@@ -81,8 +81,10 @@ class ProfileEditorActivity : AppCompatActivity() {
         binding.toyGirlInterest.hollowButtonText.text = "Toy Girl"
         binding.bisexualInterest.hollowButtonText.text = "Bisexual"
         binding.straightInterest.hollowButtonText.text = "Straight"
+        binding.friendshipInterest.hollowButtonText.text = "Friendship"
         binding.sugarDaddyInterest.hollowButtonText.text = "Sugar Daddy"
         binding.sugarMommyInterest.hollowButtonText.text = "Sugar Mommy"
+        binding.relationshipInterest.hollowButtonText.text = "Relationship"
 
         binding.sixtyNineExperience.hollowButtonText.text = "69"
         binding.analSexExperience.hollowButtonText.text = "Anal Sex"
@@ -92,6 +94,7 @@ class ProfileEditorActivity : AppCompatActivity() {
         binding.threesomeExperience.hollowButtonText.text = "Threesome"
         binding.givenHeadExperience.hollowButtonText.text = "Given Head"
         binding.sexToyExperience.hollowButtonText.text = "Used Sex Toys"
+        binding.missionaryExperience.hollowButtonText.text = "Missionary"
         binding.videoSexExperience.hollowButtonText.text = "Video Sex Chat"
         binding.publicSexExperience.hollowButtonText.text = "Sexed In Public"
         binding.receivedHeadExperience.hollowButtonText.text = "Received Head"
@@ -112,13 +115,16 @@ class ProfileEditorActivity : AppCompatActivity() {
             gayInterest = sharedPreferences.getInt(getString(R.string.gay_interest), 0),
             lesbianInterest = sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
             straightInterest = sharedPreferences.getInt(getString(R.string.straight_interest), 0),
+            friendshipInterest = sharedPreferences.getInt(getString(R.string.friendship_interest), 0),
             sugarDaddyInterest = sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
             sugarMommyInterest = sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
+            relationshipInterest = sharedPreferences.getInt(getString(R.string.relationship_interest), 0),
             toyBoyInterest = sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
             toyGirlInterest = sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
             sixtyNineExperience = sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
             analSexExperience = sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
             givenHeadExperience = sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
+            missionaryExperience = sharedPreferences.getInt(getString(R.string.missionary_experience), 0),
             oneNightStandExperience = sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
             orgySexExperience = sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
             poolSexExperience = sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),
@@ -377,6 +383,21 @@ class ProfileEditorActivity : AppCompatActivity() {
             }
         }
 
+        binding.friendshipInterest.hollowButtonLayout.setOnClickListener {
+            binding.friendshipInterest.hollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.friendshipInterest.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
+                binding.friendshipInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.friendshipInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                updateSexualityRequest.friendshipInterest = 1
+            } else {
+                binding.friendshipInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.friendshipInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                updateSexualityRequest.friendshipInterest = 0
+            }
+        }
+
         binding.toyBoyInterest.hollowButtonLayout.setOnClickListener {
             binding.toyBoyInterest.hollowButtonLayout.startAnimation(buttonClickEffect)
 
@@ -404,6 +425,21 @@ class ProfileEditorActivity : AppCompatActivity() {
                 binding.lesbianInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.lesbianInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
                 updateSexualityRequest.lesbianInterest = 0
+            }
+        }
+
+        binding.relationshipInterest.hollowButtonLayout.setOnClickListener {
+            binding.relationshipInterest.hollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.relationshipInterest.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
+                binding.relationshipInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.relationshipInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                updateSexualityRequest.relationshipInterest = 1
+            } else {
+                binding.relationshipInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.relationshipInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                updateSexualityRequest.relationshipInterest = 0
             }
         }
 
@@ -509,6 +545,21 @@ class ProfileEditorActivity : AppCompatActivity() {
                 binding.analSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.analSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
                 updateSexualityRequest.analSexExperience = 0
+            }
+        }
+
+        binding.missionaryExperience.hollowButtonLayout.setOnClickListener {
+            binding.missionaryExperience.hollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.missionaryExperience.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
+                binding.missionaryExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.missionaryExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                updateSexualityRequest.missionaryExperience = 1
+            } else {
+                binding.missionaryExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.missionaryExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                updateSexualityRequest.missionaryExperience = 0
             }
         }
 
@@ -722,6 +773,11 @@ class ProfileEditorActivity : AppCompatActivity() {
             binding.bisexualInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
+        if (sharedPreferences.getInt(getString(R.string.friendship_interest), 0) > 0) {
+            binding.friendshipInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.friendshipInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+        }
+
         if (sharedPreferences.getInt(getString(R.string.gay_interest), 0) > 0) {
             binding.gayInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
             binding.gayInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
@@ -730,6 +786,11 @@ class ProfileEditorActivity : AppCompatActivity() {
         if (sharedPreferences.getInt(getString(R.string.straight_interest), 0) > 0) {
             binding.straightInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
             binding.straightInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.relationship_interest), 0) > 0) {
+            binding.relationshipInterest.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.relationshipInterest.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.lesbian_interest), 0) > 0) {
@@ -770,6 +831,11 @@ class ProfileEditorActivity : AppCompatActivity() {
         if (sharedPreferences.getInt(getString(R.string.camera_sex_experience), 0) > 0) {
             binding.cameraSexExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
             binding.cameraSexExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.missionary_experience), 0) > 0) {
+            binding.missionaryExperience.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+            binding.missionaryExperience.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
 
         if (sharedPreferences.getInt(getString(R.string.car_sex_experience), 0) > 0) {
@@ -1008,6 +1074,8 @@ class ProfileEditorActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putInt(getString(R.string.bisexual_interest), updateSexualityRequest.bisexualInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.gay_interest), updateSexualityRequest.gayInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.straight_interest), updateSexualityRequest.straightInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.friendship_interest), updateSexualityRequest.friendshipInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.relationship_interest), updateSexualityRequest.relationshipInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.lesbian_interest), updateSexualityRequest.lesbianInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.sugar_daddy_interest), updateSexualityRequest.sugarDaddyInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.sugar_mommy_interest), updateSexualityRequest.sugarMommyInterest)
@@ -1019,6 +1087,7 @@ class ProfileEditorActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putInt(getString(R.string.car_sex_experience), updateSexualityRequest.carSexExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.threesome_experience), updateSexualityRequest.threesomeExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.given_head_experience), updateSexualityRequest.givenHeadExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.missionary_experience), updateSexualityRequest.missionaryExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.received_head_experience), updateSexualityRequest.receivedHeadExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.one_night_stand_experience), updateSexualityRequest.oneNightStandExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.orgy_experience), updateSexualityRequest.orgySexExperience)

@@ -971,13 +971,16 @@ class MainActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.gay_interest), 0),
             sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
             sharedPreferences.getInt(getString(R.string.straight_interest), 0),
+            sharedPreferences.getInt(getString(R.string.friendship_interest), 0),
             sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
             sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.relationship_interest), 0),
             sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
             sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
             sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
             sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
             sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.missionary_experience), 0),
             sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
             sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
             sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),
@@ -1206,7 +1209,8 @@ class MainActivity : AppCompatActivity() {
                     0, 0, 0, 0,
                     0, 0, 0, 0,
                     0, 0, 0, 0,
-                    0, 0, 0, 0)
+                    0, 0, 0, 0,
+                    0, 0, 0)
 
                 try {
                     authenticationResponse = mapper.readValue(myResponse)
@@ -1242,7 +1246,9 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putInt(getString(R.string.toy_boy_category), authenticationResponse.toyBoyCategory)
                     sharedPreferencesEditor.putInt(getString(R.string.toy_girl_category), authenticationResponse.toyGirlCategory)
                     sharedPreferencesEditor.putInt(getString(R.string.bisexual_interest), authenticationResponse.bisexualInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.friendship_interest), authenticationResponse.friendshipInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.gay_interest), authenticationResponse.gayInterest)
+                    sharedPreferencesEditor.putInt(getString(R.string.relationship_interest), authenticationResponse.relationshipInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.lesbian_interest), authenticationResponse.lesbianInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.straight_interest), authenticationResponse.straightInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.sugar_daddy_interest), authenticationResponse.sugarDaddyInterest)
@@ -1250,6 +1256,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putInt(getString(R.string.toy_boy_interest), authenticationResponse.toyBoyInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.toy_girl_interest), authenticationResponse.toyGirlInterest)
                     sharedPreferencesEditor.putInt(getString(R.string.sixty_nine_experience), authenticationResponse.sixtyNineExperience)
+                    sharedPreferencesEditor.putInt(getString(R.string.missionary_experience), authenticationResponse.missionaryExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.anal_sex_experience), authenticationResponse.analSexExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.given_head_experience), authenticationResponse.givenHeadExperience)
                     sharedPreferencesEditor.putInt(getString(R.string.one_night_stand_experience), authenticationResponse.oneNightStandExperience)

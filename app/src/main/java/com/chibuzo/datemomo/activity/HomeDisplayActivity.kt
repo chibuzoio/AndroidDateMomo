@@ -108,8 +108,10 @@ class HomeDisplayActivity : AppCompatActivity() {
         binding.toyGirlInterest.blueButtonText.text = "Toy Girl"
         binding.bisexualInterest.blueButtonText.text = "Bisexual"
         binding.straightInterest.blueButtonText.text = "Straight"
+        binding.friendshipInterest.blueButtonText.text = "Friendship"
         binding.sugarDaddyInterest.blueButtonText.text = "Sugar Daddy"
         binding.sugarMommyInterest.blueButtonText.text = "Sugar Mommy"
+        binding.relationshipInterest.blueButtonText.text = "Relationship"
 
         binding.sixtyNineExperience.blueButtonText.text = "69"
         binding.analSexExperience.blueButtonText.text = "Anal Sex"
@@ -119,6 +121,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         binding.threesomeExperience.blueButtonText.text = "Threesome"
         binding.givenHeadExperience.blueButtonText.text = "Given Head"
         binding.sexToyExperience.blueButtonText.text = "Used Sex Toys"
+        binding.missionaryExperience.blueButtonText.text = "Missionary"
         binding.videoSexExperience.blueButtonText.text = "Video Sex Chat"
         binding.publicSexExperience.blueButtonText.text = "Sexed In Public"
         binding.receivedHeadExperience.blueButtonText.text = "Received Head"

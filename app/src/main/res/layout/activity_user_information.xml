@@ -260,6 +260,15 @@
                             android:layout_height="wrap_content"/>
 
                         <include
+                            android:id="@+id/friendshipInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
                             android:id="@+id/gayInterest"
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
@@ -270,6 +279,15 @@
 
                         <include
                             android:id="@+id/lesbianInterest"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/relationshipInterest"
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
@@ -362,6 +380,15 @@
 
                         <include
                             android:id="@+id/givenHeadExperience"
+                            android:visibility="gone"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/missionaryExperience"
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"

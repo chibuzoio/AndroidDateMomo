@@ -100,13 +100,16 @@ class UserBioActivity : AppCompatActivity() {
             gayInterest = 0,
             lesbianInterest = 0,
             straightInterest = 0,
+            friendshipInterest = 0,
             sugarDaddyInterest = 0,
             sugarMommyInterest = 0,
+            relationshipInterest = 0,
             toyBoyInterest = 0,
             toyGirlInterest = 0,
             sixtyNineExperience = 0,
             analSexExperience = 0,
             givenHeadExperience = 0,
+            missionaryExperience = 0,
             oneNightStandExperience = 0,
             orgySexExperience = 0,
             poolSexExperience = 0,
@@ -209,8 +212,10 @@ class UserBioActivity : AppCompatActivity() {
         binding.toyGirl.hollowButtonText.text = "Toy Girl"
         binding.bisexual.hollowButtonText.text = "Bisexual"
         binding.straight.hollowButtonText.text = "Straight"
+        binding.friendship.hollowButtonText.text = "Friendship"
         binding.sugarDaddy.hollowButtonText.text = "Sugar Daddy"
         binding.sugarMommy.hollowButtonText.text = "Sugar Mommy"
+        binding.relationship.hollowButtonText.text = "Relationship"
 
         binding.sixtyNine.hollowButtonText.text = "69"
         binding.analSex.hollowButtonText.text = "Anal Sex"
@@ -220,6 +225,7 @@ class UserBioActivity : AppCompatActivity() {
         binding.threesome.hollowButtonText.text = "Threesome"
         binding.givenHead.hollowButtonText.text = "Given Head"
         binding.sexToys.hollowButtonText.text = "Used Sex Toys"
+        binding.missionary.hollowButtonText.text = "Missionary"
         binding.videoSex.hollowButtonText.text = "Video Sex Chat"
         binding.publicSex.hollowButtonText.text = "Sexed In Public"
         binding.receivedHead.hollowButtonText.text = "Received Head"
@@ -386,6 +392,21 @@ class UserBioActivity : AppCompatActivity() {
             }
         }
 
+        binding.friendship.hollowButtonLayout.setOnClickListener {
+            binding.friendship.hollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.friendship.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
+                binding.friendship.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.friendship.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                userBioRequest.friendshipInterest = 1
+            } else {
+                binding.friendship.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.friendship.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                userBioRequest.friendshipInterest = 0
+            }
+        }
+
         binding.gay.hollowButtonLayout.setOnClickListener {
             binding.gay.hollowButtonLayout.startAnimation(buttonClickEffect)
 
@@ -398,6 +419,21 @@ class UserBioActivity : AppCompatActivity() {
                 binding.gay.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.gay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
                 userBioRequest.gayInterest = 0
+            }
+        }
+
+        binding.relationship.hollowButtonLayout.setOnClickListener {
+            binding.relationship.hollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.relationship.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
+                binding.relationship.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.relationship.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                userBioRequest.relationshipInterest = 1
+            } else {
+                binding.relationship.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.gay.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                userBioRequest.relationshipInterest = 0
             }
         }
 
@@ -533,6 +569,21 @@ class UserBioActivity : AppCompatActivity() {
                 binding.analSex.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
                 binding.analSex.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
                 userBioRequest.analSexExperience = 0
+            }
+        }
+
+        binding.missionary.hollowButtonLayout.setOnClickListener {
+            binding.missionary.hollowButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.missionary.hollowButtonText.currentTextColor ==
+                ContextCompat.getColor(this, R.color.blue)) {
+                binding.missionary.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.white))
+                binding.missionary.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.blue_button)
+                userBioRequest.missionaryExperience = 1
+            } else {
+                binding.missionary.hollowButtonText.setTextColor(ContextCompat.getColor(this, R.color.blue))
+                binding.missionary.hollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_button)
+                userBioRequest.missionaryExperience = 0
             }
         }
 
@@ -752,13 +803,16 @@ class UserBioActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.gay_interest), 0),
             sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
             sharedPreferences.getInt(getString(R.string.straight_interest), 0),
+            sharedPreferences.getInt(getString(R.string.friendship_interest), 0),
             sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
             sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.relationship_interest), 0),
             sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
             sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
             sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
             sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
             sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.missionary_experience), 0),
             sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
             sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
             sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),

@@ -266,12 +266,20 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             homeDisplayModel.binding.bisexualInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
+        if (homeDisplayResponses[position].friendshipInterest > 0) {
+            homeDisplayModel.binding.friendshipInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
         if (homeDisplayResponses[position].gayInterest > 0) {
             homeDisplayModel.binding.gayInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponses[position].straightInterest > 0) {
             homeDisplayModel.binding.straightInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].relationshipInterest > 0) {
+            homeDisplayModel.binding.relationshipInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponses[position].lesbianInterest > 0) {
@@ -296,6 +304,10 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
         if (homeDisplayResponses[position].analSexExperience > 0) {
             homeDisplayModel.binding.analSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponses[position].missionaryExperience > 0) {
+            homeDisplayModel.binding.missionaryExperience.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponses[position].sixtyNineExperience > 0) {

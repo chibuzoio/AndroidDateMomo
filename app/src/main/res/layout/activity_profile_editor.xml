@@ -353,6 +353,14 @@
                             android:layout_height="wrap_content"/>
 
                         <include
+                            android:id="@+id/friendshipInterest"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_hollow_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
                             android:id="@+id/gayInterest"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
@@ -362,6 +370,14 @@
 
                         <include
                             android:id="@+id/lesbianInterest"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_hollow_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/relationshipInterest"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
                             layout="@layout/include_hollow_blue_button"
@@ -453,6 +469,14 @@
 
                         <include
                             android:id="@+id/givenHeadExperience"
+                            android:layout_marginEnd="11dp"
+                            android:layout_marginBottom="15dp"
+                            layout="@layout/include_hollow_blue_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <include
+                            android:id="@+id/missionaryExperience"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
                             layout="@layout/include_hollow_blue_button"

@@ -427,8 +427,10 @@ class UserProfileActivity : AppCompatActivity() {
         binding.toyGirlInterest.blueButtonText.text = "Toy Girl"
         binding.bisexualInterest.blueButtonText.text = "Bisexual"
         binding.straightInterest.blueButtonText.text = "Straight"
+        binding.friendshipInterest.blueButtonText.text = "Friendship"
         binding.sugarDaddyInterest.blueButtonText.text = "Sugar Daddy"
         binding.sugarMommyInterest.blueButtonText.text = "Sugar Mommy"
+        binding.relationshipInterest.blueButtonText.text = "Relationship"
 
         binding.sixtyNineExperience.blueButtonText.text = "69"
         binding.analSexExperience.blueButtonText.text = "Anal Sex"
@@ -438,6 +440,7 @@ class UserProfileActivity : AppCompatActivity() {
         binding.threesomeExperience.blueButtonText.text = "Threesome"
         binding.givenHeadExperience.blueButtonText.text = "Given Head"
         binding.sexToyExperience.blueButtonText.text = "Used Sex Toys"
+        binding.missionaryExperience.blueButtonText.text = "Missionary"
         binding.videoSexExperience.blueButtonText.text = "Video Sex Chat"
         binding.publicSexExperience.blueButtonText.text = "Sexed In Public"
         binding.receivedHeadExperience.blueButtonText.text = "Received Head"
@@ -498,6 +501,10 @@ class UserProfileActivity : AppCompatActivity() {
             binding.bisexualInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
+        if (sharedPreferences.getInt(getString(R.string.friendship_interest), 0) > 0) {
+            binding.friendshipInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
         if (sharedPreferences.getInt(getString(R.string.gay_interest), 0) > 0) {
             binding.gayInterest.blueButtonLayout.visibility = View.VISIBLE
         }
@@ -508,6 +515,10 @@ class UserProfileActivity : AppCompatActivity() {
 
         if (sharedPreferences.getInt(getString(R.string.lesbian_interest), 0) > 0) {
             binding.lesbianInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.relationship_interest), 0) > 0) {
+            binding.relationshipInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0) > 0) {
@@ -528,6 +539,10 @@ class UserProfileActivity : AppCompatActivity() {
 
         if (sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0) > 0) {
             binding.analSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (sharedPreferences.getInt(getString(R.string.missionary_experience), 0) > 0) {
+            binding.missionaryExperience.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0) > 0) {
@@ -1153,13 +1168,16 @@ class UserProfileActivity : AppCompatActivity() {
             sharedPreferences.getInt(getString(R.string.gay_interest), 0),
             sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
             sharedPreferences.getInt(getString(R.string.straight_interest), 0),
+            sharedPreferences.getInt(getString(R.string.friendship_interest), 0),
             sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
             sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
+            sharedPreferences.getInt(getString(R.string.relationship_interest), 0),
             sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
             sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
             sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
             sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
             sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
+            sharedPreferences.getInt(getString(R.string.missionary_experience), 0),
             sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
             sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
             sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),

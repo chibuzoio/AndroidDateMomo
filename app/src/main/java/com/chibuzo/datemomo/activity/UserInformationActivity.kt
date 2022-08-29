@@ -176,8 +176,10 @@ class UserInformationActivity : AppCompatActivity() {
         binding.toyGirlInterest.blueButtonText.text = "Toy Girl"
         binding.bisexualInterest.blueButtonText.text = "Bisexual"
         binding.straightInterest.blueButtonText.text = "Straight"
+        binding.friendshipInterest.blueButtonText.text = "Friendship"
         binding.sugarDaddyInterest.blueButtonText.text = "Sugar Daddy"
         binding.sugarMommyInterest.blueButtonText.text = "Sugar Mommy"
+        binding.relationshipInterest.blueButtonText.text = "Relationship"
 
         binding.sixtyNineExperience.blueButtonText.text = "69"
         binding.analSexExperience.blueButtonText.text = "Anal Sex"
@@ -187,6 +189,7 @@ class UserInformationActivity : AppCompatActivity() {
         binding.threesomeExperience.blueButtonText.text = "Threesome"
         binding.givenHeadExperience.blueButtonText.text = "Given Head"
         binding.sexToyExperience.blueButtonText.text = "Used Sex Toys"
+        binding.missionaryExperience.blueButtonText.text = "Missionary"
         binding.videoSexExperience.blueButtonText.text = "Video Sex Chat"
         binding.publicSexExperience.blueButtonText.text = "Sexed In Public"
         binding.receivedHeadExperience.blueButtonText.text = "Received Head"
@@ -244,8 +247,16 @@ class UserInformationActivity : AppCompatActivity() {
             binding.bisexualInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
+        if (homeDisplayResponse.friendshipInterest > 0) {
+            binding.friendshipInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
         if (homeDisplayResponse.gayInterest > 0) {
             binding.gayInterest.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponse.relationshipInterest > 0) {
+            binding.relationshipInterest.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.straightInterest > 0) {
@@ -274,6 +285,10 @@ class UserInformationActivity : AppCompatActivity() {
 
         if (homeDisplayResponse.analSexExperience > 0) {
             binding.analSexExperience.blueButtonLayout.visibility = View.VISIBLE
+        }
+
+        if (homeDisplayResponse.missionaryExperience > 0) {
+            binding.missionaryExperience.blueButtonLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sixtyNineExperience > 0) {
