@@ -1144,12 +1144,8 @@ class ProfileEditorActivity : AppCompatActivity() {
         val imageWidth = theBitmap!!.width
         val imageHeight = theBitmap!!.height
 
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        theBitmap!!.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        val base64Picture =
-            android.util.Base64.encodeToString(byteArray, android.util.Base64.DEFAULT)
-
+        val base64Picture = Utility.encodeUploadImage(theBitmap!!)
+        
         val mapper = jacksonObjectMapper()
         val pictureUpdateRequest = PictureUpdateRequest(
             sharedPreferences.getInt(getString(R.string.member_id), 0),

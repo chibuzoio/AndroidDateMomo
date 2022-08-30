@@ -363,6 +363,13 @@
             android:id="@+id/singleButtonDialog"
             layout="@layout/include_single_button_dialog"/>
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
