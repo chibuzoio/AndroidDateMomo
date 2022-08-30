@@ -320,10 +320,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            binding.pictureUploadProgress.setOnClickListener {
+//                binding.pictureUploadProgress.visibility = View.GONE
+            }
+
             binding.pictureUploadNext.blueButtonLayout.setOnClickListener {
                 binding.pictureUploadNext.blueButtonLayout.startAnimation(buttonClickEffect)
-                binding.pictureUploadNext.blueButtonLayout.visibility = View.GONE
-                binding.uploadProgressIcon.visibility = View.VISIBLE
+                binding.pictureUploadProgress.visibility = View.VISIBLE
 
                 userAge = if (binding.userAgeInput.genericInputField.text.toString().trim()
                         .isEmpty()
@@ -717,6 +720,7 @@ class MainActivity : AppCompatActivity() {
                 binding.doubleButtonDialog.doubleButtonTitle.text = "Exit Notice!"
                 binding.doubleButtonDialog.doubleButtonMessage.text = "Do you wish to exit the registration process and continue later?"
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+                binding.pictureUploadProgress.visibility = View.GONE
             }
             binding.registrationLayout.isVisible -> {
                 binding.loginPassword.leftIconInputField.genericInputField.setText("")
@@ -761,9 +765,8 @@ class MainActivity : AppCompatActivity() {
         binding.uploadPictureButton.iconHollowButtonLayout.visibility = View.VISIBLE
         binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
         binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-        binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
+        binding.pictureUploadProgress.visibility = View.GONE
         binding.registerProgressIcon.visibility = View.GONE
-        binding.uploadProgressIcon.visibility = View.GONE
         binding.loginProgressIcon.visibility = View.GONE
     }
 
@@ -860,9 +863,8 @@ class MainActivity : AppCompatActivity() {
         if (userAgeValid) {
             binding.userAgeInputError.visibility = View.GONE
         } else {
-            binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
+            binding.pictureUploadProgress.visibility = View.GONE
             binding.userAgeInputError.visibility = View.VISIBLE
-            binding.uploadProgressIcon.visibility = View.GONE
             binding.userAgeInputError.text = errorType
         }
     }
@@ -1089,8 +1091,7 @@ class MainActivity : AppCompatActivity() {
                 call.cancel()
 
                 runOnUiThread {
-                    binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
-                    binding.uploadProgressIcon.visibility = View.GONE
+                    binding.pictureUploadProgress.visibility = View.GONE
                 }
 
                 if (!Utility.isConnected(baseContext)) {
@@ -1124,8 +1125,7 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
 
                     runOnUiThread {
-                        binding.pictureUploadNext.blueButtonLayout.visibility = View.VISIBLE
-                        binding.uploadProgressIcon.visibility = View.GONE
+                        binding.pictureUploadProgress.visibility = View.GONE
                     }
 
                     val intent = Intent(baseContext, UserBioActivity::class.java)
@@ -1415,17 +1415,19 @@ class MainActivity : AppCompatActivity() {
 
     fun displayDoubleButtonDialog() {
         runOnUiThread {
-            binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+            binding.pictureUploadProgress.visibility = View.GONE
         }
     }
 
     fun displaySingleButtonDialog(title: String, message: String) {
         runOnUiThread {
-            binding.singleButtonDialog.singleButtonTitle.text = title
-            binding.singleButtonDialog.singleButtonMessage.text = message
             binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonTitle.text = title
+            binding.pictureUploadProgress.visibility = View.GONE
         }
     }
 

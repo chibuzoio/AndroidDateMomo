@@ -355,6 +355,20 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/pictureUploadProgress"
+            android:gravity="center"
+            android:visibility="gone"
+            android:background="@color/background_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
         <include
             android:id="@+id/doubleButtonDialog"
             layout="@layout/include_double_button_dialog"/>
@@ -362,13 +376,6 @@
         <include
             android:id="@+id/singleButtonDialog"
             layout="@layout/include_single_button_dialog"/>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </FrameLayout>
 
