@@ -117,7 +117,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
 
     override fun getItemCount(): Int {
         messageModel.binding.messageSenderLayout.setOnClickListener {
-            val senderMessage = messageModel.binding.messageInputField.text.toString()
+            val senderMessage = messageModel.binding.messageInputField.text.toString().trim()
 
             messageModel.binding.messageInputField.setText("")
 
