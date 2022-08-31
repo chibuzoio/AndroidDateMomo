@@ -158,6 +158,8 @@ class UserProfileActivity : AppCompatActivity() {
             if (userLikerResponseArray.isEmpty()) {
                 binding.allLikersDisplayLayout.visibility = View.GONE
             } else {
+                binding.allLikersFirstLayout.visibility = View.VISIBLE
+
                 if (userLikerResponseArray.size == 1) {
                     initializeFirstLikerLayout()
                 }

@@ -19,27 +19,7 @@ class Utility {
             val byteArrayOutputStream = ByteArrayOutputStream()
             val currentBitmapSize = bitmap.allocationByteCount
 
-            if (currentBitmapSize > 174747195) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream)
-            } else if (currentBitmapSize > 109216997) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 55, byteArrayOutputStream)
-            } else if (currentBitmapSize > 65530198) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream)
-            } else if (currentBitmapSize > 43686798) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 65, byteArrayOutputStream)
-            } else if (currentBitmapSize > 32765100) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
-            } else if (currentBitmapSize > 21843400) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream)
-            } else if (currentBitmapSize > 16062577) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
-            } else if (currentBitmapSize > 11838951) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, byteArrayOutputStream)
-            } else if (currentBitmapSize > 7530000) {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteArrayOutputStream)
-            } else {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, byteArrayOutputStream)
-            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 35, byteArrayOutputStream)
 
             return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
         }
