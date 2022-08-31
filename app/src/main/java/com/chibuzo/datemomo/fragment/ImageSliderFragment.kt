@@ -39,6 +39,7 @@ class ImageSliderFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         fragmentObject = this
+        pictureOwnerResponse = PictureOwnerResponse(0)
 
         sharedPreferences =
             requireActivity().getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
