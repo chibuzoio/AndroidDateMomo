@@ -69,15 +69,15 @@ class MainActivity : AppCompatActivity() {
     private var theBitmap: Bitmap? = null
     private var loginPasswordValid = false
     private var loginUserNameValid = false
+    private var loginPassword: String = ""
+    private var loginUserName: String = ""
     private val CAPTURE_IMAGE_REQUEST = 100
+    private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
     private var registerPasswordValid = false
     private var registerUserNameValid = false
-    private lateinit var loginPassword: String
-    private lateinit var loginUserName: String
-    private lateinit var requestProcess: String
-    private lateinit var registerPassword: String
-    private lateinit var registerUserName: String
+    private var registerPassword: String = ""
+    private var registerUserName: String = ""
     private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
