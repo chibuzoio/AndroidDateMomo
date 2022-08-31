@@ -51,9 +51,9 @@ class HomeDisplayActivity : AppCompatActivity() {
     private var requestProcess: String = ""
     private var totalAvailablePages: Int = 0
     private var isActivityActive: Boolean = true
-    private lateinit var userUpdatedLocation: String
+    private var userUpdatedLocation: String = ""
+    private var originalRequestProcess: String = ""
     private lateinit var messageRequest: MessageRequest
-    private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var homeDisplayModel: HomeDisplayModel
     private lateinit var binding: ActivityHomeDisplayBinding

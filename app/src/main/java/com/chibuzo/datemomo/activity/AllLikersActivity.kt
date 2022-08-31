@@ -28,8 +28,8 @@ class AllLikersActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
-    private lateinit var requestProcess: String
     private lateinit var binding: ActivityAllLikersBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences

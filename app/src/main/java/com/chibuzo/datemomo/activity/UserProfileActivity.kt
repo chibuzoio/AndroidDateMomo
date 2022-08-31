@@ -52,9 +52,9 @@ class UserProfileActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 200
     private var theBitmap: Bitmap? = null
     private val CAPTURE_IMAGE_REQUEST = 100
-    private lateinit var requestProcess: String
-    private lateinit var requestedActivity: String
-    private lateinit var userUpdatedLocation: String
+    private var requestProcess: String = ""
+    private var requestedActivity: String = ""
+    private var userUpdatedLocation: String = ""
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var sharedPreferences: SharedPreferences

@@ -37,9 +37,9 @@ import java.io.IOException
 
 class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
+    private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
-    private lateinit var requestProcess: String
-    private lateinit var originalRequestProcess: String
+    private var originalRequestProcess: String = ""
     private lateinit var binding: ActivityMessageBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences

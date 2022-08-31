@@ -25,7 +25,7 @@ class ImageSliderActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private lateinit var requestProcess: String
+    private var requestProcess: String = ""
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityImageSliderBinding
     private lateinit var sharedPreferences: SharedPreferences

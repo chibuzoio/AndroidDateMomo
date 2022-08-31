@@ -28,7 +28,7 @@ class ImageDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private lateinit var requestProcess: String
+    private var requestProcess: String = ""
     private lateinit var binding: ActivityImageDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var pictureCompositeModel: PictureCompositeModel

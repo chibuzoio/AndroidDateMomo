@@ -38,10 +38,10 @@ class ProfileEditorActivity : AppCompatActivity() {
     private var photoFile: File? = null
     private val PICK_IMAGE_REQUEST = 200
     private var theBitmap: Bitmap? = null
+    private var updatedStatus: String = ""
     private val CAPTURE_IMAGE_REQUEST = 100
+    private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
-    private lateinit var updatedStatus: String
-    private lateinit var requestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var viewRootHeightArray: MutableSet<Int>

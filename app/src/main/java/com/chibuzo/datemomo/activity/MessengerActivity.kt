@@ -37,8 +37,8 @@ class MessengerActivity : AppCompatActivity() {
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
+    private var originalRequestProcess: String = ""
     private lateinit var messageRequest: MessageRequest
-    private lateinit var originalRequestProcess: String
     private lateinit var binding: ActivityMessengerBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences

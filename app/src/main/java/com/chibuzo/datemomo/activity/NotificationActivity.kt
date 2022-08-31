@@ -36,7 +36,7 @@ class NotificationActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private lateinit var requestProcess: String
+    private var requestProcess: String = ""
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityNotificationBinding
     private lateinit var sharedPreferences: SharedPreferences

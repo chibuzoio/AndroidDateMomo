@@ -27,8 +27,8 @@ import java.io.IOException
 import java.util.*
 
 class UserBioActivity : AppCompatActivity() {
-    private lateinit var requestProcess: String
-    private lateinit var originalRequestProcess: String
+    private var requestProcess: String = ""
+    private var originalRequestProcess: String = ""
     private lateinit var userBioRequest: UserBioRequest
     private lateinit var binding: ActivityUserBioBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -155,8 +155,10 @@ class UserBioActivity : AppCompatActivity() {
                 userBioRequest.gayInterest == 0 &&
                 userBioRequest.lesbianInterest == 0 &&
                 userBioRequest.straightInterest == 0 &&
+                userBioRequest.friendshipInterest == 0 &&
                 userBioRequest.sugarDaddyInterest == 0 &&
                 userBioRequest.sugarMommyInterest == 0 &&
+                userBioRequest.relationshipInterest == 0 &&
                 userBioRequest.toyBoyInterest == 0 &&
                 userBioRequest.toyGirlInterest == 0) {
                 binding.userKYCSkipButton.greyButtonLayout.visibility = View.VISIBLE

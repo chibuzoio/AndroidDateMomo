@@ -34,10 +34,10 @@ class UserInformationActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
-    private lateinit var requestProcess: String
-    private lateinit var requestedActivity: String
+    private var requestProcess: String = ""
+    private var requestedActivity: String = ""
+    private var originalRequestProcess: String = ""
     private lateinit var messageRequest: MessageRequest
-    private lateinit var originalRequestProcess: String
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var binding: ActivityUserInformationBinding
