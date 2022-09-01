@@ -201,6 +201,25 @@ class MainActivity : AppCompatActivity() {
                 )
             )
 
+/*
+            ok_button.setOnClickListener {
+                EmojiCompat.get().registerInitCallback(object : EmojiCompat.InitCallback() {
+                    override fun onInitialized() {
+                        super.onInitialized()
+                        Log.d("MainActivity", "EmojiCompat initialized successfully")
+                        val processed = EmojiCompat.get().process(emojiContent)
+                        emoji_text_view.text = processed
+                    }
+
+                    override fun onFailed(throwable: Throwable?) {
+                        super.onFailed(throwable)
+                        Toast.makeText(this@MainActivity,
+                            throwable?.message ?: "", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+*/
+
             binding.registrationInnerLayout.setOnClickListener {
                 clearAllFieldFocus()
             }

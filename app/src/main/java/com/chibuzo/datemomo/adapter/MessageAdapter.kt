@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.emoji2.text.EmojiCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.RecyclerMessageBinding
@@ -30,10 +31,13 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        messageModel.currentPosition = position
+
         messageModel.binding.messageEditMenu.setOnClickListener {
             editMessageMode = true
 
-            messageModel.binding.messageInputField.setText(messageResponses[messageModel.currentPosition].message)
+            val editorMessage = EmojiCompat.get().process(messageResponses[messageModel.currentPosition].message)
+            messageModel.binding.messageInputField.setText(editorMessage)
 
             messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
             messageModel.binding.messengerMenuLayout.visibility = View.GONE
@@ -101,12 +105,16 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
             messageModel.senderId -> {
                 holder.binding.senderMessageLayout.visibility = View.VISIBLE
                 holder.binding.receiverMessageLayout.visibility = View.GONE
-                holder.binding.senderMessageText.text = messageResponses[position].message
+
+                val senderMessage = EmojiCompat.get().process(messageResponses[messageModel.currentPosition].message)
+                holder.binding.senderMessageText.text = senderMessage
             }
             messageModel.receiverId -> {
                 holder.binding.receiverMessageLayout.visibility = View.VISIBLE
                 holder.binding.senderMessageLayout.visibility = View.GONE
-                holder.binding.receiverMessageText.text = messageResponses[position].message
+
+                val receiverMessage = EmojiCompat.get().process(messageResponses[messageModel.currentPosition].message)
+                holder.binding.receiverMessageText.text = receiverMessage
             }
             else -> {
                 holder.binding.receiverMessageLayout.visibility = View.GONE
@@ -117,9 +125,11 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
 
     override fun getItemCount(): Int {
         messageModel.binding.messageSenderLayout.setOnClickListener {
-            val senderMessage = messageModel.binding.messageInputField.text.toString().trim()
+            var senderMessage = messageModel.binding.messageInputField.text.toString().trim()
 
             messageModel.binding.messageInputField.setText("")
+
+            senderMessage = EmojiCompat.get().process(senderMessage).toString()
 
             if (senderMessage.isNotEmpty()) {
                 if (editMessageMode) {

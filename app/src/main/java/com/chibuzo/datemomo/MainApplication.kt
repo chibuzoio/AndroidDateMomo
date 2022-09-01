@@ -6,6 +6,9 @@ import android.os.Build
 import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
+import androidx.core.provider.FontRequest
+import androidx.emoji2.text.EmojiCompat
+import androidx.emoji2.text.FontRequestEmojiCompatConfig
 
 class MainApplication : Application() {
 
@@ -51,6 +54,17 @@ class MainApplication : Application() {
                 }
             }
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        val fontRequest = FontRequest(
+            "com.google.android.gms.fonts",
+            "com.google.android.gms",
+            "Noto Color Emoji Compat",
+            R.array.com_google_android_gms_fonts_certs)
+        val config = FontRequestEmojiCompatConfig(this, fontRequest)
+        EmojiCompat.init(config)
     }
 }
 
