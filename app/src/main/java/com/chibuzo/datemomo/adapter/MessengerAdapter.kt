@@ -67,7 +67,7 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
             holder.binding.userFullName.text = messengerResponses[position].fullName
         }
 
-        holder.binding.lastMessage.text = messengerResponses[position].lastMessage
+        holder.binding.lastMessage.text = Utility.decodeEmoji(messengerResponses[position].lastMessage)
         holder.binding.messageStatusTime.text = Utility.getTimeDifference(messengerResponses[position].lastMessageDate.toLong())
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
 

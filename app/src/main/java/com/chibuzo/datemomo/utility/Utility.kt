@@ -7,13 +7,31 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Base64
 import android.util.DisplayMetrics
-import android.util.Log
 import java.io.ByteArrayOutputStream
+import java.io.UnsupportedEncodingException
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
 class Utility {
 
     companion object {
+
+        fun encodeEmoji(message: String?): String? {
+            return try {
+                URLEncoder.encode(message, "UTF-8")
+            } catch (e: UnsupportedEncodingException) {
+                message
+            }
+        }
+
+        fun decodeEmoji(message: String?): String? {
+            return try {
+                URLDecoder.decode(message, "UTF-8")
+            } catch (e: UnsupportedEncodingException) {
+                message
+            }
+        }
 
         fun encodeUploadImage(bitmap: Bitmap): String {
             val byteArrayOutputStream = ByteArrayOutputStream()
