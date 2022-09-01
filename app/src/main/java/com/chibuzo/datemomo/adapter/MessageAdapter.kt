@@ -21,7 +21,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 
-class MessageAdapter(private var messageResponses: Array<MessageResponse>, private val messageModel: MessageModel) :
+class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, private val messageModel: MessageModel) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
     private var editMessageMode: Boolean = false
 
@@ -35,8 +35,6 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
 
         messageModel.binding.messageEditMenu.setOnClickListener {
             editMessageMode = true
-
-//            val editorMessage = EmojiCompat.get().process(messageResponses[messageModel.currentPosition].message)
 
             val editorMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
             messageModel.binding.messageInputField.setText(editorMessage)
@@ -52,7 +50,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 messageResponses[messageModel.currentPosition].messageId,
                 messageModel.receiverId, 3)
             messageModel.messageActivity.deleteSingleMessage(deleteChatRequest)
-            messageResponses = removeAt(messageModel.currentPosition)
+            messageResponses.removeAt(messageModel.currentPosition)
             notifyItemRemoved(messageModel.currentPosition)
 
             messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
@@ -73,7 +71,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 messageResponses[messageModel.currentPosition].messageId,
                 messageModel.receiverId, deleteMessageType)
             messageModel.messageActivity.deleteSingleMessage(deleteChatRequest)
-            messageResponses = removeAt(messageModel.currentPosition)
+            messageResponses.removeAt(messageModel.currentPosition)
             notifyItemRemoved(messageModel.currentPosition)
 
             messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
@@ -108,16 +106,12 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 holder.binding.senderMessageLayout.visibility = View.VISIBLE
                 holder.binding.receiverMessageLayout.visibility = View.GONE
 
-//                val senderMessage = EmojiCompat.get().process(messageResponses[messageModel.currentPosition].message)
-
                 val senderMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
                 holder.binding.senderMessageText.text = senderMessage
             }
             messageModel.receiverId -> {
                 holder.binding.receiverMessageLayout.visibility = View.VISIBLE
                 holder.binding.senderMessageLayout.visibility = View.GONE
-
-//                val receiverMessage = EmojiCompat.get().process(messageResponses[messageModel.currentPosition].message)
 
                 val receiverMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
                 holder.binding.receiverMessageText.text = receiverMessage
@@ -135,11 +129,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
 
             messageModel.binding.messageInputField.setText("")
 
-//            senderMessage = EmojiCompat.get().process(senderMessage).toString()
-
             senderMessage = Utility.encodeEmoji(senderMessage).toString()
-
-            Log.e(TAG, "senderMessage value here is $senderMessage")
 
             if (senderMessage.isNotEmpty()) {
                 if (editMessageMode) {
@@ -151,7 +141,7 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                     val messageResponse = messageResponses[messageModel.currentPosition]
                     messageResponse.message = senderMessage
 
-                    messageResponses = replace(messageResponse, messageModel.currentPosition)
+                    messageResponses[messageModel.currentPosition] = messageResponse
 
                     notifyItemChanged(messageModel.currentPosition)
 
@@ -164,7 +154,8 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
 
                     val insertPosition = itemCount
 
-                    messageResponses = append(messageResponse)
+                    messageResponses.add(messageResponse)
+
                     notifyItemInserted(insertPosition)
 
                     messageModel.binding.messageRecyclerView.layoutManager!!.scrollToPosition(
@@ -215,22 +206,24 @@ class MessageAdapter(private var messageResponses: Array<MessageResponse>, priva
                 val postMessageResponse: PostMessageResponse
 
                 try {
-                    postMessageResponse = mapper.readValue(myResponse)
+                    if (!editMessageMode) {
+                        postMessageResponse = mapper.readValue(myResponse)
 
-                    val messageResponse = MessageResponse(
-                        postMessageResponse.messageId,
-                        postMessageResponse.messenger,
-                        postMessageResponse.message,
-                        postMessageResponse.readStatus,
-                        postMessageResponse.seenStatus,
-                        postMessageResponse.deleteMessage,
-                        postMessageResponse.messageDate
-                    )
+                        val messageResponse = MessageResponse(
+                            postMessageResponse.messageId,
+                            postMessageResponse.messenger,
+                            postMessageResponse.message,
+                            postMessageResponse.readStatus,
+                            postMessageResponse.seenStatus,
+                            postMessageResponse.deleteMessage,
+                            postMessageResponse.messageDate
+                        )
 
-                    messageResponses[postMessageResponse.messagePosition] = messageResponse
+                        messageResponses[postMessageResponse.messagePosition] = messageResponse
 
-                    messageModel.messageActivity.runOnUiThread {
-                        notifyItemChanged(postMessageResponse.messagePosition)
+                        messageModel.messageActivity.runOnUiThread {
+                            notifyItemChanged(postMessageResponse.messagePosition)
+                        }
                     }
                 } catch (exception: IOException) {
                     exception.printStackTrace()

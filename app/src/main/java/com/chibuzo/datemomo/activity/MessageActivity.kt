@@ -37,6 +37,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
@@ -47,7 +48,7 @@ class MessageActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var viewRootHeightArray: MutableSet<Int>
-    private lateinit var messageResponseArray: Array<MessageResponse>
+    private lateinit var messageResponseArray: ArrayList<MessageResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
