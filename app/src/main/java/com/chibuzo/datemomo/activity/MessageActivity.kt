@@ -27,13 +27,16 @@ import com.chibuzo.datemomo.model.MessageModel
 import com.chibuzo.datemomo.model.request.DeleteChatRequest
 import com.chibuzo.datemomo.model.request.EditMessageRequest
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
+import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.MessageResponse
+import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
@@ -63,6 +66,36 @@ class MessageActivity : AppCompatActivity() {
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            triggerRequestProcess()
+        }
+
+        binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+            if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
+                triggerRequestProcess()
+            }
+        }
+
+        binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
+
+        binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+        }
 
         binding.messengerMenuCancel.setOnClickListener {
             binding.deleteForEveryoneMenu.visibility = View.VISIBLE
@@ -205,7 +238,6 @@ class MessageActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (binding.messageInputField.isFocused) {
-            Log.e(TAG, "binding.messageInputField is currently focused!!!!!!!!!!!!")
             binding.messageInputField.clearFocus()
         }
 
@@ -214,15 +246,32 @@ class MessageActivity : AppCompatActivity() {
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
-        activityStackModel.activityStack.pop()
+        try {
+            activityStackModel.activityStack.pop()
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to pop activityStack here is ${exception.message}")
+        }
 
         val activityStackString = mapper.writeValueAsString(activityStackModel)
         sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
         sharedPreferencesEditor.apply()
 
-        when (activityStackModel.activityStack.peek()) {
-            getString(R.string.activity_home_display) -> fetchMatchedUsers()
-            else -> super.onBackPressed()
+        try {
+            when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_home_display) -> fetchMatchedUsers()
+                getString(R.string.activity_messenger) -> fetchUserMessengers()
+                else -> super.onBackPressed()
+            }
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
+        }
+    }
+
+    private fun triggerRequestProcess() {
+        when (requestProcess) {
+            getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
         }
     }
 
@@ -278,6 +327,63 @@ class MessageActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserMessengers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messengers_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_messenger))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                runOnUiThread {
+
+                }
+
+                val intent = Intent(baseContext, MessengerActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
             }
         })
     }
@@ -361,6 +467,22 @@ class MessageActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+    }
+
+    fun displayDoubleButtonDialog() {
+        runOnUiThread {
+            binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
+            binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun displaySingleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.singleButtonDialog.singleButtonTitle.text = title
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+        }
     }
 
     private fun hideSystemUI() {

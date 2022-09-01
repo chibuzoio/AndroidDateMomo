@@ -31,6 +31,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -164,16 +165,26 @@ class MessengerActivity : AppCompatActivity() {
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
-        activityStackModel.activityStack.pop()
+        try {
+            activityStackModel.activityStack.pop()
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to pop activityStack here is ${exception.message}")
+        }
 
         val activityStackString = mapper.writeValueAsString(activityStackModel)
         sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
         sharedPreferencesEditor.apply()
 
-        when (activityStackModel.activityStack.peek()) {
-            getString(R.string.activity_home_display) -> fetchMatchedUsers()
-            getString(R.string.activity_user_profile) -> fetchUserLikers()
-            else -> super.onBackPressed()
+        try {
+            when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_home_display) -> fetchMatchedUsers()
+                getString(R.string.activity_user_profile) -> fetchUserLikers()
+                else -> super.onBackPressed()
+            }
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
     }
 

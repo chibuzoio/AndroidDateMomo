@@ -170,7 +170,7 @@
                     android:id="@+id/messageSenderLayout"
                     android:layout_weight="1.3"
                     android:orientation="vertical"
-                    android:gravity="top|center_horizontal"
+                    android:gravity="bottom|center_horizontal"
                     android:layout_width="0dp"
                     android:layout_height="match_parent">
 
