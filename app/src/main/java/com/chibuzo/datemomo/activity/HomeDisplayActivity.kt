@@ -720,13 +720,6 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_message))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
-
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }

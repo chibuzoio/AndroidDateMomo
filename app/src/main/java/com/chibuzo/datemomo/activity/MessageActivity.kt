@@ -247,17 +247,6 @@ class MessageActivity : AppCompatActivity() {
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
         try {
-            activityStackModel.activityStack.pop()
-        } catch (exception: EmptyStackException) {
-            exception.printStackTrace()
-            Log.e(TAG, "Exception from trying to pop activityStack here is ${exception.message}")
-        }
-
-        val activityStackString = mapper.writeValueAsString(activityStackModel)
-        sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-        sharedPreferencesEditor.apply()
-
-        try {
             when (activityStackModel.activityStack.peek()) {
                 getString(R.string.activity_home_display) -> fetchMatchedUsers()
                 getString(R.string.activity_messenger) -> fetchUserMessengers()
