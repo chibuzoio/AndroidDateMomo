@@ -25,6 +25,7 @@ import com.chibuzo.datemomo.databinding.ActivityUserAccountBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
+import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -77,6 +78,9 @@ class UserAccountActivity : AppCompatActivity() {
         sharedPreferencesEditor = sharedPreferences.edit()
 
         redrawBottomMenuIcons(getString(R.string.clicked_generic_menu))
+
+        checkMessageUpdate()
+        checkNotificationUpdate()
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -289,6 +293,80 @@ class UserAccountActivity : AppCompatActivity() {
                     + sharedPreferences.getString(getString(R.string.profile_picture), ""))
             .transform(CircleCrop(), CenterCrop())
             .into(binding.accountProfilePicture)
+    }
+
+    @Throws(IOException::class)
+    fun checkNotificationUpdate() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest =
+            UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_check_notification))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse = mapper.readValue(myResponse) as CommittedResponse
+
+                runOnUiThread {
+                    binding.bottomNavigationLayout.newNotificationNotifier.visibility =
+                        if (committedResponse.committed) { View.VISIBLE } else { View.GONE }
+                }
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    fun checkMessageUpdate() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest =
+            UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_check_message))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse = mapper.readValue(myResponse) as CommittedResponse
+
+                runOnUiThread {
+                    binding.bottomNavigationLayout.newMessageNotifier.visibility =
+                        if (committedResponse.committed) { View.VISIBLE } else { View.GONE }
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)

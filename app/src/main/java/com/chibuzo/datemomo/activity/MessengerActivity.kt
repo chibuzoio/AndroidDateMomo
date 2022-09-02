@@ -75,6 +75,12 @@ class MessengerActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
+
+        binding.bottomNavigationLayout.newMessageNotifier.visibility = View.GONE
+
+        checkNotificationUpdate()
+
         binding.confirmMessengerDelete.dialogRetryButton.text = "Delete"
         binding.confirmMessengerDelete.doubleButtonTitle.text = "Delete Chats"
         binding.confirmMessengerDelete.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.red))
@@ -104,8 +110,6 @@ class MessengerActivity : AppCompatActivity() {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
-
-        redrawBottomMenuIcons(getString(R.string.clicked_message_menu))
 
         binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
             redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
@@ -186,6 +190,43 @@ class MessengerActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+    }
+
+    @Throws(IOException::class)
+    fun checkNotificationUpdate() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest =
+            UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_check_notification))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse = mapper.readValue(myResponse) as CommittedResponse
+
+                runOnUiThread {
+                    binding.bottomNavigationLayout.newNotificationNotifier.visibility =
+                        if (committedResponse.committed) { View.VISIBLE } else { View.GONE }
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)

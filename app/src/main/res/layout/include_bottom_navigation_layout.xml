@@ -46,21 +46,38 @@
         android:layout_width="0dp"
         android:layout_height="53dp">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/messageMenuImageCover"
-            android:padding="7dp"
-            android:gravity="center"
-            android:background="@drawable/ignored_bottom_menu"
-            android:layout_width="31dp"
-            android:layout_height="31dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/bottomMessageMenuImage"
-                android:src="@drawable/icon_message_blue"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/messageMenuImageCover"
+                android:padding="7dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:background="@drawable/ignored_bottom_menu"
+                android:layout_width="31dp"
+                android:layout_height="31dp">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <ImageView
+                    android:id="@+id/bottomMessageMenuImage"
+                    android:src="@drawable/icon_message_blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:id="@+id/newMessageNotifier"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_marginTop="-7dp"
+                android:layout_marginStart="7dp"
+                android:background="@drawable/new_item_notifier"
+                android:layout_width="11dp"
+                android:layout_height="11dp"/>
+
+        </FrameLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -102,21 +119,38 @@
         android:layout_width="0dp"
         android:layout_height="53dp">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/notificationMenuImageCover"
-            android:padding="7dp"
-            android:gravity="center"
-            android:background="@drawable/ignored_bottom_menu"
-            android:layout_width="31dp"
-            android:layout_height="31dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/bottomNotificationMenuImage"
-                android:src="@drawable/icon_notification_blue"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/notificationMenuImageCover"
+                android:padding="7dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:background="@drawable/ignored_bottom_menu"
+                android:layout_width="31dp"
+                android:layout_height="31dp">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <ImageView
+                    android:id="@+id/bottomNotificationMenuImage"
+                    android:src="@drawable/icon_notification_blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <View
+                android:id="@+id/newNotificationNotifier"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:layout_marginTop="-7dp"
+                android:layout_marginStart="7dp"
+                android:background="@drawable/new_item_notifier"
+                android:layout_width="11dp"
+                android:layout_height="11dp"/>
+
+        </FrameLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

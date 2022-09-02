@@ -3,11 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/likers_image_placeholder.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/new_content_notifier.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/new_item_notifier.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/picture_counter_layout.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/profile_picture_cover.xml" value="0.1455" />
+        <entry key="app/src/main/res/drawable/profile_picture_placeholder.xml" value="0.1455" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_profile_editor.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_user_account.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_user_information.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_user_profile.xml" value="0.19479166666666667" />
+        <entry key="app/src/main/res/layout/include_bottom_navigation_layout.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/recycler_home_display.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/recycler_message.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/recycler_notification.xml" value="0.19479166666666667" />

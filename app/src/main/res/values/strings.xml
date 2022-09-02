@@ -101,6 +101,7 @@
     <string name="api_post_message">service/postmessage.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
     <string name="api_user_picture">service/userpicture.php</string>
+    <string name="api_check_message">service/checkmessage.php</string>
     <string name="api_logout_member">service/logoutmember.php</string>
     <string name="api_picture_owner">service/pictureowner.php</string>
     <string name="api_update_status">service/updatestatus.php</string>
@@ -116,6 +117,7 @@
     <string name="api_matched_user_data">service/matcheduserdata.php</string>
     <string name="api_user_messages_data">service/usermessagesdata.php</string>
     <string name="api_user_status_update">service/userstatusupdate.php</string>
+    <string name="api_check_notification">service/checknotification.php</string>
     <string name="api_user_notifications">service/usernotifications.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
