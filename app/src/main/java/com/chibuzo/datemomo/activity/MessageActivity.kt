@@ -24,10 +24,7 @@ import com.chibuzo.datemomo.adapter.MessageAdapter
 import com.chibuzo.datemomo.databinding.ActivityMessageBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.MessageModel
-import com.chibuzo.datemomo.model.request.DeleteChatRequest
-import com.chibuzo.datemomo.model.request.EditMessageRequest
-import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
-import com.chibuzo.datemomo.model.request.UserLikerRequest
+import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.MessageResponse
 import com.chibuzo.datemomo.utility.Utility
@@ -43,7 +40,9 @@ class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
+    var currentlyCheckingMessages: Boolean = false
     private var originalRequestProcess: String = ""
+    private lateinit var messageAdapter: MessageAdapter
     private lateinit var binding: ActivityMessageBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
@@ -218,13 +217,13 @@ class MessageActivity : AppCompatActivity() {
                 bundle.getInt("receiverId"), this,
                 0, binding, this)
 
-            val messageAdapter = MessageAdapter(messageResponseArray, messageModel)
+            messageAdapter = MessageAdapter(messageResponseArray, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter
 
             (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
         } catch (exception: IOException) {
             exception.printStackTrace()
-            Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
+            Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }
 
@@ -263,6 +262,95 @@ class MessageActivity : AppCompatActivity() {
         when (requestProcess) {
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun checkUnseenMessages() {
+        val mapper = jacksonObjectMapper()
+        val checkMessageRequest = CheckMessageRequest(
+            senderId = bundle.getInt("senderId"),
+            receiverId = bundle.getInt("receiverId")
+        )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(checkMessageRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        if (!currentlyCheckingMessages) {
+            val client = OkHttpClient()
+            val request: Request = Request.Builder()
+                .url(getString(R.string.date_momo_api) + getString(R.string.api_check_unseen_message))
+                .post(requestBody)
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    call.cancel()
+                    currentlyCheckingMessages = false
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    val myResponse: String = response.body()!!.string()
+                    val committedResponse = mapper.readValue(myResponse) as CommittedResponse
+
+                    if (committedResponse.committed) {
+                        fetchUserMessages()
+                    }
+                }
+            })
+        }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserMessages() {
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val messageRequest = MessageRequest(
+            senderId = bundle.getInt("senderId"),
+            receiverId = bundle.getInt("receiverId"),
+            fullName = bundle.getString("fullName").toString(),
+            userName = bundle.getString("userName").toString(),
+            lastActiveTime = bundle.getString("lastActiveTime").toString(),
+            profilePicture = bundle.getString("profilePicture").toString()
+        )
+
+        val jsonObjectString = mapper.writeValueAsString(messageRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messages_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+                currentlyCheckingMessages = false
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                try {
+                    messageResponseArray = mapper.readValue(myResponse)
+                    messageAdapter.notifyItemRangeChanged(0, messageResponseArray.size)
+                    (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
+                    currentlyCheckingMessages = false
+                } catch (exception: IOException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Error message from here is ${exception.message}")
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)

@@ -172,6 +172,10 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                     postSenderMessage(messageModel.context, postMessageRequest)
                 }
             }
+
+            if (!messageModel.messageActivity.currentlyCheckingMessages) {
+                messageModel.messageActivity.checkUnseenMessages()
+            }
         }
 
         return messageResponses.size

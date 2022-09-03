@@ -75,6 +75,9 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
         holder.binding.messageStatusTime.text = Utility.getTimeDifference(messengerResponses[position].lastMessageDate.toLong())
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
 
+        holder.binding.messageStatusCounter.visibility =
+            if (messengerResponses[position].unreadMessageCount > 0) { View.VISIBLE } else { View.INVISIBLE }
+        
         holder.binding.messengerPropertyLayout.setOnLongClickListener {
             messengerModel.binding.messengerMenuLayout.visibility = View.VISIBLE
             messengerModel.currentPosition = position

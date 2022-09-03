@@ -120,6 +120,7 @@
     <string name="api_check_notification">service/checknotification.php</string>
     <string name="api_user_notifications">service/usernotifications.php</string>
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
+    <string name="api_check_unseen_message">service/checkunseenmessage.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
     <string name="api_more_matched_user_data">service/morematcheduserdata.php</string>
     <string name="api_change_profile_picture">service/changeprofilepicture.php</string>
