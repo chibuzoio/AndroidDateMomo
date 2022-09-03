@@ -17,12 +17,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.AllLikersAdapter
 import com.chibuzo.datemomo.databinding.ActivityAllLikersBinding
+import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import java.io.IOException
+import java.util.*
 
 class AllLikersActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -104,6 +106,32 @@ class AllLikersActivity : AppCompatActivity() {
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
+        }
+    }
+
+    override fun onBackPressed() {
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        try {
+            when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_all_likers) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    this.onBackPressed()
+                }
+                getString(R.string.activity_user_profile) -> super.onBackPressed()
+                else -> super.onBackPressed()
+            }
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
     }
 

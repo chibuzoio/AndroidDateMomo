@@ -1015,10 +1015,6 @@ class ProfileEditorActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {

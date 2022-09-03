@@ -75,6 +75,7 @@
         <activity
             android:name=".activity.MessengerActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:exported="true">
 
         </activity>
@@ -89,6 +90,7 @@
         <activity
             android:name=".activity.UserInformationActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:exported="true">
 
         </activity>
@@ -96,6 +98,7 @@
         <activity
             android:name=".activity.AllLikersActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:exported="true">
 
         </activity>
@@ -115,18 +118,21 @@
 
         <activity android:name=".activity.ImageDisplayActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:exported="true">
 
         </activity>
 
         <activity android:name=".activity.NotificationActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:exported="true">
 
         </activity>
 
         <activity android:name=".activity.UserAccountActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:exported="true">
 
         </activity>

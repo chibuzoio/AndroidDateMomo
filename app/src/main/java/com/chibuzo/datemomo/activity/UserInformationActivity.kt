@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class UserInformationActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -340,6 +342,35 @@ class UserInformationActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        try {
+            when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_messenger) -> fetchUserMessengers()
+                getString(R.string.activity_notification) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    this.onBackPressed()
+                }
+                getString(R.string.activity_home_display) -> fetchMatchedUsers()
+                getString(R.string.activity_user_profile) -> fetchUserLikers()
+                getString(R.string.activity_user_account) -> fetchLikedUsers()
+                else -> super.onBackPressed()
+            }
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(NotificationActivity.TAG, "Exception from trying to peek activityStack here is ${exception.message}")
+        }
+    }
+
     override fun onStart() {
         super.onStart()
         hideSystemUI()
@@ -384,6 +415,13 @@ class UserInformationActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_message))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
 
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)

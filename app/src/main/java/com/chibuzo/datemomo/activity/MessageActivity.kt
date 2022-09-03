@@ -263,6 +263,16 @@ class MessageActivity : AppCompatActivity() {
 
         try {
             when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_message) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    this.onBackPressed()
+                }
+                getString(R.string.activity_user_information) -> fetchUserInformation()
                 getString(R.string.activity_home_display) -> fetchMatchedUsers()
                 getString(R.string.activity_messenger) -> fetchUserMessengers()
                 else -> super.onBackPressed()
@@ -275,8 +285,57 @@ class MessageActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
+            getString(R.string.request_fetch_user_information) ->fetchUserInformation()
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
+            getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserInformation() {
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val userInformationRequest = UserInformationRequest(bundle.getInt("receiverId"))
+        val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_information))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_user_information))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                val intent = Intent(baseContext, UserInformationActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -450,10 +509,6 @@ class MessageActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -465,6 +520,14 @@ class MessageActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_messenger))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -531,21 +594,25 @@ class MessageActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
- /*               if (!Utility.isConnected(baseContext)) {
+                if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
                     displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
                 } else {
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }*/
+                }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_home_display))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)

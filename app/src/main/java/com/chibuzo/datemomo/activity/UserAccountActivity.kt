@@ -33,6 +33,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 class UserAccountActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -295,6 +297,35 @@ class UserAccountActivity : AppCompatActivity() {
             .into(binding.accountProfilePicture)
     }
 
+    override fun onBackPressed() {
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        try {
+            when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_messenger) -> fetchUserMessengers()
+                getString(R.string.activity_notification) -> fetchNotifications()
+                getString(R.string.activity_home_display) -> fetchMatchedUsers()
+                getString(R.string.activity_user_profile) -> fetchUserLikers()
+                getString(R.string.activity_user_account) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    this.onBackPressed()
+                }
+                else -> super.onBackPressed()
+            }
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
+        }
+    }
+
     @Throws(IOException::class)
     fun checkNotificationUpdate() {
         val mapper = jacksonObjectMapper()
@@ -439,10 +470,6 @@ class UserAccountActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -461,10 +488,6 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
-
-                runOnUiThread {
-//                    binding.userInformationLayout.visibility = View.GONE
-                }
 
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -497,10 +520,6 @@ class UserAccountActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -515,14 +534,10 @@ class UserAccountActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_message))
+                activityStackModel.activityStack.push(getString(R.string.activity_notification))
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
-
-                runOnUiThread {
-//                    binding.userInformationLayout.visibility = View.GONE
-                }
 
                 val intent = Intent(baseContext, NotificationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -639,10 +654,6 @@ class UserAccountActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -661,10 +672,6 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
-
-                runOnUiThread {
-//                    binding.userInformationLayout.visibility = View.GONE
-                }
 
                 val intent = Intent(baseContext, UserProfileActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

@@ -170,20 +170,29 @@ class MessengerActivity : AppCompatActivity() {
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
         try {
-            activityStackModel.activityStack.pop()
-        } catch (exception: EmptyStackException) {
-            exception.printStackTrace()
-            Log.e(TAG, "Exception from trying to pop activityStack here is ${exception.message}")
-        }
-
-        val activityStackString = mapper.writeValueAsString(activityStackModel)
-        sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-        sharedPreferencesEditor.apply()
-
-        try {
             when (activityStackModel.activityStack.peek()) {
+                getString(R.string.activity_messenger) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    this.onBackPressed()
+                }
+                getString(R.string.activity_notification) -> fetchNotifications()
                 getString(R.string.activity_home_display) -> fetchMatchedUsers()
                 getString(R.string.activity_user_profile) -> fetchUserLikers()
+                getString(R.string.activity_user_account) -> fetchLikedUsers()
+                getString(R.string.activity_message) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    super.onBackPressed()
+                }
                 else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
@@ -345,6 +354,13 @@ class MessengerActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
 
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                activityStackModel.activityStack.push(getString(R.string.activity_message))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
@@ -382,10 +398,6 @@ class MessengerActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -400,14 +412,10 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_message))
+                activityStackModel.activityStack.push(getString(R.string.activity_notification))
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
-
-                runOnUiThread {
-//                    binding.userInformationLayout.visibility = View.GONE
-                }
 
                 val intent = Intent(baseContext, NotificationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -542,7 +550,7 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
+                activityStackModel.activityStack.push(getString(R.string.activity_user_account))
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
