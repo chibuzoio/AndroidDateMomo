@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -40,8 +42,8 @@ class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
-    var currentlyCheckingMessages: Boolean = false
     private var originalRequestProcess: String = ""
+    private lateinit var messageModel: MessageModel
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var binding: ActivityMessageBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -66,6 +68,15 @@ class MessageActivity : AppCompatActivity() {
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
+
+        messageModel = MessageModel(
+            senderId = 0,
+            receiverId = 0,
+            context = this,
+            currentPosition = 0,
+            binding = binding,
+            messageActivity = this
+        )
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -188,6 +199,8 @@ class MessageActivity : AppCompatActivity() {
                 leastRootViewHeight = 0
                 hideSystemUI()
             }
+
+            checkUnseenMessages()
         }
 
         binding.messageInputField.setOnFocusChangeListener { _, focused ->
@@ -196,6 +209,8 @@ class MessageActivity : AppCompatActivity() {
             } else {
                 hideSystemUI()
             }
+
+            checkUnseenMessages()
         }
 
         try {
@@ -213,7 +228,7 @@ class MessageActivity : AppCompatActivity() {
             binding.messageRecyclerView.layoutManager = layoutManager
             binding.messageRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val messageModel = MessageModel(bundle.getInt("senderId"),
+            messageModel = MessageModel(bundle.getInt("senderId"),
                 bundle.getInt("receiverId"), this,
                 0, binding, this)
 
@@ -280,29 +295,26 @@ class MessageActivity : AppCompatActivity() {
             jsonObjectString
         )
 
-        if (!currentlyCheckingMessages) {
-            val client = OkHttpClient()
-            val request: Request = Request.Builder()
-                .url(getString(R.string.date_momo_api) + getString(R.string.api_check_unseen_message))
-                .post(requestBody)
-                .build()
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_check_unseen_message))
+            .post(requestBody)
+            .build()
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    call.cancel()
-                    currentlyCheckingMessages = false
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse = mapper.readValue(myResponse) as CommittedResponse
+
+                if (committedResponse.committed) {
+                    fetchUserMessages()
                 }
-
-                override fun onResponse(call: Call, response: Response) {
-                    val myResponse: String = response.body()!!.string()
-                    val committedResponse = mapper.readValue(myResponse) as CommittedResponse
-
-                    if (committedResponse.committed) {
-                        fetchUserMessages()
-                    }
-                }
-            })
-        }
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -334,7 +346,6 @@ class MessageActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
-                currentlyCheckingMessages = false
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -343,12 +354,15 @@ class MessageActivity : AppCompatActivity() {
                 try {
                     messageResponseArray = mapper.readValue(myResponse)
 
-                    runOnUiThread {
-                        messageAdapter.notifyItemRangeChanged(0, messageResponseArray.size)
-                        (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
+                    if (messageResponseArray.size > 0) {
+                        runOnUiThread {
+                            messageAdapter = MessageAdapter(messageResponseArray, messageModel)
+                            binding.messageRecyclerView.swapAdapter(messageAdapter, true)
+                            (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(
+                                messageResponseArray.size - 1
+                            )
+                        }
                     }
-
-                    currentlyCheckingMessages = false
                 } catch (exception: IOException) {
                     exception.printStackTrace()
                     Log.e(TAG, "Error message from here is ${exception.message}")
