@@ -342,8 +342,12 @@ class MessageActivity : AppCompatActivity() {
 
                 try {
                     messageResponseArray = mapper.readValue(myResponse)
-                    messageAdapter.notifyItemRangeChanged(0, messageResponseArray.size)
-                    (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
+
+                    runOnUiThread {
+                        messageAdapter.notifyItemRangeChanged(0, messageResponseArray.size)
+                        (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
+                    }
+
                     currentlyCheckingMessages = false
                 } catch (exception: IOException) {
                     exception.printStackTrace()
