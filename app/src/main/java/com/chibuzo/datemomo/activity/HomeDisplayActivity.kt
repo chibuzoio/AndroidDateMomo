@@ -287,9 +287,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                     super.onScrolled(recyclerView, dx, dy)
 
                     if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
-//                        if (currentPage <= totalAvailablePages) {
-                            fetchMoreMatchedUsers()
-//                        }
+                        requestProcess = getString(R.string.request_fetch_more_matched_users)
+                        fetchMoreMatchedUsers()
                     }
                 }
             })
@@ -439,11 +438,30 @@ class HomeDisplayActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
-            getString(R.string.request_fetch_notifications) -> fetchNotifications()
-            getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
-            getString(R.string.request_fetch_user_messages) -> fetchUserMessages(messageRequest)
-            getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
-            getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
+            getString(R.string.request_fetch_more_matched_users) -> {
+                requestProcess = getString(R.string.request_fetch_more_matched_users)
+                fetchMoreMatchedUsers()
+            }
+            getString(R.string.request_fetch_user_messengers) -> {
+                requestProcess = getString(R.string.request_fetch_user_messengers)
+                fetchUserMessengers()
+            }
+            getString(R.string.request_fetch_notifications) -> {
+                requestProcess = getString(R.string.request_fetch_notifications)
+                fetchNotifications()
+            }
+            getString(R.string.request_fetch_user_messages) -> {
+                requestProcess = getString(R.string.request_fetch_user_messages)
+                fetchUserMessages(messageRequest)
+            }
+            getString(R.string.request_fetch_user_likers) -> {
+                requestProcess = getString(R.string.request_fetch_user_likers)
+                fetchUserLikers()
+            }
+            getString(R.string.request_fetch_liked_users) -> {
+                requestProcess = getString(R.string.request_fetch_liked_users)
+                fetchLikedUsers()
+            }
         }
     }
 
@@ -646,6 +664,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }
@@ -703,6 +723,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
@@ -809,6 +831,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
@@ -868,6 +892,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }
@@ -925,6 +951,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, UserAccountActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -977,6 +1005,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE

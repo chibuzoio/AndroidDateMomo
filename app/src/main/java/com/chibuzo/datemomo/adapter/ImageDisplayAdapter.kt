@@ -149,14 +149,6 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
-
-/*                if (!Utility.isConnected(baseContext)) {
-                    displayDoubleButtonDialog()
-                } else if (e.message!!.contains("after")) {
-                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
-                } else {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }*/
             }
 
             @Throws(IOException::class)

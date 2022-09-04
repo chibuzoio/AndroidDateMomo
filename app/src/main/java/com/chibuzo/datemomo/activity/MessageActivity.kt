@@ -272,15 +272,26 @@ class MessageActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_user_information) -> fetchUserInformation()
-                getString(R.string.activity_home_display) -> fetchMatchedUsers()
-                getString(R.string.activity_messenger) -> fetchUserMessengers()
+                getString(R.string.activity_user_information) -> {
+                    requestProcess = getString(R.string.request_fetch_user_information)
+                    fetchUserInformation()
+                }
+                getString(R.string.activity_home_display) -> {
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
+                }
+                getString(R.string.activity_messenger) -> {
+                    requestProcess = getString(R.string.request_fetch_user_messengers)
+                    fetchUserMessengers()
+                }
                 else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+
+        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     private fun triggerRequestProcess() {
@@ -288,6 +299,7 @@ class MessageActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_information) ->fetchUserInformation()
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
+            getString(R.string.request_fetch_user_messages) -> fetchUserMessages()
         }
     }
 
@@ -331,6 +343,8 @@ class MessageActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, UserInformationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -370,6 +384,7 @@ class MessageActivity : AppCompatActivity() {
                 val committedResponse = mapper.readValue(myResponse) as CommittedResponse
 
                 if (committedResponse.committed) {
+                    requestProcess = getString(R.string.request_fetch_user_messages)
                     fetchUserMessages()
                 }
             }
@@ -528,6 +543,8 @@ class MessageActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -612,6 +629,8 @@ class MessageActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

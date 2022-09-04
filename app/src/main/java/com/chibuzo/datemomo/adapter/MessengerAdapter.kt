@@ -106,6 +106,7 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
 
         messengerModel.binding.userInfoMenu.setOnClickListener {
             messengerModel.messengerActivity.fetchUserInformation(messengerResponses[messengerModel.currentPosition].chatmateId)
+            messengerModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_information)
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
         }
 

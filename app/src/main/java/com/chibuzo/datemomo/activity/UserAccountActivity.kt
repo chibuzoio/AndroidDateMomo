@@ -305,10 +305,22 @@ class UserAccountActivity : AppCompatActivity() {
 
         try {
             when (activityStackModel.activityStack.peek()) {
-                getString(R.string.activity_messenger) -> fetchUserMessengers()
-                getString(R.string.activity_notification) -> fetchNotifications()
-                getString(R.string.activity_home_display) -> fetchMatchedUsers()
-                getString(R.string.activity_user_profile) -> fetchUserLikers()
+                getString(R.string.activity_messenger) -> {
+                    requestProcess = getString(R.string.request_fetch_user_messengers)
+                    fetchUserMessengers()
+                }
+                getString(R.string.activity_notification) -> {
+                    requestProcess = getString(R.string.request_fetch_notifications)
+                    fetchNotifications()
+                }
+                getString(R.string.activity_home_display) -> {
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
+                }
+                getString(R.string.activity_user_profile) -> {
+                    requestProcess = getString(R.string.request_fetch_user_likers)
+                    fetchUserLikers()
+                }
                 getString(R.string.activity_user_account) -> {
                     activityStackModel.activityStack.pop()
 
@@ -324,6 +336,8 @@ class UserAccountActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+
+        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Throws(IOException::class)
@@ -489,6 +503,8 @@ class UserAccountActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -538,6 +554,8 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, NotificationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -624,6 +642,8 @@ class UserAccountActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -672,6 +692,8 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, UserProfileActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

@@ -40,7 +40,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -305,32 +304,38 @@ class UserProfileActivity : AppCompatActivity() {
                 startActivity(intent)
             } else {
                 userInformationRequest = UserInformationRequest(userLikerResponseArray[5].memberId)
+                requestProcess = getString(R.string.request_fetch_user_information)
                 fetchUserInformation()
             }
         }
 
         binding.fifthLikerFrameLayout.setOnClickListener {
             userInformationRequest = UserInformationRequest(userLikerResponseArray[4].memberId)
+            requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.fourthLikerFrameLayout.setOnClickListener {
             userInformationRequest = UserInformationRequest(userLikerResponseArray[3].memberId)
+            requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.thirdLikerFrameLayout.setOnClickListener {
             userInformationRequest = UserInformationRequest(userLikerResponseArray[2].memberId)
+            requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.secondLikerFrameLayout.setOnClickListener {
             userInformationRequest = UserInformationRequest(userLikerResponseArray[1].memberId)
+            requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.firstLikerFrameLayout.setOnClickListener {
             userInformationRequest = UserInformationRequest(userLikerResponseArray[0].memberId)
+            requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
@@ -612,26 +617,44 @@ class UserProfileActivity : AppCompatActivity() {
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
         try {
-            activityStackModel.activityStack.pop()
-        } catch (exception: EmptyStackException) {
-            exception.printStackTrace()
-            Log.e(TAG, "Exception from trying to pop activityStack here is ${exception.message}")
-        }
-
-        val activityStackString = mapper.writeValueAsString(activityStackModel)
-        sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-        sharedPreferencesEditor.apply()
-
-        try {
             when (activityStackModel.activityStack.peek()) {
-                getString(R.string.activity_home_display) -> fetchMatchedUsers()
-                getString(R.string.activity_messenger) -> fetchUserMessengers()
+                getString(R.string.activity_messenger) -> {
+                    requestProcess = getString(R.string.request_fetch_user_messengers)
+                    fetchUserMessengers()
+                }
+                getString(R.string.activity_user_account) -> {
+                    requestProcess = getString(R.string.request_fetch_liked_users)
+                    fetchLikedUsers()
+                }
+                getString(R.string.activity_user_profile) -> {
+                    activityStackModel.activityStack.pop()
+
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    sharedPreferencesEditor.apply()
+
+                    this.onBackPressed()
+                }
+                getString(R.string.activity_home_display) -> {
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
+                }
+                getString(R.string.activity_user_information) -> {
+                    requestProcess = getString(R.string.request_fetch_user_information)
+                    fetchUserInformation()
+                }
+                getString(R.string.activity_notification) -> {
+                    requestProcess = getString(R.string.request_fetch_notifications)
+                    fetchNotifications()
+                }
                 else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+
+        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Deprecated("Deprecated in Java")
@@ -775,12 +798,22 @@ class UserProfileActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
                 val intent = if (requestedActivity == getString(R.string.activity_image_display)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_image_display))
                     Intent(baseContext, ImageDisplayActivity::class.java)
                 } else {
+                    activityStackModel.activityStack.push(getString(R.string.activity_image_slider))
                     Intent(baseContext, ImageSliderActivity::class.java)
                 }
+
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 requestedActivity = ""
 
@@ -1017,6 +1050,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
+            getString(R.string.request_fetch_user_information) -> fetchUserInformation()
             getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
             getString(R.string.request_fetch_notifications) -> fetchNotifications()
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
@@ -1067,6 +1101,8 @@ class UserProfileActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, NotificationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -1113,6 +1149,8 @@ class UserProfileActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, UserInformationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -1143,10 +1181,6 @@ class UserProfileActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                runOnUiThread {
-
-                }
-
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -1165,6 +1199,8 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, UserAccountActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -1218,6 +1254,8 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, MessengerActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -1307,6 +1345,8 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

@@ -112,6 +112,7 @@ class MessengerActivity : AppCompatActivity() {
         }
 
         binding.bottomNavigationLayout.bottomHomeMenuLayout.setOnClickListener {
+            requestProcess = getString(R.string.request_fetch_matched_users)
             redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
             fetchMatchedUsers()
         }
@@ -180,10 +181,22 @@ class MessengerActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_notification) -> fetchNotifications()
-                getString(R.string.activity_home_display) -> fetchMatchedUsers()
-                getString(R.string.activity_user_profile) -> fetchUserLikers()
-                getString(R.string.activity_user_account) -> fetchLikedUsers()
+                getString(R.string.activity_notification) -> {
+                    requestProcess = getString(R.string.request_fetch_notifications)
+                    fetchNotifications()
+                }
+                getString(R.string.activity_home_display) -> {
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
+                }
+                getString(R.string.activity_user_profile) -> {
+                    requestProcess = getString(R.string.request_fetch_user_likers)
+                    fetchUserLikers()
+                }
+                getString(R.string.activity_user_account) -> {
+                    requestProcess = getString(R.string.request_fetch_liked_users)
+                    fetchLikedUsers()
+                }
                 getString(R.string.activity_message) -> {
                     activityStackModel.activityStack.pop()
 
@@ -199,6 +212,8 @@ class MessengerActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+
+        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Throws(IOException::class)
@@ -308,6 +323,8 @@ class MessengerActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, UserInformationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -360,6 +377,8 @@ class MessengerActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, MessageActivity::class.java)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
@@ -416,6 +435,8 @@ class MessengerActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, NotificationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -502,6 +523,8 @@ class MessengerActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -555,6 +578,8 @@ class MessengerActivity : AppCompatActivity() {
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
 
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
                 val intent = Intent(baseContext, UserAccountActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
                 startActivity(intent)
@@ -607,6 +632,8 @@ class MessengerActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, UserProfileActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

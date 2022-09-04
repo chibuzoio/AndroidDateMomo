@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -868,6 +869,8 @@ class UserBioActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(ActivityStackModel(activityStack))
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

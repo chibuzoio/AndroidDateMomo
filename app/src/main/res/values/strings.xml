@@ -73,11 +73,13 @@
     <string name="request_authenticate_user">authenticateUser</string>
     <string name="request_fetch_matched_users">fetchMatchedUsers</string>
     <string name="request_fetch_user_messages">fetchUserMessages</string>
+    <string name="request_fetch_user_pictures">fetchUserPictures</string>
     <string name="request_fetch_notifications">fetchNotifications</string>
     <string name="request_fetch_user_messengers">fetchUserMessengers</string>
     <string name="request_fetch_user_information">fetchUserInformation</string>
     <string name="request_skip_sexuality_interest">skipSexualityInterest</string>
     <string name="request_update_current_location">updateCurrentLocation</string>
+    <string name="request_fetch_more_matched_users">fetchMoreMatchedUsers</string>
     <string name="request_submit_sexuality_interest">submitSexualityInterest</string>
 
     <!-- NOTIFICATION TYPEs -->

@@ -153,7 +153,10 @@ class ImageDisplayActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_user_information) -> fetchUserInformation()
+                getString(R.string.activity_user_information) -> {
+                    requestProcess = getString(R.string.request_fetch_user_information)
+                    fetchUserInformation()
+                }
                 getString(R.string.activity_user_profile) -> super.onBackPressed()
                 else -> super.onBackPressed()
             }
@@ -161,6 +164,8 @@ class ImageDisplayActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+
+        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     override fun onStart() {
@@ -207,6 +212,8 @@ class ImageDisplayActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(activityStackModel)
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, UserInformationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

@@ -28,7 +28,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.Lifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -37,7 +36,10 @@ import com.chibuzo.datemomo.activity.UserBioActivity
 import com.chibuzo.datemomo.databinding.ActivityMainBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.UserNameModel
-import com.chibuzo.datemomo.model.request.*
+import com.chibuzo.datemomo.model.request.AuthenticationRequest
+import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
+import com.chibuzo.datemomo.model.request.PictureUploadRequest
+import com.chibuzo.datemomo.model.request.RegistrationRequest
 import com.chibuzo.datemomo.model.response.AuthenticationResponse
 import com.chibuzo.datemomo.model.response.PictureUploadResponse
 import com.chibuzo.datemomo.model.response.RegistrationResponse
@@ -45,19 +47,12 @@ import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.default
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import okhttp3.*
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
     private var userAge = 0
@@ -1065,6 +1060,8 @@ class MainActivity : AppCompatActivity() {
                 val activityStackString = mapper.writeValueAsString(ActivityStackModel(activityStack))
                 sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
                 sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, HomeDisplayActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
