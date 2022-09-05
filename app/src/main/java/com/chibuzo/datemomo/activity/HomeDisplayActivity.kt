@@ -465,22 +465,6 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
     }
 
-    private fun toggleProgressBar() {
-        if (lastDisplayPage <= 0) {
-            if (binding.defaultProgress.isShown) {
-                binding.defaultProgress.visibility = View.GONE
-            } else {
-                binding.defaultProgress.visibility = View.VISIBLE
-            }
-        } else {
-            if (binding.loadMoreProgress.isShown) {
-                binding.loadMoreProgress.visibility = View.GONE
-            } else {
-                binding.loadMoreProgress.visibility = View.VISIBLE
-            }
-        }
-    }
-
     @Throws(IOException::class)
     fun checkNotificationUpdate() {
         val mapper = jacksonObjectMapper()
@@ -557,7 +541,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun fetchMoreMatchedUsers() {
-        toggleProgressBar()
+        binding.moreMatchedUserProgressBar.visibility = View.VISIBLE
 
         var tenIterationCounter = 0
         val homeDisplayRequest = HomeDisplayRequest(arrayListOf())
@@ -600,7 +584,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                 }
 
                 runOnUiThread {
-                    toggleProgressBar()
+                    binding.moreMatchedUserProgressBar.visibility = View.GONE
                 }
             }
 
@@ -608,9 +592,11 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 homeDisplayResponseArray = mapper.readValue(myResponse)
 
-                Log.e(TAG, "Response from fetchMoreMatchedUsers here is $homeDisplayResponseArray")
-
                 runOnUiThread {
+                    val scrollToPosition = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                    binding.moreMatchedUserProgressBar.visibility = View.GONE
+
                     outerHomeDisplayResponse.homeDisplayResponses.addAll(homeDisplayResponseArray)
                     totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
 
@@ -619,7 +605,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                     lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
 
-                    toggleProgressBar()
+                    binding.homeDisplayRecyclerView.layoutManager!!.scrollToPosition(scrollToPosition)
                 }
             }
         })

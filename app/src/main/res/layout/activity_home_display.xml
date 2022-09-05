@@ -21,18 +21,10 @@
             android:layout_height="match_parent"/>
 
         <ProgressBar
-            android:id="@+id/defaultProgress"
+            android:id="@+id/moreMatchedUserProgressBar"
             android:visibility="gone"
-            android:layout_gravity="center_horizontal|top"
-            android:foregroundGravity="center_horizontal|top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <ProgressBar
-            android:id="@+id/loadMoreProgress"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal|bottom"
-            android:foregroundGravity="center_horizontal|bottom"
+            android:layout_marginBottom="55dp"
+            android:layout_gravity="bottom|center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
