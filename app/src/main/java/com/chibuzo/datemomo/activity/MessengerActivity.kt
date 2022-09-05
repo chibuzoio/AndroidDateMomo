@@ -318,10 +318,16 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_user_information))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
@@ -373,10 +379,16 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_message))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_message)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_message))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
@@ -431,10 +443,16 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_notification))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_notification)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_notification))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
@@ -518,10 +536,16 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_home_display))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_home_display)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_home_display))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
@@ -573,10 +597,16 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_user_account))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_account)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_user_account))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
@@ -628,10 +658,16 @@ class MessengerActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_profile)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 

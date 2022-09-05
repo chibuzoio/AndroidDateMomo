@@ -184,10 +184,16 @@ class ImageSliderActivity : AppCompatActivity() {
 
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-                activityStackModel.activityStack.push(getString(R.string.activity_user_information))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
