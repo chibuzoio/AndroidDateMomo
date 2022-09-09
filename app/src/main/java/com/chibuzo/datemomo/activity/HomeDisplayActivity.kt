@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
 import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
@@ -134,6 +135,23 @@ class HomeDisplayActivity : AppCompatActivity() {
 
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
+
+        binding.emptyTimelineDialog.dialogActivityButton.blueButtonText.text = "Go To Settings"
+        binding.emptyTimelineDialog.dialogActivityText.text =
+            "Your timeline is empty because you have few or no preferences that are " +
+                    "related to any user's preferences. You might want to update your " +
+                    "preferences to see users with preferences that are related to yours"
+
+        Glide.with(this)
+            .load(R.drawable.icon_timeline)
+            .into(binding.emptyTimelineDialog.dialogActivityImage)
+
+        binding.emptyTimelineDialog.dialogActivityButton.blueButtonLayout.setOnClickListener {
+            binding.emptyTimelineDialog.dialogActivityButton.blueButtonLayout.startAnimation(buttonClickEffect)
+
+            val intent = Intent(baseContext, ProfileEditorActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
@@ -268,30 +286,42 @@ class HomeDisplayActivity : AppCompatActivity() {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             outerHomeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-            lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
-            totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
+            if (outerHomeDisplayResponse.homeDisplayResponses.size > 0) {
+                binding.emptyTimelineDialog.dialogActivityLayout.visibility = View.GONE
 
-            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            binding.homeDisplayRecyclerView.layoutManager = layoutManager
-            binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
+                lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
+                totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
 
-            homeDisplayModel = HomeDisplayModel(deviceWidth, requestProcess,
-                buttonClickEffect, binding, this)
+                val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+                binding.homeDisplayRecyclerView.layoutManager = layoutManager
+                binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val homeDisplayAdapter =
-                HomeDisplayAdapter(outerHomeDisplayResponse.homeDisplayResponses, homeDisplayModel)
-            binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
+                homeDisplayModel = HomeDisplayModel(
+                    deviceWidth, requestProcess,
+                    buttonClickEffect, binding, this
+                )
 
-            binding.homeDisplayRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
+                val homeDisplayAdapter =
+                    HomeDisplayAdapter(
+                        outerHomeDisplayResponse.homeDisplayResponses,
+                        homeDisplayModel
+                    )
+                binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
 
-                    if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
-                        requestProcess = getString(R.string.request_fetch_more_matched_users)
-                        fetchMoreMatchedUsers()
+                binding.homeDisplayRecyclerView.addOnScrollListener(object :
+                    RecyclerView.OnScrollListener() {
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+
+                        if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
+                            requestProcess = getString(R.string.request_fetch_more_matched_users)
+                            fetchMoreMatchedUsers()
+                        }
                     }
-                }
-            })
+                })
+            } else {
+                binding.emptyTimelineDialog.dialogActivityLayout.visibility = View.VISIBLE
+            }
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")

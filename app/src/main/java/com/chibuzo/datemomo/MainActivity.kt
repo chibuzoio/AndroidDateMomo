@@ -120,13 +120,12 @@ class MainActivity : AppCompatActivity() {
                         .equals(getString(R.string.level_display_matched_users)) -> {
                         requestProcess = getString(R.string.request_fetch_matched_users)
                         setContentView(R.layout.splash_screen)
-
                         fetchMatchedUsers()
                     }
                     else -> {
-                        binding.authenticationLayout.visibility = View.VISIBLE
-                        binding.pictureUploadLayout.visibility = View.GONE
-                        binding.registrationLayout.visibility = View.GONE
+                        requestProcess = getString(R.string.request_fetch_matched_users)
+                        setContentView(R.layout.splash_screen)
+                        fetchMatchedUsers()
                     }
                 }
             } else {
@@ -134,6 +133,14 @@ class MainActivity : AppCompatActivity() {
                 binding.pictureUploadLayout.visibility = View.GONE
                 binding.registrationLayout.visibility = View.GONE
             }
+
+            binding.poorInternetDialog.dialogActivityButton.blueButtonText.text = "Retry"
+            binding.poorInternetDialog.dialogActivityText.text =
+                "Check your internet connectivity or connect to a WiFi network!"
+
+            Glide.with(this)
+                .load(R.drawable.icon_poor_connectivity)
+                .into(binding.poorInternetDialog.dialogActivityImage)
 
             Glide.with(this)
                 .asGif()
@@ -214,6 +221,12 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 */
+
+            binding.poorInternetDialog.dialogActivityButton.blueButtonLayout.setOnClickListener {
+                requestProcess = getString(R.string.request_fetch_matched_users)
+                setContentView(R.layout.splash_screen)
+                fetchMatchedUsers()
+            }
 
             binding.registrationInnerLayout.setOnClickListener {
                 clearAllFieldFocus()
@@ -1034,9 +1047,7 @@ class MainActivity : AppCompatActivity() {
 
                 runOnUiThread {
                     setContentView(binding.root)
-                    binding.createAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-                    binding.loginAccountSubmit.blueButtonLayout.visibility = View.VISIBLE
-                    binding.authenticationLayout.visibility = View.VISIBLE
+                    binding.poorInternetDialog.dialogActivityLayout.visibility = View.VISIBLE
                     binding.registerProgressIcon.visibility = View.GONE
                     binding.pictureUploadLayout.visibility = View.GONE
                     binding.registrationLayout.visibility = View.GONE

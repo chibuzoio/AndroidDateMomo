@@ -377,6 +377,10 @@
             android:id="@+id/singleButtonDialog"
             layout="@layout/include_single_button_dialog"/>
 
+        <include
+            android:id="@+id/poorInternetDialog"
+            layout="@layout/include_dialog_activity_layout"/>
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

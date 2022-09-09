@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogActivityLayout"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:visibility="gone"
+    android:gravity="center"
+    android:padding="25dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/dialogActivityImage"
+        android:layout_width="77dp"
+        android:layout_height="77dp"/>
+
+    <TextView
+        android:id="@+id/dialogActivityText"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_marginTop="55dp"
+        android:layout_marginBottom="25dp"
+        android:textColor="@color/edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <include
+        android:id="@+id/dialogActivityButton"
+        layout="@layout/include_blue_button"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+

@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.NotificationAdapter
 import com.chibuzo.datemomo.databinding.ActivityNotificationBinding
@@ -80,6 +81,14 @@ class NotificationActivity : AppCompatActivity() {
         binding.bottomNavigationLayout.newNotificationNotifier.visibility = View.GONE
 
         checkMessageUpdate()
+
+        binding.emptyNotificationDialog.dialogActivityButton.blueButtonText.text = "Go Back"
+        binding.emptyNotificationDialog.dialogActivityText.text =
+            "You do not have any notifications yet!"
+
+        Glide.with(this)
+            .load(R.drawable.icon_notification)
+            .into(binding.emptyNotificationDialog.dialogActivityImage)
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
