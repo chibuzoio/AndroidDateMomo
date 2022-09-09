@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/userLikerRecyclerLayout"
+        android:id="@+id/userLikedRecyclerLayout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/likerProfilePicture"
+                android:id="@+id/likedProfilePicture"
                 android:layout_margin="7dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
@@ -43,7 +43,7 @@
                 android:layout_height="0dp"/>
 
             <TextView
-                android:id="@+id/likerUserFullName"
+                android:id="@+id/likedUserFullName"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:textColor="@color/edit_text"
@@ -56,7 +56,7 @@
                 android:layout_height="0dp"/>
 
             <TextView
-                android:id="@+id/likerCurrentLocation"
+                android:id="@+id/likedCurrentLocation"
                 android:textSize="15sp"
                 android:textColor="@color/edit_text"
                 android:layout_width="match_parent"

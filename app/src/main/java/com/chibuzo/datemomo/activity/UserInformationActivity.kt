@@ -389,6 +389,18 @@ class UserInformationActivity : AppCompatActivity() {
                     requestProcess = getString(R.string.request_fetch_user_pictures)
                     fetchUserPictures()
                 }
+                getString(R.string.activity_user_account) -> {
+                    requestProcess = getString(R.string.request_fetch_liked_users)
+                    fetchLikedUsers()
+                }
+                getString(R.string.activity_all_likers) -> {
+                    requestProcess = getString(R.string.request_fetch_user_likers)
+                    fetchUserLikers()
+                }
+                getString(R.string.activity_all_liked) -> {
+                    requestProcess = getString(R.string.request_fetch_liked_users)
+                    fetchLikedUsers()
+                }
                 else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
@@ -412,6 +424,81 @@ class UserInformationActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_pictures) -> fetchUserPictures()
             getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchLikedUsers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_liked_users_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+                val intentActivity = activityStackModel.activityStack.peek()
+
+                if (intentActivity == getString(R.string.activity_all_liked)) {
+                    if (intentActivity != getString(R.string.activity_all_liked)) {
+                        activityStackModel.activityStack.push(getString(R.string.activity_all_liked))
+                        val activityStackString = mapper.writeValueAsString(activityStackModel)
+                        sharedPreferencesEditor.putString(
+                            getString(R.string.activity_stack),
+                            activityStackString
+                        )
+                        sharedPreferencesEditor.apply()
+                    }
+
+                    val intent = Intent(baseContext, AllLikedActivity::class.java)
+                    intent.putExtra("jsonResponse", myResponse)
+                    startActivity(intent)
+                } else {
+                    if (intentActivity != getString(R.string.activity_user_account)) {
+                        activityStackModel.activityStack.push(getString(R.string.activity_user_account))
+                        val activityStackString = mapper.writeValueAsString(activityStackModel)
+                        sharedPreferencesEditor.putString(
+                            getString(R.string.activity_stack),
+                            activityStackString
+                        )
+                        sharedPreferencesEditor.apply()
+                    }
+
+                    val intent = Intent(baseContext, UserAccountActivity::class.java)
+                    intent.putExtra("jsonResponse", myResponse)
+                    startActivity(intent)
+                }
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+            }
+        })
     }
 
     @Throws(IOException::class)
@@ -509,21 +596,39 @@ class UserInformationActivity : AppCompatActivity() {
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_profile)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
+                val intentActivity = activityStackModel.activityStack.peek()
+
+                if (intentActivity == getString(R.string.activity_all_likers)) {
+                    if (intentActivity != getString(R.string.activity_all_likers)) {
+                        activityStackModel.activityStack.push(getString(R.string.activity_all_likers))
+                        val activityStackString = mapper.writeValueAsString(activityStackModel)
+                        sharedPreferencesEditor.putString(
+                            getString(R.string.activity_stack),
+                            activityStackString
+                        )
+                        sharedPreferencesEditor.apply()
+                    }
+
+                    val intent = Intent(baseContext, AllLikersActivity::class.java)
+                    intent.putExtra("jsonResponse", myResponse)
+                    startActivity(intent)
+                } else {
+                    if (intentActivity != getString(R.string.activity_user_profile)) {
+                        activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
+                        val activityStackString = mapper.writeValueAsString(activityStackModel)
+                        sharedPreferencesEditor.putString(
+                            getString(R.string.activity_stack),
+                            activityStackString
+                        )
+                        sharedPreferencesEditor.apply()
+                    }
+
+                    val intent = Intent(baseContext, UserProfileActivity::class.java)
+                    intent.putExtra("jsonResponse", myResponse)
+                    startActivity(intent)
                 }
 
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, UserProfileActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
-                startActivity(intent)
             }
         })
     }

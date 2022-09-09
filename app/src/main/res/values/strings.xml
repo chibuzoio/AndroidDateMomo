@@ -9,6 +9,7 @@
     <!-- Intent Activity Origin -->
     <string name="activity_main">MainActivity</string>
     <string name="activity_message">MessageActivity</string>
+    <string name="activity_all_liked">AllLikedActivity</string>
     <string name="activity_messenger">MessengerActivity</string>
     <string name="activity_all_likers">AllLikersActivity</string>
     <string name="activity_home_display">HomeDisplayActivity</string>

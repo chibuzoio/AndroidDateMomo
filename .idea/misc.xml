@@ -9,6 +9,8 @@
         <entry key="app/src/main/res/drawable/picture_counter_layout.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/profile_picture_cover.xml" value="0.1455" />
         <entry key="app/src/main/res/drawable/profile_picture_placeholder.xml" value="0.1455" />
+        <entry key="app/src/main/res/layout/activity_all_liked.xml" value="0.19479166666666667" />
+        <entry key="app/src/main/res/layout/activity_all_likers.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_home_display.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_image_slider.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/activity_notification.xml" value="0.19479166666666667" />
@@ -19,6 +21,8 @@
         <entry key="app/src/main/res/layout/include_bottom_navigation_layout.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/include_dialog_activity_layout.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/include_single_button_dialog.xml" value="0.19479166666666667" />
+        <entry key="app/src/main/res/layout/recycler_all_liked.xml" value="0.19375" />
+        <entry key="app/src/main/res/layout/recycler_all_likers.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/recycler_home_display.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/recycler_message.xml" value="0.19479166666666667" />
         <entry key="app/src/main/res/layout/recycler_notification.xml" value="0.19479166666666667" />

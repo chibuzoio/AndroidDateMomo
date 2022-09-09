@@ -297,6 +297,20 @@ class UserProfileActivity : AppCompatActivity() {
             if (userLikerResponseArray.size > 6) {
                 val mapper = jacksonObjectMapper()
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_all_likers)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_all_likers))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
+
                 val userLikerResponseString = mapper.writeValueAsString(userLikerResponseArray)
 
                 val intent = Intent(baseContext, AllLikersActivity::class.java)

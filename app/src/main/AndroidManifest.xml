@@ -103,6 +103,14 @@
 
         </activity>
 
+        <activity
+            android:name=".activity.AllLikedActivity"
+            android:screenOrientation="portrait"
+            android:noHistory="true"
+            android:exported="true">
+
+        </activity>
+
         <activity android:name=".activity.ImageSliderActivity"
             android:screenOrientation="portrait"
             android:noHistory="true"

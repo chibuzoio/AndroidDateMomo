@@ -90,6 +90,11 @@ class NotificationActivity : AppCompatActivity() {
             .load(R.drawable.icon_notification)
             .into(binding.emptyNotificationDialog.dialogActivityImage)
 
+        binding.emptyNotificationDialog.dialogActivityButton.blueButtonLayout.setOnClickListener {
+            binding.emptyNotificationDialog.dialogActivityButton.blueButtonLayout.startAnimation(buttonClickEffect)
+            onBackPressed()
+        }
+
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
@@ -155,16 +160,21 @@ class NotificationActivity : AppCompatActivity() {
             notificationResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             val allLikersModel = AllLikersModel(
-                sharedPreferences.getInt(getString(R.string.member_id), 0),
-                deviceWidth
-            )
+                sharedPreferences.getInt(getString(R.string.member_id), 0), deviceWidth, "", this)
 
-            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            binding.notificationRecyclerView.layoutManager = layoutManager
-            binding.notificationRecyclerView.itemAnimator = DefaultItemAnimator()
+            if (notificationResponseArray.size > 0) {
+                binding.emptyNotificationDialog.dialogActivityLayout.visibility = View.GONE
 
-            val notificationAdapter = NotificationAdapter(notificationResponseArray, allLikersModel)
-            binding.notificationRecyclerView.adapter = notificationAdapter
+                val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+                binding.notificationRecyclerView.layoutManager = layoutManager
+                binding.notificationRecyclerView.itemAnimator = DefaultItemAnimator()
+
+                val notificationAdapter =
+                    NotificationAdapter(notificationResponseArray, allLikersModel)
+                binding.notificationRecyclerView.adapter = notificationAdapter
+            } else {
+                binding.emptyNotificationDialog.dialogActivityLayout.visibility = View.VISIBLE
+            }
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")

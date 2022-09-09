@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -16,13 +17,14 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
-import com.chibuzo.datemomo.adapter.ImageDisplayAdapter
-import com.chibuzo.datemomo.databinding.ActivityImageDisplayBinding
+import com.chibuzo.datemomo.adapter.AllLikedAdapter
+import com.chibuzo.datemomo.adapter.AllLikersAdapter
+import com.chibuzo.datemomo.databinding.ActivityAllLikedBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
-import com.chibuzo.datemomo.model.PictureCompositeModel
 import com.chibuzo.datemomo.model.request.UserInformationRequest
-import com.chibuzo.datemomo.model.response.UserPictureResponse
+import com.chibuzo.datemomo.model.request.UserLikerRequest
+import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -30,25 +32,27 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
-class ImageDisplayActivity : AppCompatActivity() {
+class AllLikedActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
-    private lateinit var binding: ActivityImageDisplayBinding
+    private var leastRootViewHeight: Int = 0
+    private lateinit var binding: ActivityAllLikedBinding
+    private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var pictureCompositeModel: PictureCompositeModel
+    private lateinit var userInformationRequest: UserInformationRequest
+    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var userPictureResponseArray: ArrayList<UserPictureResponse>
-    private lateinit var pictureCompositeModelArray: ArrayList<PictureCompositeModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityImageDisplayBinding.inflate(layoutInflater)
+        binding = ActivityAllLikedBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        hideSystemUI()
 
         val displayMetrics = DisplayMetrics()
 
@@ -66,6 +70,7 @@ class ImageDisplayActivity : AppCompatActivity() {
 
         bundle = intent.extras!!
 
+        buttonClickEffect = AlphaAnimation(1f, 0f)
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
@@ -103,37 +108,21 @@ class ImageDisplayActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userPictureResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
-
-            pictureCompositeModelArray = ArrayList()
-            pictureCompositeModel = PictureCompositeModel(ArrayList())
-
-            userPictureResponseArray.forEachIndexed { index, userPictureResponse ->
-                pictureCompositeModel.userPictureResponses.add(userPictureResponse)
-
-                if (((index + 1) % 3) == 0) {
-                    pictureCompositeModelArray.add(pictureCompositeModel)
-
-                    pictureCompositeModel = PictureCompositeModel(ArrayList())
-                }
-
-                if ((index == (userPictureResponseArray.size - 1)) && ((userPictureResponseArray.size % 3) != 0)) {
-                    pictureCompositeModelArray.add(pictureCompositeModel)
-                }
-            }
+            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            binding.imageDisplayRecyclerView.layoutManager = layoutManager
-            binding.imageDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
+            binding.allLikedRecyclerView.layoutManager = layoutManager
+            binding.allLikedRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val allLikersModel = AllLikersModel(bundle.getInt("memberId"),
-                deviceWidth, "", this)
+            val allLikersModel =
+                AllLikersModel(sharedPreferences.getInt(getString(R.string.member_id), 0),
+                    deviceWidth, "", this)
 
-            val imageDisplayAdapter = ImageDisplayAdapter(pictureCompositeModelArray, allLikersModel)
-            binding.imageDisplayRecyclerView.adapter = imageDisplayAdapter
+            val allLikersAdapter = AllLikedAdapter(userLikerResponseArray, allLikersModel)
+            binding.allLikedRecyclerView.adapter = allLikersAdapter
         } catch (exception: IOException) {
             exception.printStackTrace()
-            Log.e(TAG, "Error message from here is ${exception.message}")
+            Log.e(AllLikersActivity.TAG, "Error message from here is ${exception.message}")
         }
     }
 
@@ -145,7 +134,7 @@ class ImageDisplayActivity : AppCompatActivity() {
 
         try {
             when (activityStackModel.activityStack.peek()) {
-                getString(R.string.activity_image_display) -> {
+                getString(R.string.activity_all_liked) -> {
                     activityStackModel.activityStack.pop()
 
                     val activityStackString = mapper.writeValueAsString(activityStackModel)
@@ -154,32 +143,27 @@ class ImageDisplayActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_user_information) -> {
-                    requestProcess = getString(R.string.request_fetch_user_information)
-                    fetchUserInformation()
+                getString(R.string.activity_user_account) -> {
+                    requestProcess = getString(R.string.request_fetch_liked_users)
+                    fetchLikedUsers()
                 }
                 getString(R.string.activity_user_profile) -> super.onBackPressed()
                 else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()
-            Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
+            Log.e(AllLikersActivity.TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
 
-        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        hideSystemUI()
+        Log.e(AllLikersActivity.TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Throws(IOException::class)
-    fun fetchUserInformation() {
+    fun fetchUserInformation(userInformationRequest: UserInformationRequest) {
         val mapper = jacksonObjectMapper()
+        this.userInformationRequest = userInformationRequest
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val userInformationRequest = UserInformationRequest(bundle.getInt("memberId"))
-        val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
+        val jsonObjectString = mapper.writeValueAsString(this.userInformationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
             jsonObjectString
@@ -220,7 +204,7 @@ class ImageDisplayActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(AllLikersActivity.TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, UserInformationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)
@@ -229,9 +213,66 @@ class ImageDisplayActivity : AppCompatActivity() {
         })
     }
 
+    @Throws(IOException::class)
+    fun fetchLikedUsers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_liked_users_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_account)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_user_account))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
+                val intent = Intent(baseContext, UserAccountActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
+    }
+
     private fun triggerRequestProcess() {
         when (requestProcess) {
-            getString(R.string.request_fetch_user_information) -> fetchUserInformation()
+            getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
         }
     }
 
@@ -265,7 +306,7 @@ class ImageDisplayActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val TAG = "ImageDisplayActivity"
+        const val TAG = "AllLikedActivity"
     }
 }
 
