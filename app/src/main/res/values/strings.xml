@@ -133,6 +133,7 @@
     <string name="api_delete_profile_picture">service/deleteprofilepicture.php</string>
     <string name="api_delete_messenger_messages">service/deletemessengermessages.php</string>
     <string name="api_notify_profile_picture_owner">service/notifyprofilepictureowner.php</string>
+    <string name="api_update_notification_read_status">service/updatenotificationreadstatus.php</string>
 
     <!-- Shared Preferences Keys -->
     <string name="age">age</string>

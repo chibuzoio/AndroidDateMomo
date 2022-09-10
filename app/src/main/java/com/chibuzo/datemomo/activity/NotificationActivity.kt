@@ -24,6 +24,7 @@ import com.chibuzo.datemomo.databinding.ActivityNotificationBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
+import com.chibuzo.datemomo.model.request.ReadStatusRequest
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
@@ -44,6 +45,7 @@ class NotificationActivity : AppCompatActivity() {
     private var requestProcess: String = ""
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityNotificationBinding
+    private lateinit var readStatusRequest: ReadStatusRequest
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var userInformationRequest: UserInformationRequest
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
@@ -245,6 +247,43 @@ class NotificationActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
             getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun updateNotificationReadStatus(readStatusRequest: ReadStatusRequest) {
+        val mapper = jacksonObjectMapper()
+        this.readStatusRequest = readStatusRequest
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val jsonObjectString = mapper.writeValueAsString(this.readStatusRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_update_notification_read_status))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+            }
+        })
     }
 
     @Throws(IOException::class)
