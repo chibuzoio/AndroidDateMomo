@@ -8,11 +8,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.NotificationActivity
 import com.chibuzo.datemomo.databinding.RecyclerNotificationBinding
 import com.chibuzo.datemomo.model.AllLikersModel
+import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.response.NotificationResponse
 import com.chibuzo.datemomo.utility.Utility
-
 
 class NotificationAdapter(private var notificationResponses: ArrayList<NotificationResponse>,
                           private var allLikersModel: AllLikersModel) :
@@ -39,8 +40,6 @@ class NotificationAdapter(private var notificationResponses: ArrayList<Notificat
             .transform(CircleCrop(), CenterCrop())
             .into(holder.binding.notifierProfilePicture)
 
-        // Replace the occurrence of { with <b> and the occurrence of } with </b>
-
         var notificationString = notificationResponses[position].genericNotification
         notificationString = notificationString.replace("{", "<b>")
         notificationString = notificationString.replace("}", "</b>")
@@ -50,6 +49,12 @@ class NotificationAdapter(private var notificationResponses: ArrayList<Notificat
         holder.binding.genericNotification.text = notificationHtml
         holder.binding.notificationDate.text =
             Utility.getTimeDifference(notificationResponses[position].notificationDate.toLong())
+
+        holder.binding.genericNotificationLayout.setOnClickListener {
+            allLikersModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_information)
+            val userInformationRequest = UserInformationRequest(notificationResponses[position].notificationEffectorId)
+            (allLikersModel.appCompatActivity as NotificationActivity).fetchUserInformation(userInformationRequest)
+        }
     }
 
     override fun getItemCount(): Int {

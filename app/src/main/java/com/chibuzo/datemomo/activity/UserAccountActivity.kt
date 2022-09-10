@@ -435,7 +435,7 @@ class UserAccountActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(UserProfileActivity.TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, UserInformationActivity::class.java)
                 intent.putExtra("jsonResponse", myResponse)

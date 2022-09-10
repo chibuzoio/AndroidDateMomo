@@ -24,6 +24,7 @@ import com.chibuzo.datemomo.databinding.ActivityNotificationBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
+import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.NotificationResponse
@@ -44,6 +45,7 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityNotificationBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userInformationRequest: UserInformationRequest
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var notificationResponseArray: ArrayList<NotificationResponse>
 
@@ -243,6 +245,61 @@ class NotificationActivity : AppCompatActivity() {
             getString(R.string.request_fetch_user_likers) -> fetchUserLikers()
             getString(R.string.request_fetch_liked_users) -> fetchLikedUsers()
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserInformation(userInformationRequest: UserInformationRequest) {
+        val mapper = jacksonObjectMapper()
+        this.userInformationRequest = userInformationRequest
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val jsonObjectString = mapper.writeValueAsString(this.userInformationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_information))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
+                    val activityStackString = mapper.writeValueAsString(activityStackModel)
+                    sharedPreferencesEditor.putString(
+                        getString(R.string.activity_stack),
+                        activityStackString
+                    )
+                    sharedPreferencesEditor.apply()
+                }
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
+                val intent = Intent(baseContext, UserInformationActivity::class.java)
+                intent.putExtra("jsonResponse", myResponse)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
