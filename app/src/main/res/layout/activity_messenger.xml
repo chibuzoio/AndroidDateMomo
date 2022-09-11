@@ -39,6 +39,58 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/emptyMessengerLayout"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:layout_marginBottom="54dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_margin="11dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/emptyMessengerIcon"
+                    android:layout_width="77dp"
+                    android:layout_height="77dp"/>
+
+                <TextView
+                    android:id="@+id/emptyMessengerMessage"
+                    android:textSize="15sp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginStart="11dp"
+                    android:textColor="@color/edit_text"
+                    android:text="Your messenger list is empty! You might want to begin meeting people by waving at them!"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/emptyMessengerRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <ProgressBar
+                    android:id="@+id/emptyMessengerProgressBar"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </FrameLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
         <View
             android:layout_gravity="bottom"
             android:layout_marginBottom="53dp"

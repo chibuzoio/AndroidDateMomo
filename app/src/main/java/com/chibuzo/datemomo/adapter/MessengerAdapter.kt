@@ -17,7 +17,7 @@ import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.response.MessengerResponse
 import com.chibuzo.datemomo.utility.Utility
 
-class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>, private val messengerModel: MessengerModel) :
+class MessengerAdapter(private var messengerResponses: ArrayList<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
@@ -100,7 +100,7 @@ class MessengerAdapter(private var messengerResponses: Array<MessengerResponse>,
                 messengerResponses[messengerModel.currentPosition].messageTableName)
             messengerModel.messengerActivity.deleteMessengerMessages(deleteMessageRequest)
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
-            messengerResponses = removeAt(messengerModel.currentPosition)
+            messengerResponses.removeAt(messengerModel.currentPosition)
             notifyItemRemoved(messengerModel.currentPosition)
         }
 

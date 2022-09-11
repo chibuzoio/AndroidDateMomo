@@ -78,6 +78,7 @@
     <string name="request_fetch_notifications">fetchNotifications</string>
     <string name="request_fetch_user_messengers">fetchUserMessengers</string>
     <string name="request_fetch_user_information">fetchUserInformation</string>
+    <string name="request_fetch_more_twenty_users">fetchMoreTwentyUsers</string>
     <string name="request_skip_sexuality_interest">skipSexualityInterest</string>
     <string name="request_update_current_location">updateCurrentLocation</string>
     <string name="request_fetch_more_matched_users">fetchMoreMatchedUsers</string>
@@ -107,6 +108,7 @@
     <string name="api_post_message">service/postmessage.php</string>
     <string name="api_post_picture">service/postpicture.php</string>
     <string name="api_user_picture">service/userpicture.php</string>
+    <string name="api_all_user_data">service/alluserdata.php</string>
     <string name="api_check_message">service/checkmessage.php</string>
     <string name="api_logout_member">service/logoutmember.php</string>
     <string name="api_picture_owner">service/pictureowner.php</string>

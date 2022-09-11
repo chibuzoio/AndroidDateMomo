@@ -17,14 +17,19 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.adapter.EmptyMessengerAdapter
 import com.chibuzo.datemomo.adapter.MessengerAdapter
 import com.chibuzo.datemomo.databinding.ActivityMessengerBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.MessengerModel
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
+import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.model.response.MessengerResponse
+import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -32,19 +37,24 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private var lastDisplayPage: Int = 0
     private var requestProcess: String = ""
+    private var totalAvailablePages: Int = 0
     private var originalRequestProcess: String = ""
     private lateinit var messageRequest: MessageRequest
     private lateinit var binding: ActivityMessengerBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var messengerResponseArray: Array<MessengerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
+    private lateinit var outerHomeDisplayResponse: OuterHomeDisplayResponse
+    private lateinit var messengerResponseArray: ArrayList<MessengerResponse>
+    private lateinit var homeDisplayResponseArray: ArrayList<HomeDisplayResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +90,10 @@ class MessengerActivity : AppCompatActivity() {
         binding.bottomNavigationLayout.newMessageNotifier.visibility = View.GONE
 
         checkNotificationUpdate()
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_empty_chat))
+            .into(binding.emptyMessengerIcon)
 
         binding.confirmMessengerDelete.dialogRetryButton.text = "Delete"
         binding.confirmMessengerDelete.doubleButtonTitle.text = "Delete Chats"
@@ -144,15 +158,25 @@ class MessengerActivity : AppCompatActivity() {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-            val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-            binding.messengerRecyclerView.layoutManager = layoutManager
-            binding.messengerRecyclerView.itemAnimator = DefaultItemAnimator()
+            messengerResponseArray = arrayListOf()
 
-            val messengerModel = MessengerModel(deviceWidth,
-                -1, requestProcess, binding, this)
+            if (messengerResponseArray.isNotEmpty()) {
+                val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+                binding.messengerRecyclerView.layoutManager = layoutManager
+                binding.messengerRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val messengerAdapter = MessengerAdapter(messengerResponseArray, messengerModel)
-            binding.messengerRecyclerView.adapter = messengerAdapter
+                val messengerModel = MessengerModel(
+                    deviceWidth, -1, requestProcess,
+                    binding, this
+                )
+
+                val messengerAdapter = MessengerAdapter(messengerResponseArray, messengerModel)
+                binding.messengerRecyclerView.adapter = messengerAdapter
+            } else {
+                binding.emptyMessengerLayout.visibility = View.VISIBLE
+
+                fetchDateMomoUsers()
+            }
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")
@@ -214,6 +238,151 @@ class MessengerActivity : AppCompatActivity() {
         }
 
         Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+    }
+
+    @Throws(IOException::class)
+    fun fetchMoreTwentyUsers() {
+        binding.emptyMessengerProgressBar.visibility = View.VISIBLE
+
+        var twentyIterationCounter = 0
+        val homeDisplayRequest = HomeDisplayRequest(arrayListOf())
+
+        for (index in outerHomeDisplayResponse.thousandRandomCounter.indices) {
+            if (index > lastDisplayPage) {
+                homeDisplayRequest.nextMatchedUsersIdArray.add(outerHomeDisplayResponse.thousandRandomCounter[index])
+                twentyIterationCounter++
+
+                if (twentyIterationCounter >= 20) {
+                    break
+                }
+            }
+        }
+
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_more_matched_user_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(this@MessengerActivity)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+
+                runOnUiThread {
+                    binding.emptyMessengerProgressBar.visibility = View.GONE
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                homeDisplayResponseArray = mapper.readValue(myResponse)
+
+                runOnUiThread {
+                    val scrollToPosition = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                    binding.emptyMessengerProgressBar.visibility = View.GONE
+
+                    outerHomeDisplayResponse.homeDisplayResponses.addAll(homeDisplayResponseArray)
+                    totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                    binding.emptyMessengerRecyclerView.adapter!!.notifyItemRangeInserted(
+                        lastDisplayPage + 1, outerHomeDisplayResponse.homeDisplayResponses.size)
+
+                    lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
+
+                    binding.emptyMessengerRecyclerView.layoutManager!!.scrollToPosition(scrollToPosition)
+                }
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    fun fetchDateMomoUsers() {
+        val mapper = jacksonObjectMapper()
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_all_user_data))
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+                    binding.emptyMessengerProgressBar.visibility = View.GONE
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                outerHomeDisplayResponse = mapper.readValue(myResponse)
+
+                runOnUiThread {
+                    binding.emptyMessengerProgressBar.visibility = View.GONE
+
+                    lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
+                    totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                    val layoutManager =
+                        LinearLayoutManager(this@MessengerActivity, RecyclerView.VERTICAL, false)
+                    binding.emptyMessengerRecyclerView.layoutManager = layoutManager
+                    binding.emptyMessengerRecyclerView.itemAnimator = DefaultItemAnimator()
+
+                    val allLikersModel = AllLikersModel(
+                        memberId = sharedPreferences.getInt(getString(R.string.member_id), 0),
+                        deviceWidth = deviceWidth,
+                        requestProcess = "",
+                        appCompatActivity = this@MessengerActivity
+                    )
+
+                    val emptyMessengerAdapter =
+                        EmptyMessengerAdapter(
+                            outerHomeDisplayResponse.homeDisplayResponses,
+                            allLikersModel
+                        )
+                    binding.emptyMessengerRecyclerView.adapter = emptyMessengerAdapter
+
+                    binding.emptyMessengerRecyclerView.addOnScrollListener(object :
+                        RecyclerView.OnScrollListener() {
+                        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                            super.onScrolled(recyclerView, dx, dy)
+
+                            if (!binding.emptyMessengerRecyclerView.canScrollVertically(1)) {
+                                requestProcess = getString(R.string.request_fetch_more_twenty_users)
+                                fetchMoreTwentyUsers()
+                            }
+                        }
+                    })
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)
