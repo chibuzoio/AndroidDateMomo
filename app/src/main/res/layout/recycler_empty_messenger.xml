@@ -5,12 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <FrameLayout
         android:id="@+id/profilePictureLayout"
         android:gravity="center"
         android:orientation="vertical"
+        android:layout_gravity="center"
+        android:foregroundGravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
+        <View
+            android:layout_margin="7dp"
+            android:layout_gravity="center"
+            android:foregroundGravity="center"
+            android:background="@drawable/profile_picture_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <ImageView
             android:id="@+id/userProfilePicture"
@@ -18,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/userInformationLayout"

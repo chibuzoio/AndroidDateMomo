@@ -315,12 +315,21 @@ class MessengerActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun fetchDateMomoUsers() {
         val mapper = jacksonObjectMapper()
+        val userLikerRequest =
+            UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
             .url(getString(R.string.date_momo_api) + getString(R.string.api_all_user_data))
+            .post(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
