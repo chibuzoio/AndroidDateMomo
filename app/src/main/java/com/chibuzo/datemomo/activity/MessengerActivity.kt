@@ -158,8 +158,6 @@ class MessengerActivity : AppCompatActivity() {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
 
-            messengerResponseArray = arrayListOf()
-
             if (messengerResponseArray.isNotEmpty()) {
                 val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
                 binding.messengerRecyclerView.layoutManager = layoutManager

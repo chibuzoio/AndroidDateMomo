@@ -11,6 +11,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -161,16 +162,30 @@ class MessageActivity : AppCompatActivity() {
 
         }
 
+        binding.wavingHandSenderAnime.setOnClickListener {
+            // send waving hand as message to recipient
+
+        }
+
         Glide.with(this)
             .asGif()
-            .load(R.drawable.hello_message)
-            .into(binding.welcomeHelloMessage)
+            .load(R.drawable.anime_waving_hand)
+            .into(binding.wavingHandSenderAnime)
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + bundle.getString("profilePicture"))
+            .transform(CircleCrop(), CenterCrop())
+            .into(binding.emptyMessageProfilePicture)
 
         binding.receiverUserName.text = bundle.getString("fullName")!!.ifEmpty {
             bundle.getString("userName").toString().replaceFirstChar { it.uppercase() }
         }
         binding.lastActiveTime.text = bundle.getString("lastActiveTime")!!.ifEmpty {
             "online"
+        }
+        binding.userFullName.text = bundle.getString("fullName")!!.ifEmpty() {
+            bundle.getString("userName")!!.replaceFirstChar { it.uppercase() }
         }
 
         Glide.with(this)

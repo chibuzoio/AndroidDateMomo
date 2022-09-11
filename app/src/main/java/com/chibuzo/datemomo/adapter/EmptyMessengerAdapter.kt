@@ -1,5 +1,7 @@
 package com.chibuzo.datemomo.adapter
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +13,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.MessengerActivity
 import com.chibuzo.datemomo.databinding.RecyclerEmptyMessengerBinding
 import com.chibuzo.datemomo.model.AllLikersModel
+import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 
 class EmptyMessengerAdapter(private var homeDisplayResponses: ArrayList<HomeDisplayResponse>, private var allLikersModel: AllLikersModel) :
     RecyclerView.Adapter<EmptyMessengerAdapter.MyViewHolder>() {
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerEmptyMessengerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -24,6 +30,11 @@ class EmptyMessengerAdapter(private var homeDisplayResponses: ArrayList<HomeDisp
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        sharedPreferences =
+            holder.itemView.context.getSharedPreferences(holder
+                .itemView.context.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
+        sharedPreferencesEditor = sharedPreferences.edit()
+
         val imageLayoutWidth = (allLikersModel.deviceWidth * 25) / 100;
         val informationLayoutWidth = allLikersModel.deviceWidth - imageLayoutWidth
 
@@ -31,6 +42,27 @@ class EmptyMessengerAdapter(private var homeDisplayResponses: ArrayList<HomeDisp
         holder.binding.profilePictureLayout.layoutParams.height = imageLayoutWidth
         holder.binding.userInformationLayout.layoutParams.height = imageLayoutWidth
         holder.binding.userInformationLayout.layoutParams.width = informationLayoutWidth
+
+        holder.binding.wavingHandIconLayout.setOnClickListener {
+            // Send waving hand icon directly to user
+
+        }
+
+        holder.binding.userEmptyMessengerLayout.setOnClickListener {
+            allLikersModel.requestProcess =
+                holder.itemView.context.getString(R.string.request_fetch_user_messages)
+
+            val messageRequest = MessageRequest(
+                senderId = sharedPreferences.getInt(holder.itemView.context.getString(R.string.member_id), 0),
+                receiverId = homeDisplayResponses[position].memberId,
+                fullName = homeDisplayResponses[position].fullName,
+                userName = homeDisplayResponses[position].userName,
+                lastActiveTime = "",
+                profilePicture = homeDisplayResponses[position].profilePicture
+            )
+
+            (allLikersModel.appCompatActivity as MessengerActivity).fetchUserMessages(messageRequest)
+        }
 
         Glide.with(holder.itemView.context)
             .load(ContextCompat.getDrawable(holder.itemView.context, R.drawable.icon_waving_hand))

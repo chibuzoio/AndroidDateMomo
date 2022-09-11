@@ -115,16 +115,80 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/welcomeMessageLayout"
-                    android:gravity="center"
                     android:orientation="vertical"
                     android:background="@color/white"
+                    android:gravity="center_horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/welcomeHelloMessage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="171dp"/>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <FrameLayout
+                            android:id="@+id/profilePictureCover"
+                            android:layout_marginTop="111dp"
+                            android:foregroundGravity="center"
+                            android:background="@drawable/profile_picture_cover"
+                            android:layout_width="111dp"
+                            android:layout_height="111dp">
+
+                            <View
+                                android:id="@+id/profilePicturePlaceholder"
+                                android:layout_margin="7dp"
+                                android:background="@drawable/profile_picture_placeholder"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                            <ImageView
+                                android:id="@+id/emptyMessageProfilePicture"
+                                android:layout_margin="7dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"/>
+
+                        </FrameLayout>
+
+                        <TextView
+                            android:id="@+id/userFullName"
+                            android:textSize="17sp"
+                            android:gravity="center"
+                            android:textStyle="bold"
+                            android:layout_marginTop="11dp"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/userCurrentLocation"
+                            android:textSize="15sp"
+                            android:visibility="gone"
+                            android:textColor="@color/edit_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <View
+                        android:layout_weight="1"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"/>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:orientation="vertical"
+                        android:gravity="bottom|center"
+                        android:layout_gravity="bottom|center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/wavingHandSenderAnime"
+                            android:layout_marginBottom="25dp"
+                            android:layout_width="77dp"
+                            android:layout_height="77dp"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
