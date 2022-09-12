@@ -132,8 +132,8 @@
                             android:layout_marginTop="111dp"
                             android:foregroundGravity="center"
                             android:background="@drawable/profile_picture_cover"
-                            android:layout_width="111dp"
-                            android:layout_height="111dp">
+                            android:layout_width="125dp"
+                            android:layout_height="125dp">
 
                             <View
                                 android:id="@+id/profilePicturePlaceholder"
