@@ -1004,9 +1004,11 @@ class ProfileEditorActivity : AppCompatActivity() {
                         sharedPreferences.getString(getString(R.string.updated_location), "").toString())
                     sharedPreferencesEditor.apply()
 
-                    binding.locationUpdaterButton.visibility = View.GONE
-                    binding.userLocationHeader.visibility = View.GONE
-                    binding.userLocationValue.visibility = View.GONE
+                    runOnUiThread {
+                        binding.locationUpdaterButton.visibility = View.GONE
+                        binding.userLocationHeader.visibility = View.GONE
+                        binding.userLocationValue.visibility = View.GONE
+                    }
                 }
             }
         })
