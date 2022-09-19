@@ -149,7 +149,14 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             .transform(CenterCrop(), RoundedCorners(33))
             .into(holder.binding.userImage)
 
-        holder.binding.userLocation.text = homeDisplayResponses[position].currentLocation
+        holder.binding.userLocation.text =
+            homeDisplayResponses[position].currentLocation.ifEmpty { "Location Not Set" }
+
+        if (homeDisplayResponses[position].currentLocation.isEmpty()) {
+            holder.binding.userLocation.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.edit_text_hint))
+        } else {
+            holder.binding.userLocation.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.edit_text))
+        }
 
         if (homeDisplayResponses[position].fullName.isEmpty()) {
             holder.binding.userFullName.text =
@@ -206,7 +213,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         homeDisplayModel.binding.userInformationImage.layoutParams.height = imageHeight
 
         homeDisplayModel.binding.userStatusText.text = homeDisplayResponses[position].userStatus
-        homeDisplayModel.binding.userLocation.text = homeDisplayResponses[position].currentLocation
+        homeDisplayModel.binding.userLocation.text =
+            homeDisplayResponses[position].currentLocation.ifEmpty { "Location Not Set" }
 
         val userFullName = homeDisplayResponses[position].fullName.ifEmpty {
             homeDisplayResponses[position].userName.replaceFirstChar { it.uppercase() }

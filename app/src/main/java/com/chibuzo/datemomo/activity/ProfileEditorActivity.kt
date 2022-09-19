@@ -175,9 +175,15 @@ class ProfileEditorActivity : AppCompatActivity() {
             }
         }
 
-        if (sharedPreferences.getString(getString(R.string.updated_location), "")
-                .equals(sharedPreferences.getString(getString(R.string.current_location), ""))
-            && sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
+        if ((sharedPreferences.getString(getString(R.string.updated_location), "")
+                .equals(sharedPreferences.getString(getString(R.string.current_location), "")))
+            && sharedPreferences.getString(getString(R.string.current_location), "")!!.isNotEmpty()) {
+            binding.locationUpdaterSeparator.visibility = View.GONE
+            binding.currentLocationHeader.visibility = View.GONE
+            binding.currentLocationValue.visibility = View.GONE
+            binding.userLocationHeader.visibility = View.GONE
+            binding.userLocationValue.visibility = View.GONE
+        } else if (sharedPreferences.getString(getString(R.string.updated_location), "")!!.isEmpty()) {
             binding.locationUpdaterSeparator.visibility = View.GONE
             binding.currentLocationHeader.visibility = View.GONE
             binding.currentLocationValue.visibility = View.GONE

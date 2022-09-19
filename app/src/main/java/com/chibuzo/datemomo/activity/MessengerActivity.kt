@@ -203,32 +203,10 @@ class MessengerActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_notification) -> {
-                    requestProcess = getString(R.string.request_fetch_notifications)
-                    fetchNotifications()
-                }
-                getString(R.string.activity_home_display) -> {
+                else -> {
                     requestProcess = getString(R.string.request_fetch_matched_users)
                     fetchMatchedUsers()
                 }
-                getString(R.string.activity_user_profile) -> {
-                    requestProcess = getString(R.string.request_fetch_user_likers)
-                    fetchUserLikers()
-                }
-                getString(R.string.activity_user_account) -> {
-                    requestProcess = getString(R.string.request_fetch_liked_users)
-                    fetchLikedUsers()
-                }
-                getString(R.string.activity_message) -> {
-                    activityStackModel.activityStack.pop()
-
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                    sharedPreferencesEditor.apply()
-
-                    super.onBackPressed()
-                }
-                else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()

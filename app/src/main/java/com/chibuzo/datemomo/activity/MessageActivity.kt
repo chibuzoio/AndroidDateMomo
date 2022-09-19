@@ -10,6 +10,8 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.window.OnBackInvokedDispatcher
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -287,19 +289,10 @@ class MessageActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_user_information) -> {
-                    requestProcess = getString(R.string.request_fetch_user_information)
-                    fetchUserInformation()
-                }
-                getString(R.string.activity_home_display) -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
-                }
-                getString(R.string.activity_messenger) -> {
+                else -> {
                     requestProcess = getString(R.string.request_fetch_user_messengers)
                     fetchUserMessengers()
                 }
-                else -> super.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()
