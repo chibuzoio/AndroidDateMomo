@@ -47,6 +47,7 @@ import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -528,7 +529,6 @@ class MainActivity : AppCompatActivity() {
                                 R.drawable.icon_person_blue
                             )
                         )
-                        binding.loginUserNameError.visibility = View.GONE
                     }
                 })
 
@@ -556,7 +556,6 @@ class MainActivity : AppCompatActivity() {
                                 R.drawable.icon_person_blue
                             )
                         )
-                        binding.userNameInputError.visibility = View.GONE
                     }
                 })
 
@@ -584,7 +583,6 @@ class MainActivity : AppCompatActivity() {
                                 R.drawable.icon_password_blue
                             )
                         )
-                        binding.loginPasswordError.visibility = View.GONE
                     }
                 })
 
@@ -612,7 +610,6 @@ class MainActivity : AppCompatActivity() {
                                 R.drawable.icon_password_blue
                             )
                         )
-                        binding.passwordInputError.visibility = View.GONE
                     }
                 })
 
@@ -635,6 +632,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     binding.loginUserNameError.visibility = View.GONE
+                    binding.loginPasswordError.visibility = View.GONE
 
                     showSystemUI()
                 } else {
@@ -662,6 +660,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     binding.userNameInputError.visibility = View.GONE
+                    binding.passwordInputError.visibility = View.GONE
 
                     showSystemUI()
                 } else {
@@ -688,6 +687,7 @@ class MainActivity : AppCompatActivity() {
                             R.drawable.icon_password_blue
                         )
                     )
+                    binding.loginUserNameError.visibility = View.GONE
                     binding.loginPasswordError.visibility = View.GONE
 
                     showSystemUI()
@@ -715,6 +715,7 @@ class MainActivity : AppCompatActivity() {
                             R.drawable.icon_password_blue
                         )
                     )
+                    binding.userNameInputError.visibility = View.GONE
                     binding.passwordInputError.visibility = View.GONE
 
                     showSystemUI()
@@ -1217,6 +1218,8 @@ class MainActivity : AppCompatActivity() {
                     binding.loginProgressIcon.visibility = View.GONE
                 }
 
+                Log.e(TAG, "Error message from trying to login user here is ${e.message}")
+
                 if (!Utility.isConnected(baseContext)) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
@@ -1245,7 +1248,19 @@ class MainActivity : AppCompatActivity() {
                     authenticationResponse = mapper.readValue(myResponse)
                 } catch (exception: IOException) {
                     exception.printStackTrace()
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+
+                    runOnUiThread {
+                        binding.loginAccountSubmit.blueButtonLayout.visibility =
+                            View.VISIBLE
+                        binding.authenticationLayout.visibility = View.VISIBLE
+                        binding.pictureUploadLayout.visibility = View.GONE
+                        binding.registrationLayout.visibility = View.GONE
+                        binding.loginProgressIcon.visibility = View.GONE
+
+//                        binding.loginPasswordError.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.red))
+                        binding.loginPasswordError.text = "User name or password is invalid!"
+                        binding.loginPasswordError.visibility = View.VISIBLE
+                    }
                 }
 
                 if (authenticationResponse.authenticated) {
@@ -1334,6 +1349,18 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
+                } else {
+                    runOnUiThread {
+                        binding.loginAccountSubmit.blueButtonLayout.visibility =
+                            View.VISIBLE
+                        binding.authenticationLayout.visibility = View.VISIBLE
+                        binding.pictureUploadLayout.visibility = View.GONE
+                        binding.registrationLayout.visibility = View.GONE
+                        binding.loginProgressIcon.visibility = View.GONE
+
+                        binding.loginPasswordError.text = "User name or password is invalid!"
+                        binding.loginPasswordError.visibility = View.VISIBLE
+                    }
                 }
             }
         })
@@ -1377,6 +1404,7 @@ class MainActivity : AppCompatActivity() {
                 } else if (e.message!!.contains("after")) {
                     displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
                 } else {
+                    Log.e(TAG, "Error message gotten from trying to register user here is ${e.message}")
                     displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
                 }
             }
