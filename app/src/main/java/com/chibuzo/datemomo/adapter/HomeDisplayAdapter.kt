@@ -195,15 +195,21 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             }
         }
 
-        homeDisplayResponses[position].userPictureModels
-
         sharedPreferencesEditor.putBoolean(context.getString(R.string.user_information_layout_visible), true)
         sharedPreferencesEditor.apply()
 
+        var imageHeight = 0
         val imageWidth = homeDisplayModel.deviceWidth - Utility.dimen(context, 23f)
-        val imageHeight = (homeDisplayResponses[position].userPictureModels[userPicturePosition].imageHeight *
-                (homeDisplayModel.deviceWidth - Utility.dimen(context, 23f))) /
-                homeDisplayResponses[position].userPictureModels[userPicturePosition].imageWidth
+
+        try {
+            imageHeight =
+                (homeDisplayResponses[position].userPictureModels[userPicturePosition].imageHeight *
+                        (homeDisplayModel.deviceWidth - Utility.dimen(context, 23f))) /
+                        homeDisplayResponses[position].userPictureModels[userPicturePosition].imageWidth
+        } catch (exception: IndexOutOfBoundsException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Error message from selecting from array here is ${exception.message}")
+        }
 
         homeDisplayModel.binding.userImageContainer.layoutParams.width = imageWidth
         homeDisplayModel.binding.userImageContainer.layoutParams.height = imageHeight
