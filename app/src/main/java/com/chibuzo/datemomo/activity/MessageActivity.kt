@@ -153,11 +153,13 @@ class MessageActivity : AppCompatActivity() {
         }
 
         binding.receiverUserName.setOnClickListener {
-
+            requestProcess = getString(R.string.request_fetch_user_information)
+            fetchUserInformation()
         }
 
         binding.profilePictureLayout.setOnClickListener {
-
+            requestProcess = getString(R.string.request_fetch_user_information)
+            fetchUserInformation()
         }
 
         binding.backArrowLayout.setOnClickListener {

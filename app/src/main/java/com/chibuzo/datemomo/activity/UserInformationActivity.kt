@@ -77,19 +77,26 @@ class UserInformationActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        try {
+            val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            homeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
+        } catch (exception: IOException) {
+            exception.printStackTrace()
+            finish()
+        }
+
+        messageRequest = MessageRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            homeDisplayResponse.memberId,
+            homeDisplayResponse.fullName,
+            homeDisplayResponse.userName.replaceFirstChar { it.uppercase() },
+            "",
+            homeDisplayResponse.profilePicture)
+
         binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {
             binding.userMessageButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
-
-            messageRequest = MessageRequest(
-                sharedPreferences.getInt(getString(R.string.member_id), 0),
-                homeDisplayResponse.memberId,
-                homeDisplayResponse.fullName,
-                homeDisplayResponse.userName.replaceFirstChar { it.uppercase() },
-                "",
-                homeDisplayResponse.profilePicture)
-
             requestProcess = getString(R.string.request_fetch_user_messages)
-
             fetchUserMessages()
         }
 
@@ -134,15 +141,6 @@ class UserInformationActivity : AppCompatActivity() {
         binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
-        }
-
-        try {
-            val mapper = jacksonObjectMapper()
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            homeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
-        } catch (exception: IOException) {
-            exception.printStackTrace()
-            finish()
         }
 
         Glide.with(this)
