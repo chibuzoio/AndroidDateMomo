@@ -133,6 +133,24 @@ class HomeDisplayActivity : AppCompatActivity() {
         binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
         binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
 
+        val mapper = jacksonObjectMapper()
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val activityStackModel: ActivityStackModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+        if (activityStackModel.activityStack.size > 1) {
+            activityStackModel.activityStack.removeAllElements()
+            activityStackModel.activityStack.push(getString(R.string.activity_home_display))
+            val activityStackString = mapper.writeValueAsString(activityStackModel)
+            sharedPreferencesEditor.putString(
+                getString(R.string.activity_stack),
+                activityStackString
+            )
+            sharedPreferencesEditor.apply()
+        }
+
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
 
