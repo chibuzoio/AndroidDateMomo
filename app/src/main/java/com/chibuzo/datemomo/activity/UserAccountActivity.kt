@@ -355,22 +355,6 @@ class UserAccountActivity : AppCompatActivity() {
 
         try {
             when (activityStackModel.activityStack.peek()) {
-                getString(R.string.activity_messenger) -> {
-                    requestProcess = getString(R.string.request_fetch_user_messengers)
-                    fetchUserMessengers()
-                }
-                getString(R.string.activity_notification) -> {
-                    requestProcess = getString(R.string.request_fetch_notifications)
-                    fetchNotifications()
-                }
-                getString(R.string.activity_home_display) -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
-                }
-                getString(R.string.activity_user_profile) -> {
-                    requestProcess = getString(R.string.request_fetch_user_likers)
-                    fetchUserLikers()
-                }
                 getString(R.string.activity_user_account) -> {
                     activityStackModel.activityStack.pop()
 
@@ -380,7 +364,10 @@ class UserAccountActivity : AppCompatActivity() {
 
                     this.onBackPressed()
                 }
-                else -> super.onBackPressed()
+                else -> {
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
+                }
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()
