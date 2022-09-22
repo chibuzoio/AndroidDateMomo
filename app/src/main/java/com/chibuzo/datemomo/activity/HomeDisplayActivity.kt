@@ -359,6 +359,38 @@ class HomeDisplayActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
+            binding.userGay.blueButtonLayout.visibility = View.GONE
+            binding.userToyBoy.blueButtonLayout.visibility = View.GONE
+            binding.gayInterest.blueButtonLayout.visibility = View.GONE
+            binding.userLesbian.blueButtonLayout.visibility = View.GONE
+            binding.userToyGirl.blueButtonLayout.visibility = View.GONE
+            binding.userBisexual.blueButtonLayout.visibility = View.GONE
+            binding.userStraight.blueButtonLayout.visibility = View.GONE
+            binding.toyBoyInterest.blueButtonLayout.visibility = View.GONE
+            binding.userSugarDaddy.blueButtonLayout.visibility = View.GONE
+            binding.userSugarMommy.blueButtonLayout.visibility = View.GONE
+            binding.lesbianInterest.blueButtonLayout.visibility = View.GONE
+            binding.toyGirlInterest.blueButtonLayout.visibility = View.GONE
+            binding.bisexualInterest.blueButtonLayout.visibility = View.GONE
+            binding.carSexExperience.blueButtonLayout.visibility = View.GONE
+            binding.sexToyExperience.blueButtonLayout.visibility = View.GONE
+            binding.straightInterest.blueButtonLayout.visibility = View.GONE
+            binding.analSexExperience.blueButtonLayout.visibility = View.GONE
+            binding.orgySexExperience.blueButtonLayout.visibility = View.GONE
+            binding.poolSexExperience.blueButtonLayout.visibility = View.GONE
+            binding.friendshipInterest.blueButtonLayout.visibility = View.GONE
+            binding.sugarDaddyInterest.blueButtonLayout.visibility = View.GONE
+            binding.sugarMommyInterest.blueButtonLayout.visibility = View.GONE
+            binding.videoSexExperience.blueButtonLayout.visibility = View.GONE
+            binding.cameraSexExperience.blueButtonLayout.visibility = View.GONE
+            binding.givenHeadExperience.blueButtonLayout.visibility = View.GONE
+            binding.publicSexExperience.blueButtonLayout.visibility = View.GONE
+            binding.sixtyNineExperience.blueButtonLayout.visibility = View.GONE
+            binding.threesomeExperience.blueButtonLayout.visibility = View.GONE
+            binding.missionaryExperience.blueButtonLayout.visibility = View.GONE
+            binding.relationshipInterest.blueButtonLayout.visibility = View.GONE
+            binding.receivedHeadExperience.blueButtonLayout.visibility = View.GONE
+            binding.oneNightStandExperience.blueButtonLayout.visibility = View.GONE
         } else {
             finishAffinity()
         }
