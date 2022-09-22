@@ -218,74 +218,76 @@ class MessengerActivity : AppCompatActivity() {
 
     @Throws(IOException::class)
     fun fetchMoreTwentyUsers() {
-        binding.emptyMessengerProgressBar.visibility = View.VISIBLE
+        if (totalAvailablePages < outerHomeDisplayResponse.thousandRandomCounter.size) {
+            binding.emptyMessengerProgressBar.visibility = View.VISIBLE
 
-        var twentyIterationCounter = 0
-        val homeDisplayRequest = HomeDisplayRequest(arrayListOf())
+            var twentyIterationCounter = 0
+            val homeDisplayRequest = HomeDisplayRequest(arrayListOf())
 
-        for (index in outerHomeDisplayResponse.thousandRandomCounter.indices) {
-            if (index > lastDisplayPage) {
-                homeDisplayRequest.nextMatchedUsersIdArray.add(outerHomeDisplayResponse.thousandRandomCounter[index])
-                twentyIterationCounter++
+            for (index in outerHomeDisplayResponse.thousandRandomCounter.indices) {
+                if (index > lastDisplayPage) {
+                    homeDisplayRequest.nextMatchedUsersIdArray.add(outerHomeDisplayResponse.thousandRandomCounter[index])
+                    twentyIterationCounter++
 
-                if (twentyIterationCounter >= 20) {
-                    break
+                    if (twentyIterationCounter >= 20) {
+                        break
+                    }
                 }
             }
+
+            val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
+            val requestBody: RequestBody = RequestBody.create(
+                MediaType.parse("application/json"),
+                jsonObjectString
+            )
+
+            val client = OkHttpClient()
+            val request: Request = Request.Builder()
+                .url(getString(R.string.date_momo_api) + getString(R.string.api_more_matched_user_data))
+                .post(requestBody)
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    call.cancel()
+
+                    if (!Utility.isConnected(this@MessengerActivity)) {
+                        displayDoubleButtonDialog()
+                    } else if (e.message!!.contains("after")) {
+                        displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                    } else {
+                        displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                    }
+
+                    runOnUiThread {
+                        binding.emptyMessengerProgressBar.visibility = View.GONE
+                    }
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    val myResponse: String = response.body()!!.string()
+                    homeDisplayResponseArray = mapper.readValue(myResponse)
+
+                    runOnUiThread {
+                        val scrollToPosition = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                        binding.emptyMessengerProgressBar.visibility = View.GONE
+
+                        outerHomeDisplayResponse.homeDisplayResponses.addAll(homeDisplayResponseArray)
+                        totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
+
+                        binding.emptyMessengerRecyclerView.adapter!!.notifyItemRangeInserted(
+                            lastDisplayPage + 1, outerHomeDisplayResponse.homeDisplayResponses.size)
+
+                        lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
+
+                        binding.emptyMessengerRecyclerView.layoutManager!!.scrollToPosition(scrollToPosition)
+                    }
+                }
+            })
         }
-
-        val mapper = jacksonObjectMapper()
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
-        val requestBody: RequestBody = RequestBody.create(
-            MediaType.parse("application/json"),
-            jsonObjectString
-        )
-
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + getString(R.string.api_more_matched_user_data))
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                call.cancel()
-
-                if (!Utility.isConnected(this@MessengerActivity)) {
-                    displayDoubleButtonDialog()
-                } else if (e.message!!.contains("after")) {
-                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
-                } else {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }
-
-                runOnUiThread {
-                    binding.emptyMessengerProgressBar.visibility = View.GONE
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val myResponse: String = response.body()!!.string()
-                homeDisplayResponseArray = mapper.readValue(myResponse)
-
-                runOnUiThread {
-                    val scrollToPosition = outerHomeDisplayResponse.homeDisplayResponses.size
-
-                    binding.emptyMessengerProgressBar.visibility = View.GONE
-
-                    outerHomeDisplayResponse.homeDisplayResponses.addAll(homeDisplayResponseArray)
-                    totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
-
-                    binding.emptyMessengerRecyclerView.adapter!!.notifyItemRangeInserted(
-                        lastDisplayPage + 1, outerHomeDisplayResponse.homeDisplayResponses.size)
-
-                    lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
-
-                    binding.emptyMessengerRecyclerView.layoutManager!!.scrollToPosition(scrollToPosition)
-                }
-            }
-        })
     }
 
     @Throws(IOException::class)

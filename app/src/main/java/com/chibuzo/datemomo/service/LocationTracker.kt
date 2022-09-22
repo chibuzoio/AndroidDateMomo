@@ -75,13 +75,13 @@ class LocationTracker(private val context: Context): Service(), LocationListener
                         )
                     }
 
-                    locationManager!!.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        MIN_TIME_BW_UPDATES,
-                        MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this
-                    )
-
                     if (locationManager != null) {
+                        locationManager!!.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            MIN_TIME_BW_UPDATES,
+                            MIN_DISTANCE_CHANGE_FOR_UPDATES.toFloat(), this
+                        )
+
                         locationObject = locationManager!!
                             .getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
@@ -210,8 +210,10 @@ class LocationTracker(private val context: Context): Service(), LocationListener
 
     //Runs when location is changed
     override fun onLocationChanged(location: Location) {
-        locationObject!!.latitude = location.latitude
-        locationObject!!.longitude = location.longitude
+        if (locationObject != null) {
+            locationObject!!.latitude = location.latitude
+            locationObject!!.longitude = location.longitude
+        }
     }
 
     override fun onStatusChanged(s: String, i: Int, bundle: Bundle) {}

@@ -119,13 +119,8 @@ class UserProfileActivity : AppCompatActivity() {
                 val postalCode = addresses[0].postalCode
                 val knownName = addresses[0].featureName
 
-                if (knownName.isNullOrEmpty()) {
-                    sharedPreferencesEditor.putString(getString(R.string.updated_location), city)
-                    sharedPreferencesEditor.apply()
-                } else {
-                    sharedPreferencesEditor.putString(getString(R.string.updated_location), knownName)
-                    sharedPreferencesEditor.apply()
-                }
+                sharedPreferencesEditor.putString(getString(R.string.updated_location), city)
+                sharedPreferencesEditor.apply()
 
                 // notify user of location change here
             } catch (exception: Exception) {

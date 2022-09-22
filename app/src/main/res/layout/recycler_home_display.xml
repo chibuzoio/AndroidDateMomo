@@ -48,7 +48,7 @@
 
             <TextView
                 android:id="@+id/userFullName"
-                android:textSize="23sp"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/edit_text"
                 android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
 
             <TextView
                 android:id="@+id/userLocation"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textColor="@color/edit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
