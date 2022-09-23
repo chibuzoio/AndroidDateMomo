@@ -4,16 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
-import android.window.OnBackInvokedDispatcher
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -39,7 +34,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
@@ -68,6 +62,7 @@ class MessageActivity : AppCompatActivity() {
         viewRootHeightArray = mutableSetOf()
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
+
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
@@ -80,6 +75,14 @@ class MessageActivity : AppCompatActivity() {
             binding = binding,
             messageActivity = this
         )
+
+        binding.messengerBlockUser.setOnClickListener {
+            // Display user blocking dialog
+        }
+
+        binding.messengerReportUser.setOnClickListener {
+            // Navigate to user reporting activity
+        }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE

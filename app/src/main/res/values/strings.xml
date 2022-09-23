@@ -30,6 +30,10 @@
     <string name="title_sexuality">%1$s sexuality</string>
     <string name="title_interest">%1$s is looking for</string>
     <string name="title_experience">%1$s sexual fantasies</string>
+    <string name="report_abusive_words">%1$s used abusive words on me</string>
+    <string name="report_sexual_harassment">%1$s sexually harassed me</string>
+    <string name="report_user_header">Choose what you want to report about %1$s or write it in details:</string>
+    <string name="report_user_impersonation">%1$s is using my picture/video on his account, without my consent</string>
 
     <string name="status_default">Hello dear! Welcome to my profile!</string>
     <string name="status_available">Available</string>
