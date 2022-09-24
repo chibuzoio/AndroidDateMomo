@@ -65,12 +65,14 @@
     <string name="user_logout_title">Logout</string>
     <string name="server_error_title">Server Error</string>
     <string name="network_error_title">Network Error</string>
+    <string name="report_committed_title">Report Sent!</string>
     <string name="poor_internet_title">Poor Connectivity</string>
     <string name="user_logout_message">Do you really want to logout from DateMomo?</string>
     <string name="user_category_error">Choose at least one of the options in the categories</string>
     <string name="network_error_message">Check your internet connection or connect your device to a WiFi network</string>
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
     <string name="poor_internet_message">Your device is experiencing poor internet connection. Check your network or connect to a WiFi network</string>
+    <string name="report_committed_message">Your report against %1$s has been sent to DateMomo. Thank you for contacting DateMomo. We will do our best to serve you better!</string>
 
     <string name="request_register_user">registerUser</string>
     <string name="request_fetch_liked_users">fetchLikedUsers</string>
@@ -135,6 +137,7 @@
     <string name="api_user_name_composite">service/usernamecomposite.php</string>
     <string name="api_check_unseen_message">service/checkunseenmessage.php</string>
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
+    <string name="api_commit_report_message">service/commitreportmessage.php</string>
     <string name="api_more_matched_user_data">service/morematcheduserdata.php</string>
     <string name="api_change_profile_picture">service/changeprofilepicture.php</string>
     <string name="api_delete_profile_picture">service/deleteprofilepicture.php</string>

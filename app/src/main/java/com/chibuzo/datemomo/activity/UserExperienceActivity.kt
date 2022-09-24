@@ -17,6 +17,8 @@ import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
+import com.chibuzo.datemomo.model.request.UserReportRequest
+import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -24,6 +26,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class UserExperienceActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
@@ -33,6 +36,7 @@ class UserExperienceActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var viewRootHeightArray: MutableSet<Int>
     private lateinit var binding: ActivityUserExperienceBinding
+    private var userReportingMessages: ArrayList<String> = arrayListOf()
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,15 +57,66 @@ class UserExperienceActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        binding.userReportingError.text = "You have not selected any report yet!"
+
+        binding.submitReportButton.blueButtonLayout.setOnClickListener {
+            binding.submitReportButton.blueButtonLayout.startAnimation(buttonClickEffect)
+
+            if (binding.userReportingEditor.text.toString().trim() != "") { userReportingMessages.add(binding.userReportingEditor.text.toString().trim()) }
+            if (binding.impersonationCheckbox.isChecked) { userReportingMessages.add(binding.impersonationCheckbox.text.toString()) }
+            if (binding.harassmentCheckbox.isChecked) { userReportingMessages.add(binding.harassmentCheckbox.text.toString()) }
+            if (binding.abusiveCheckbox.isChecked) { userReportingMessages.add(binding.abusiveCheckbox.text.toString()) }
+
+            if (userReportingMessages.size > 0) {
+                binding.userReportingError.visibility = View.GONE
+                commitReportingMessages()
+            } else {
+                binding.userReportingError.visibility = View.VISIBLE
+            }
+        }
+
+        binding.abusiveCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.userReportingError.visibility = View.GONE
+            } else {
+
+            }
+        }
+
+        binding.harassmentCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.userReportingError.visibility = View.GONE
+            } else {
+
+            }
+        }
+
+        binding.impersonationCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.userReportingError.visibility = View.GONE
+            } else {
+
+            }
+        }
+
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
-            triggerRequestProcess()
+
+            if (binding.singleButtonDialog.dialogRetryButton.text == "Done") {
+                onBackPressed()
+            } else {
+                triggerRequestProcess()
+            }
         }
 
         binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+            if (binding.singleButtonDialog.dialogRetryButton.text == "Done") {
+                onBackPressed()
+            }
         }
 
         binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
@@ -170,6 +225,58 @@ class UserExperienceActivity : AppCompatActivity() {
         }
 
         Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+    }
+
+    @Throws(IOException::class)
+    fun commitReportingMessages() {
+        val mapper = jacksonObjectMapper()
+
+        val userReportRequest = UserReportRequest(
+            bundle.getInt("memberId"),
+            mapper.writeValueAsString(userReportingMessages)
+        )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userReportRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_commit_report_message))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse = mapper.readValue(myResponse) as CommittedResponse
+
+                if (committedResponse.committed) {
+                    runOnUiThread {
+                        binding.singleButtonDialog.dialogRetryButton.text = "Done"
+                    }
+
+                    displaySingleButtonDialog(getString(R.string.report_committed_title),
+                        getString(R.string.report_committed_message))
+                }
+            }
+        })
     }
 
     @Throws(IOException::class)

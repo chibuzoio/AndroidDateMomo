@@ -97,6 +97,15 @@
                 android:id="@+id/submitReportButton"
                 layout="@layout/include_blue_button"/>
 
+            <TextView
+                android:id="@+id/userReportingError"
+                android:visibility="gone"
+                android:textColor="@color/red"
+                android:layout_marginTop="7dp"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <include
