@@ -168,6 +168,42 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messengerReportUser"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="Report User"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/messengerBlockUser"
+                    android:orientation="vertical"
+                    android:paddingVertical="11dp"
+                    android:gravity="center_vertical"
+                    android:layout_marginHorizontal="11dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textSize="19sp"
+                        android:text="Block User"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/cancelMenu"
                     android:orientation="vertical"
                     android:paddingVertical="11dp"

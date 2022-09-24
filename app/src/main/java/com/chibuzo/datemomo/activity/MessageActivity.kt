@@ -81,7 +81,32 @@ class MessageActivity : AppCompatActivity() {
         }
 
         binding.messengerReportUser.setOnClickListener {
-            // Navigate to user reporting activity
+            val mapper = jacksonObjectMapper()
+
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+            val activityStackModel: ActivityStackModel =
+                mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+            if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_experience)) {
+                activityStackModel.activityStack.push(getString(R.string.activity_user_experience))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(
+                    getString(R.string.activity_stack),
+                    activityStackString
+                )
+                sharedPreferencesEditor.apply()
+            }
+
+            Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
+            val intent = Intent(this, UserExperienceActivity::class.java)
+            intent.putExtra("profilePicture", bundle.getString("profilePicture"))
+            intent.putExtra("lastActiveTime", bundle.getString("lastActiveTime"))
+            intent.putExtra("userName", bundle.getString("userName"))
+            intent.putExtra("fullName", bundle.getString("fullName"))
+            intent.putExtra("memberId", bundle.getInt("receiverId"))
+            startActivity(intent)
         }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {

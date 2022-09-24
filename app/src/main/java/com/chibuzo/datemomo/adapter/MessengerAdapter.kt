@@ -1,7 +1,9 @@
 package com.chibuzo.datemomo.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +12,17 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.UserExperienceActivity
 import com.chibuzo.datemomo.databinding.RecyclerMessengerBinding
+import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.MessengerModel
 import com.chibuzo.datemomo.model.request.DeleteMessageRequest
 import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.response.MessengerResponse
 import com.chibuzo.datemomo.utility.Utility
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 class MessengerAdapter(private var messengerResponses: ArrayList<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
@@ -82,6 +89,39 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             messengerModel.binding.messengerMenuLayout.visibility = View.VISIBLE
             messengerModel.currentPosition = position
             return@setOnLongClickListener true
+        }
+
+        messengerModel.binding.messengerBlockUser.setOnClickListener {
+
+        }
+
+        messengerModel.binding.messengerReportUser.setOnClickListener {
+            val mapper = jacksonObjectMapper()
+
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+            val activityStackModel: ActivityStackModel =
+                mapper.readValue(sharedPreferences.getString(holder.itemView.context.getString(R.string.activity_stack), "")!!)
+
+            if (activityStackModel.activityStack.peek() != holder.itemView.context.getString(R.string.activity_user_experience)) {
+                activityStackModel.activityStack.push(holder.itemView.context.getString(R.string.activity_user_experience))
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(
+                    holder.itemView.context.getString(R.string.activity_stack),
+                    activityStackString
+                )
+                sharedPreferencesEditor.apply()
+            }
+
+            Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(holder.itemView.context.getString(R.string.activity_stack), "")}")
+
+            val intent = Intent(holder.itemView.context, UserExperienceActivity::class.java)
+            intent.putExtra("profilePicture", messengerResponses[messengerModel.currentPosition].profilePicture)
+            intent.putExtra("memberId", messengerResponses[messengerModel.currentPosition].chatmateId)
+            intent.putExtra("userName", messengerResponses[messengerModel.currentPosition].userName)
+            intent.putExtra("fullName", messengerResponses[messengerModel.currentPosition].fullName)
+            intent.putExtra("lastActiveTime", "")
+            holder.itemView.context.startActivity(intent)
         }
 
         messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.setOnClickListener {

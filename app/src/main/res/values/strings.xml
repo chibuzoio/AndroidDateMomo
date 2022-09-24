@@ -18,6 +18,7 @@
     <string name="activity_user_profile">UserProfileActivity</string>
     <string name="activity_notification">NotificationActivity</string>
     <string name="activity_image_display">ImageDisplayActivity</string>
+    <string name="activity_user_experience">UserExperienceActivity</string>
     <string name="activity_user_information">UserInformationActivity</string>
 
     <string name="clicked_home_menu">clickedHomeMenu</string>

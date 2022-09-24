@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <FrameLayout
         android:padding="11dp"
-        android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -16,84 +15,99 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Choose what you want to report about Okenna or write it in details: -->
-
-        <TextView
-            android:id="@+id/userReportingHeader"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:layout_marginTop="11dp"
-            android:textColor="@color/edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <!-- Okenna used abusive words on me -->
-
-        <CheckBox
-            android:id="@+id/abusiveCheckbox"
-            android:textSize="16sp"
-            android:layout_marginTop="11dp"
-            android:textColor="@color/edit_text"
-            android:theme="@style/Platform.MaterialComponents.Light"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-        <!-- Okenna sexually harassed me -->
+            <!-- Choose what you want to report about Okenna or write it in details: -->
 
-        <CheckBox
-            android:id="@+id/harassmentCheckbox"
-            android:textSize="16sp"
-            android:layout_marginTop="11dp"
-            android:textColor="@color/edit_text"
-            android:theme="@style/Platform.MaterialComponents.Light"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/userReportingHeader"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_marginTop="11dp"
+                android:textColor="@color/edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-        <!-- Okenna is using my picture/video on his account, without my consent -->
+            <!-- Okenna used abusive words on me -->
 
-        <CheckBox
-            android:id="@+id/impersonationCheckbox"
-            android:textSize="16sp"
-            android:layout_marginTop="11dp"
-            android:textColor="@color/edit_text"
-            android:theme="@style/Platform.MaterialComponents.Light"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/abusiveCheckbox"
+                android:textSize="16sp"
+                android:layout_marginTop="11dp"
+                android:textColor="@color/edit_text"
+                android:theme="@style/Platform.MaterialComponents.Light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-        <TextView
-            android:text="Other:"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="21dp"
-            android:textColor="@color/edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <!-- Okenna sexually harassed me -->
 
-        <EditText
-            android:id="@+id/userReportingEditor"
-            android:lines="5"
-            android:minLines="5"
-            android:maxLines="5"
-            android:gravity="top|start"
-            android:scrollbars="vertical"
-            android:hint="Detailed report"
-            android:paddingVertical="11dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginTop="7dp"
-            android:paddingHorizontal="11dp"
-            android:inputType="textMultiLine"
-            android:scrollHorizontally="false"
-            android:layout_marginBottom="15dp"
-            android:textColor="@color/edit_text"
-            android:background="@drawable/normal_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/harassmentCheckbox"
+                android:textSize="16sp"
+                android:layout_marginTop="11dp"
+                android:textColor="@color/edit_text"
+                android:theme="@style/Platform.MaterialComponents.Light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <!-- Okenna is using my picture/video on his account, without my consent -->
+
+            <CheckBox
+                android:id="@+id/impersonationCheckbox"
+                android:textSize="16sp"
+                android:layout_marginTop="11dp"
+                android:textColor="@color/edit_text"
+                android:theme="@style/Platform.MaterialComponents.Light"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="Other:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="21dp"
+                android:textColor="@color/edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/userReportingEditor"
+                android:lines="5"
+                android:minLines="5"
+                android:maxLines="5"
+                android:gravity="top|start"
+                android:scrollbars="vertical"
+                android:hint="Detailed report"
+                android:paddingVertical="11dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="7dp"
+                android:paddingHorizontal="11dp"
+                android:inputType="textMultiLine"
+                android:scrollHorizontally="false"
+                android:layout_marginBottom="15dp"
+                android:textColor="@color/edit_text"
+                android:background="@drawable/normal_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include
+                android:id="@+id/submitReportButton"
+                layout="@layout/include_blue_button"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <include
-            android:id="@+id/submitReportButton"
-            layout="@layout/include_blue_button"/>
+            android:id="@+id/doubleButtonDialog"
+            layout="@layout/include_double_button_dialog"/>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        <include
+            android:id="@+id/singleButtonDialog"
+            layout="@layout/include_single_button_dialog"/>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
