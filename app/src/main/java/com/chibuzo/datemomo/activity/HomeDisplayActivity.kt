@@ -11,6 +11,8 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -23,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
+import com.chibuzo.datemomo.control.AppBounceInterpolator
 import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
@@ -43,7 +46,6 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -55,6 +57,9 @@ class HomeDisplayActivity : AppCompatActivity() {
     private var isActivityActive: Boolean = true
     private var userUpdatedLocation: String = ""
     private var originalRequestProcess: String = ""
+    private lateinit var bounceAnimation: Animation
+    private lateinit var slideUpAnimation: Animation
+    private lateinit var slideDownAnimation: Animation
     private lateinit var messageRequest: MessageRequest
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var homeDisplayModel: HomeDisplayModel
@@ -89,6 +94,11 @@ class HomeDisplayActivity : AppCompatActivity() {
         bundle = intent.extras!!
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
+
+        bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
+        slideUpAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_up)
+        slideDownAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_down)
+
         sharedPreferences =
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
@@ -153,6 +163,28 @@ class HomeDisplayActivity : AppCompatActivity() {
 
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
+
+        val appBounceInterpolator = AppBounceInterpolator(0.2, 20.0)
+        bounceAnimation.interpolator = appBounceInterpolator
+
+        slideUpAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                binding.floatingPictureUploader.startAnimation(bounceAnimation)
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+
+            }
+        })
+
+        binding.floatingPictureUploader.setOnClickListener {
+            binding.floatingPictureUploader.startAnimation(bounceAnimation)
+
+        }
 
         binding.emptyTimelineDialog.dialogActivityButton.blueButtonText.text = "Go To Settings"
         binding.emptyTimelineDialog.dialogActivityText.text =
@@ -308,7 +340,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                 binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
                 homeDisplayModel = HomeDisplayModel(
-                    deviceWidth, requestProcess,
+                    deviceWidth, requestProcess, bounceAnimation,
                     buttonClickEffect, binding, this
                 )
 
@@ -323,6 +355,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                     RecyclerView.OnScrollListener() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         super.onScrolled(recyclerView, dx, dy)
+
+                        binding.floatingPictureUploader.startAnimation(slideUpAnimation)
 
                         if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
                             requestProcess = getString(R.string.request_fetch_more_matched_users)

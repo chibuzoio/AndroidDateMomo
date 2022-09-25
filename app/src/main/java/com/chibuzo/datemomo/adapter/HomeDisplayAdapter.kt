@@ -126,6 +126,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         }
 
         holder.binding.loveUserLayout.setOnClickListener {
+            holder.binding.loveUserIcon.startAnimation(homeDisplayModel.bounceAnimation)
+
             homeDisplayResponses[position].liked = !homeDisplayResponses[position].liked
             notifyItemChanged(position)
 
