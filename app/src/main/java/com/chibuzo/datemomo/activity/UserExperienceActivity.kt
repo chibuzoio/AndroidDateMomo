@@ -213,7 +213,7 @@ class UserExperienceActivity : AppCompatActivity() {
 
         try {
             when (activityStackModel.activityStack.peek()) {
-                getString(R.string.activity_user_information) -> {
+                getString(R.string.activity_user_experience) -> {
                     activityStackModel.activityStack.pop()
 
                     val activityStackString = mapper.writeValueAsString(activityStackModel)

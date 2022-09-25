@@ -877,7 +877,7 @@ class UserProfileActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                var pictureUpdateResponse = PictureUpdateResponse("")
+                val pictureUpdateResponse: PictureUpdateResponse
 
                 try {
                     pictureUpdateResponse = mapper.readValue(myResponse)

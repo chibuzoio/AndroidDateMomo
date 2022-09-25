@@ -1,12 +1,17 @@
 package com.chibuzo.datemomo.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -23,6 +28,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
 import com.chibuzo.datemomo.control.AppBounceInterpolator
@@ -33,6 +40,7 @@ import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
+import com.chibuzo.datemomo.model.response.PictureUpdateResponse
 import com.chibuzo.datemomo.service.LocationTracker
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -43,6 +51,7 @@ import okio.ByteString
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -51,7 +60,11 @@ class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private var photoFile: File? = null
     private var lastDisplayPage: Int = 0
+    private val PICK_IMAGE_REQUEST = 200
+    private var theBitmap: Bitmap? = null
+    private val CAPTURE_IMAGE_REQUEST = 100
     private var requestProcess: String = ""
     private var totalAvailablePages: Int = 0
     private var isActivityActive: Boolean = true
@@ -183,7 +196,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         binding.floatingPictureUploader.setOnClickListener {
             binding.floatingPictureUploader.startAnimation(bounceAnimation)
-
+            pickImageFromGallery()
         }
 
         binding.emptyTimelineDialog.dialogActivityButton.blueButtonText.text = "Go To Settings"
@@ -428,6 +441,102 @@ class HomeDisplayActivity : AppCompatActivity() {
         } else {
             finishAffinity()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == CAPTURE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            theBitmap = BitmapFactory.decodeFile(photoFile!!.absolutePath)
+        } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            theBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val source = ImageDecoder.createSource(contentResolver, data?.data!!)
+                ImageDecoder.decodeBitmap(source)
+            } else{
+                MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
+            }
+        }
+
+        if (theBitmap != null) {
+            updateProfilePicture()
+        }
+    }
+
+    @Throws(IOException::class)
+    fun updateProfilePicture() {
+        val imageWidth = theBitmap!!.width
+        val imageHeight = theBitmap!!.height
+
+        val base64Picture = Utility.encodeUploadImage(theBitmap!!)
+
+        val mapper = jacksonObjectMapper()
+        val pictureUpdateRequest = PictureUpdateRequest(
+            sharedPreferences.getInt(getString(R.string.member_id), 0),
+            imageWidth,
+            imageHeight,
+            base64Picture
+        )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(pictureUpdateRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_update_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(
+                        getString(R.string.poor_internet_title),
+                        getString(R.string.poor_internet_message)
+                    )
+                } else {
+                    displaySingleButtonDialog(
+                        getString(R.string.server_error_title),
+                        getString(R.string.server_error_message)
+                    )
+                }
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+
+                try {
+                    val pictureUpdateResponse = mapper.readValue(myResponse) as PictureUpdateResponse
+
+                    sharedPreferencesEditor.putString(getString(R.string.profile_picture),
+                        pictureUpdateResponse.profilePicture)
+                    sharedPreferencesEditor.apply()
+
+                    fetchUserLikers()
+                } catch (exception: IOException) {
+                    exception.printStackTrace()
+                    displaySingleButtonDialog(
+                        getString(R.string.server_error_title),
+                        getString(R.string.server_error_message)
+                    )
+                }
+            }
+        })
+    }
+
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
     private fun startSystemSocket() {
