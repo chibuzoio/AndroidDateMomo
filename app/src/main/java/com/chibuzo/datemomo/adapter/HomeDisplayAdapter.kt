@@ -186,7 +186,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             homeDisplayResponses[position].memberId,
             homeDisplayResponses[position].fullName,
             homeDisplayResponses[position].userName, "",
-            homeDisplayResponses[position].profilePicture)
+            homeDisplayResponses[position].profilePicture,
+            homeDisplayResponses[position].userBlockedStatus)
         this.userInformationRequest = UserInformationRequest(
             homeDisplayResponses[position].memberId
         )

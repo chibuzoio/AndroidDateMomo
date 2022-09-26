@@ -304,7 +304,8 @@ class UserExperienceActivity : AppCompatActivity() {
             bundle.getString("fullName")!!,
             bundle.getString("userName")!!.replaceFirstChar { it.uppercase() },
             bundle.getString("lastActiveTime")!!,
-            bundle.getString("profilePicture")!!)
+            bundle.getString("profilePicture")!!,
+            bundle.getInt("userBlockedStatus"))
 
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -356,6 +357,7 @@ class UserExperienceActivity : AppCompatActivity() {
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, MessageActivity::class.java)
+                intent.putExtra("userBlockedStatus", messageRequest.userBlockedStatus)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
                 intent.putExtra("receiverId", messageRequest.receiverId)

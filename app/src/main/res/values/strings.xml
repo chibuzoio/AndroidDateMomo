@@ -130,6 +130,7 @@
     <string name="api_update_sexuality">service/updatesexuality.php</string>
     <string name="api_user_information">service/userinformation.php</string>
     <string name="api_matched_user_data">service/matcheduserdata.php</string>
+    <string name="api_block_accused_user">service/blockaccuseduser.php</string>
     <string name="api_user_messages_data">service/usermessagesdata.php</string>
     <string name="api_user_status_update">service/userstatusupdate.php</string>
     <string name="api_check_notification">service/checknotification.php</string>

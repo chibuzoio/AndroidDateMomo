@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -77,7 +78,17 @@ class MessageActivity : AppCompatActivity() {
         )
 
         binding.messengerBlockUser.setOnClickListener {
-            // Display user blocking dialog
+            binding.messengerMenuLayout.visibility = View.GONE
+
+            val accusedUser = bundle.getString("fullName")!!.ifEmpty() {
+                bundle.getString("userName")!!.replaceFirstChar { it.uppercase() } }
+
+            binding.doubleButtonDialog.dialogRetryButton.text = "Block"
+            binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
+            binding.doubleButtonDialog.doubleButtonMessage.text = "Do you want to block $accusedUser?"
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
 
         binding.messengerReportUser.setOnClickListener {
@@ -101,6 +112,7 @@ class MessageActivity : AppCompatActivity() {
             Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
             val intent = Intent(this, UserExperienceActivity::class.java)
+            intent.putExtra("userBlockedStatus", bundle.getInt("userBlockedStatus"))
             intent.putExtra("profilePicture", bundle.getString("profilePicture"))
             intent.putExtra("lastActiveTime", bundle.getString("lastActiveTime"))
             intent.putExtra("userName", bundle.getString("userName"))
@@ -126,6 +138,8 @@ class MessageActivity : AppCompatActivity() {
 
             if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
                 triggerRequestProcess()
+            } else {
+                blockAccusedUser()
             }
         }
 
@@ -342,6 +356,43 @@ class MessageActivity : AppCompatActivity() {
     }
 
     @Throws(IOException::class)
+    fun blockAccusedUser() {
+        val unixTime = System.currentTimeMillis() / 1000L
+
+        val userBlockingRequest = UserBlockingRequest(
+            userAccusedId = bundle.getInt("receiverId"),
+            userBlockerId = sharedPreferences.getInt(getString(R.string.member_id), 0),
+            userBlockedStatus = bundle.getInt("userBlockedStatus"),
+            userBlockedDate = unixTime.toString()
+        )
+
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val jsonObjectString = mapper.writeValueAsString(userBlockingRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_edit_message))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+            }
+        })
+    }
+
+    @Throws(IOException::class)
     fun fetchUserInformation() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -446,7 +497,8 @@ class MessageActivity : AppCompatActivity() {
             fullName = bundle.getString("fullName").toString(),
             userName = bundle.getString("userName").toString(),
             lastActiveTime = bundle.getString("lastActiveTime").toString(),
-            profilePicture = bundle.getString("profilePicture").toString()
+            profilePicture = bundle.getString("profilePicture").toString(),
+            userBlockedStatus = 0
         )
 
         val jsonObjectString = mapper.writeValueAsString(messageRequest)
@@ -697,8 +749,12 @@ class MessageActivity : AppCompatActivity() {
 
     fun displayDoubleButtonDialog() {
         runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Retry"
+            binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
             binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.red))
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
     }

@@ -92,7 +92,8 @@ class UserInformationActivity : AppCompatActivity() {
             homeDisplayResponse.fullName,
             homeDisplayResponse.userName.replaceFirstChar { it.uppercase() },
             "",
-            homeDisplayResponse.profilePicture)
+            homeDisplayResponse.profilePicture,
+            homeDisplayResponse.userBlockedStatus)
 
         binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {
             binding.userMessageButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
@@ -839,6 +840,7 @@ class UserInformationActivity : AppCompatActivity() {
                 Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 val intent = Intent(baseContext, MessageActivity::class.java)
+                intent.putExtra("userBlockedStatus", messageRequest.userBlockedStatus)
                 intent.putExtra("profilePicture", messageRequest.profilePicture)
                 intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
                 intent.putExtra("receiverId", messageRequest.receiverId)

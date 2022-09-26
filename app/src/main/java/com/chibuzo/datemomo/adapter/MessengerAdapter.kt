@@ -116,6 +116,7 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(holder.itemView.context.getString(R.string.activity_stack), "")}")
 
             val intent = Intent(holder.itemView.context, UserExperienceActivity::class.java)
+            intent.putExtra("userBlockedStatus", messengerResponses[messengerModel.currentPosition].userBlockedStatus)
             intent.putExtra("profilePicture", messengerResponses[messengerModel.currentPosition].profilePicture)
             intent.putExtra("memberId", messengerResponses[messengerModel.currentPosition].chatmateId)
             intent.putExtra("userName", messengerResponses[messengerModel.currentPosition].userName)
@@ -172,7 +173,8 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
                 messengerResponses[position].fullName,
                 messengerResponses[position].userName,
                 "",
-                messengerResponses[position].profilePicture
+                messengerResponses[position].profilePicture,
+                0
             )
 
             messengerModel.messengerActivity.fetchUserMessages(messageRequest)

@@ -58,7 +58,8 @@ class EmptyMessengerAdapter(private var homeDisplayResponses: ArrayList<HomeDisp
                 fullName = homeDisplayResponses[position].fullName,
                 userName = homeDisplayResponses[position].userName,
                 lastActiveTime = "",
-                profilePicture = homeDisplayResponses[position].profilePicture
+                profilePicture = homeDisplayResponses[position].profilePicture,
+                userBlockedStatus = 0
             )
 
             (allLikersModel.appCompatActivity as MessengerActivity).fetchUserMessages(messageRequest)

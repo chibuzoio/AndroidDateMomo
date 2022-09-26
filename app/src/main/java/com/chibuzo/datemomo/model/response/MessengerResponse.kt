@@ -10,6 +10,7 @@ data class MessengerResponse(var chatmateId: Int,
                              var userStatus: String,
                              var lastMessage: String,
                              var profilePicture: String,
+                             var userBlockedStatus: Int,
                              var lastMessageDate: String,
                              var unreadMessageCount: Int,
                              var messageTableName: String)

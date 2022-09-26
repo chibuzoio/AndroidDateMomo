@@ -449,6 +449,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/userBlockingText"
                         android:textSize="19sp"
                         android:text="Block User"
                         android:textColor="@color/edit_text"
