@@ -97,7 +97,7 @@ class MessageActivity : AppCompatActivity() {
                 bundle.getString("userName")!!.replaceFirstChar { it.uppercase() } }
 
             if (userBlockedStatus > 0) {
-                binding.doubleButtonDialog.dialogRetryButton.text = "UnBlock"
+                binding.doubleButtonDialog.dialogRetryButton.text = "Unblock"
                 binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
                 binding.doubleButtonDialog.doubleButtonMessage.text =
                     "Do you want to unblock $accusedUser?"
@@ -145,12 +145,12 @@ class MessageActivity : AppCompatActivity() {
             Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
             val intent = Intent(this, UserExperienceActivity::class.java)
-            intent.putExtra("userBlockedStatus", userBlockedStatus)
             intent.putExtra("profilePicture", bundle.getString("profilePicture"))
             intent.putExtra("lastActiveTime", bundle.getString("lastActiveTime"))
             intent.putExtra("userName", bundle.getString("userName"))
             intent.putExtra("fullName", bundle.getString("fullName"))
             intent.putExtra("memberId", bundle.getInt("receiverId"))
+            intent.putExtra("userBlockedStatus", userBlockedStatus)
             startActivity(intent)
         }
 
@@ -409,7 +409,7 @@ class MessageActivity : AppCompatActivity() {
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + getString(R.string.api_edit_message))
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_block_accused_user))
             .post(requestBody)
             .build()
 

@@ -7,22 +7,28 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.MessengerActivity
 import com.chibuzo.datemomo.activity.UserExperienceActivity
 import com.chibuzo.datemomo.databinding.RecyclerMessengerBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.MessengerModel
 import com.chibuzo.datemomo.model.request.DeleteMessageRequest
 import com.chibuzo.datemomo.model.request.MessageRequest
+import com.chibuzo.datemomo.model.request.UserBlockingRequest
+import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.MessengerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import okhttp3.*
+import java.io.IOException
 
 class MessengerAdapter(private var messengerResponses: ArrayList<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
@@ -84,15 +90,56 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
 
         holder.binding.messageStatusCounter.visibility =
             if (messengerResponses[position].unreadMessageCount > 0) { View.VISIBLE } else { View.INVISIBLE }
-        
+
         holder.binding.messengerPropertyLayout.setOnLongClickListener {
             messengerModel.binding.messengerMenuLayout.visibility = View.VISIBLE
             messengerModel.currentPosition = position
             return@setOnLongClickListener true
         }
 
-        messengerModel.binding.messengerBlockUser.setOnClickListener {
+        messengerModel.binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            messengerModel.binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            messengerModel.binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
 
+            if (messengerModel.binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
+                messengerModel.messengerActivity.triggerRequestProcess()
+            } else {
+                blockAccusedUser(holder.itemView.context)
+            }
+        }
+
+        messengerModel.binding.messengerBlockUser.setOnClickListener {
+            messengerModel.binding.messengerMenuLayout.visibility = View.GONE
+
+            val accusedUser = messengerResponses[messengerModel.currentPosition].fullName.ifEmpty() {
+                messengerResponses[messengerModel.currentPosition].userName.replaceFirstChar { it.uppercase() } }
+
+            if (messengerResponses[messengerModel.currentPosition].userBlockedStatus > 0) {
+                messengerModel.binding.doubleButtonDialog.dialogRetryButton.text = "Unblock"
+                messengerModel.binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
+                messengerModel.binding.doubleButtonDialog.doubleButtonMessage.text =
+                    "Do you want to unblock $accusedUser?"
+                messengerModel.binding.doubleButtonDialog.dialogRetryButton.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.blue
+                    )
+                )
+            } else {
+                messengerModel.binding.doubleButtonDialog.dialogRetryButton.text = "Block"
+                messengerModel.binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
+                messengerModel.binding.doubleButtonDialog.doubleButtonMessage.text =
+                    "Do you want to block $accusedUser?"
+                messengerModel.binding.doubleButtonDialog.dialogRetryButton.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.red
+                    )
+                )
+            }
+
+            messengerModel.binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.blue))
+            messengerModel.binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
 
         messengerModel.binding.messengerReportUser.setOnClickListener {
@@ -174,7 +221,7 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
                 messengerResponses[position].userName,
                 "",
                 messengerResponses[position].profilePicture,
-                0
+                messengerResponses[position].userBlockedStatus
             )
 
             messengerModel.messengerActivity.fetchUserMessages(messageRequest)
@@ -187,6 +234,52 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
 
     class MyViewHolder(val binding: RecyclerMessengerBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    @Throws(IOException::class)
+    fun blockAccusedUser(context: Context) {
+        val unixTime = System.currentTimeMillis() / 1000L
+
+        val userBlockingRequest = UserBlockingRequest(
+            userAccusedId = messengerResponses[messengerModel.currentPosition].chatmateId,
+            userBlockerId = sharedPreferences.getInt(context.getString(R.string.member_id), 0),
+            userBlockedStatus = if (messengerResponses[messengerModel.currentPosition].userBlockedStatus > 0) { 0 } else { 1 },
+            userBlockedDate = unixTime.toString()
+        )
+
+        val mapper = jacksonObjectMapper()
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        val jsonObjectString = mapper.writeValueAsString(userBlockingRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(context.getString(R.string.date_momo_api) + context.getString(R.string.api_block_accused_user))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+
+                if (committedResponse.committed) {
+                    messengerResponses[messengerModel.currentPosition].userBlockedStatus =
+                        userBlockingRequest.userBlockedStatus
+
+                    messengerModel.messengerActivity.runOnUiThread {
+                        notifyItemChanged(messengerModel.currentPosition)
+                    }
+                }
+            }
+        })
+    }
 
     private fun removeAt(position: Int): Array<MessengerResponse> {
         val messengerResponseList = messengerResponses.toMutableList()

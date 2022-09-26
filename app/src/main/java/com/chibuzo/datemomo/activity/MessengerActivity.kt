@@ -111,15 +111,6 @@ class MessengerActivity : AppCompatActivity() {
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
 
-        binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
-            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
-            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
-
-            if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
-                triggerRequestProcess()
-            }
-        }
-
         binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
@@ -835,7 +826,7 @@ class MessengerActivity : AppCompatActivity() {
         })
     }
 
-    private fun triggerRequestProcess() {
+    fun triggerRequestProcess() {
         when (requestProcess) {
             getString(R.string.request_fetch_notifications) -> fetchNotifications()
             getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
@@ -860,8 +851,12 @@ class MessengerActivity : AppCompatActivity() {
 
     fun displayDoubleButtonDialog() {
         runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Retry"
+            binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
             binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.red))
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
     }
