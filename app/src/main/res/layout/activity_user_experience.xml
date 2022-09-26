@@ -15,98 +15,104 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <!-- Choose what you want to report about Okenna or write it in details: -->
-
-            <TextView
-                android:id="@+id/userReportingHeader"
-                android:textSize="17sp"
-                android:textStyle="bold"
-                android:layout_marginTop="11dp"
-                android:textColor="@color/edit_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <!-- Okenna used abusive words on me -->
-
-            <CheckBox
-                android:id="@+id/abusiveCheckbox"
-                android:textSize="16sp"
-                android:layout_marginTop="11dp"
-                android:textColor="@color/edit_text"
-                android:theme="@style/Platform.MaterialComponents.Light"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content">
 
-            <!-- Okenna sexually harassed me -->
+                <!-- Choose what you want to report about Okenna or write it in details: -->
 
-            <CheckBox
-                android:id="@+id/harassmentCheckbox"
-                android:textSize="16sp"
-                android:layout_marginTop="11dp"
-                android:textColor="@color/edit_text"
-                android:theme="@style/Platform.MaterialComponents.Light"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/userReportingHeader"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="11dp"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
-            <!-- Okenna is using my picture/video on his account, without my consent -->
+                <!-- Okenna used abusive words on me -->
 
-            <CheckBox
-                android:id="@+id/impersonationCheckbox"
-                android:textSize="16sp"
-                android:layout_marginTop="11dp"
-                android:textColor="@color/edit_text"
-                android:theme="@style/Platform.MaterialComponents.Light"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <CheckBox
+                    android:id="@+id/abusiveCheckbox"
+                    android:textSize="16sp"
+                    android:layout_marginTop="11dp"
+                    android:textColor="@color/edit_text"
+                    android:theme="@style/Platform.MaterialComponents.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-            <TextView
-                android:text="Other:"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginTop="21dp"
-                android:textColor="@color/edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <!-- Okenna sexually harassed me -->
 
-            <EditText
-                android:id="@+id/userReportingEditor"
-                android:lines="5"
-                android:minLines="5"
-                android:maxLines="5"
-                android:gravity="top|start"
-                android:scrollbars="vertical"
-                android:hint="Detailed report"
-                android:paddingVertical="11dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="7dp"
-                android:paddingHorizontal="11dp"
-                android:inputType="textMultiLine"
-                android:scrollHorizontally="false"
-                android:layout_marginBottom="15dp"
-                android:textColor="@color/edit_text"
-                android:background="@drawable/normal_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <CheckBox
+                    android:id="@+id/harassmentCheckbox"
+                    android:textSize="16sp"
+                    android:layout_marginTop="11dp"
+                    android:textColor="@color/edit_text"
+                    android:theme="@style/Platform.MaterialComponents.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-            <include
-                android:id="@+id/submitReportButton"
-                layout="@layout/include_blue_button"/>
+                <!-- Okenna is using my picture/video on his account, without my consent -->
 
-            <TextView
-                android:id="@+id/userReportingError"
-                android:visibility="gone"
-                android:textColor="@color/red"
-                android:layout_marginTop="7dp"
-                android:gravity="center_horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <CheckBox
+                    android:id="@+id/impersonationCheckbox"
+                    android:textSize="16sp"
+                    android:layout_marginTop="11dp"
+                    android:textColor="@color/edit_text"
+                    android:theme="@style/Platform.MaterialComponents.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                <TextView
+                    android:text="Other:"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="21dp"
+                    android:textColor="@color/edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/userReportingEditor"
+                    android:lines="5"
+                    android:minLines="5"
+                    android:maxLines="5"
+                    android:gravity="top|start"
+                    android:scrollbars="vertical"
+                    android:hint="Detailed report"
+                    android:paddingVertical="11dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="7dp"
+                    android:paddingHorizontal="11dp"
+                    android:inputType="textMultiLine"
+                    android:scrollHorizontally="false"
+                    android:layout_marginBottom="15dp"
+                    android:textColor="@color/edit_text"
+                    android:background="@drawable/normal_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <include
+                    android:id="@+id/submitReportButton"
+                    layout="@layout/include_blue_button"/>
+
+                <TextView
+                    android:id="@+id/userReportingError"
+                    android:visibility="gone"
+                    android:textColor="@color/red"
+                    android:layout_marginTop="7dp"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
 
         <include
             android:id="@+id/doubleButtonDialog"

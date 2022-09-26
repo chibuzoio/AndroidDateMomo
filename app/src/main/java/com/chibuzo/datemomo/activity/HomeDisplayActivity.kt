@@ -71,6 +71,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private var userUpdatedLocation: String = ""
     private var originalRequestProcess: String = ""
     private lateinit var bounceAnimation: Animation
+    private var clickBouncedPictureUploader = false
     private lateinit var slideUpAnimation: Animation
     private lateinit var slideDownAnimation: Animation
     private lateinit var messageRequest: MessageRequest
@@ -180,6 +181,23 @@ class HomeDisplayActivity : AppCompatActivity() {
         val appBounceInterpolator = AppBounceInterpolator(0.2, 20.0)
         bounceAnimation.interpolator = appBounceInterpolator
 
+        bounceAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                if (clickBouncedPictureUploader) {
+                    clickBouncedPictureUploader = false
+                    pickImageFromGallery()
+                }
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+
+            }
+        })
+
         slideUpAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {
 
@@ -196,7 +214,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         binding.floatingPictureUploader.setOnClickListener {
             binding.floatingPictureUploader.startAnimation(bounceAnimation)
-            pickImageFromGallery()
+            clickBouncedPictureUploader = true
         }
 
         binding.emptyTimelineDialog.dialogActivityButton.blueButtonText.text = "Go To Settings"

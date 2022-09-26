@@ -193,11 +193,6 @@ class UserExperienceActivity : AppCompatActivity() {
         binding.impersonationCheckbox.text = getString(R.string.report_user_impersonation, userFullName)
 
         binding.submitReportButton.blueButtonText.text = "Submit Report"
-
-        binding.submitReportButton.blueButtonLayout.setOnClickListener {
-            binding.submitReportButton.blueButtonLayout.startAnimation(buttonClickEffect)
-
-        }
     }
 
     override fun onStart() {
