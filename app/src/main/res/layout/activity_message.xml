@@ -247,6 +247,19 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <TextView
+                android:id="@+id/blockedUserNote"
+                android:padding="11dp"
+                android:textSize="15sp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_margin="11dp"
+                android:layout_gravity="bottom"
+                android:text="You blocked this user"
+                android:textColor="@color/edit_text_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <include

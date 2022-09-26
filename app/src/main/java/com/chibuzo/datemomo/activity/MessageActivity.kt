@@ -38,6 +38,7 @@ import java.util.*
 
 class MessageActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
+    private var userBlockedStatus: Int = 0
     private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
     private var originalRequestProcess: String = ""
@@ -68,6 +69,8 @@ class MessageActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
+        userBlockedStatus = bundle.getInt("userBlockedStatus")
+
         messageModel = MessageModel(
             senderId = 0,
             receiverId = 0,
@@ -77,16 +80,46 @@ class MessageActivity : AppCompatActivity() {
             messageActivity = this
         )
 
+        if (userBlockedStatus > 0) {
+            binding.messageEditorLayout.visibility = View.GONE
+            binding.blockedUserNote.visibility = View.VISIBLE
+            binding.userBlockingText.text = "Unblock User"
+        } else {
+            binding.messageEditorLayout.visibility = View.VISIBLE
+            binding.blockedUserNote.visibility = View.GONE
+            binding.userBlockingText.text = "Block User"
+        }
+
         binding.messengerBlockUser.setOnClickListener {
             binding.messengerMenuLayout.visibility = View.GONE
 
             val accusedUser = bundle.getString("fullName")!!.ifEmpty() {
                 bundle.getString("userName")!!.replaceFirstChar { it.uppercase() } }
 
-            binding.doubleButtonDialog.dialogRetryButton.text = "Block"
-            binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
-            binding.doubleButtonDialog.doubleButtonMessage.text = "Do you want to block $accusedUser?"
-            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+            if (userBlockedStatus > 0) {
+                binding.doubleButtonDialog.dialogRetryButton.text = "UnBlock"
+                binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
+                binding.doubleButtonDialog.doubleButtonMessage.text =
+                    "Do you want to unblock $accusedUser?"
+                binding.doubleButtonDialog.dialogRetryButton.setTextColor(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.blue
+                    )
+                )
+            } else {
+                binding.doubleButtonDialog.dialogRetryButton.text = "Block"
+                binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
+                binding.doubleButtonDialog.doubleButtonMessage.text =
+                    "Do you want to block $accusedUser?"
+                binding.doubleButtonDialog.dialogRetryButton.setTextColor(
+                    ContextCompat.getColor(
+                        this,
+                        R.color.red
+                    )
+                )
+            }
+
             binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
@@ -112,7 +145,7 @@ class MessageActivity : AppCompatActivity() {
             Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
             val intent = Intent(this, UserExperienceActivity::class.java)
-            intent.putExtra("userBlockedStatus", bundle.getInt("userBlockedStatus"))
+            intent.putExtra("userBlockedStatus", userBlockedStatus)
             intent.putExtra("profilePicture", bundle.getString("profilePicture"))
             intent.putExtra("lastActiveTime", bundle.getString("lastActiveTime"))
             intent.putExtra("userName", bundle.getString("userName"))
@@ -362,7 +395,7 @@ class MessageActivity : AppCompatActivity() {
         val userBlockingRequest = UserBlockingRequest(
             userAccusedId = bundle.getInt("receiverId"),
             userBlockerId = sharedPreferences.getInt(getString(R.string.member_id), 0),
-            userBlockedStatus = bundle.getInt("userBlockedStatus"),
+            userBlockedStatus = if (userBlockedStatus > 0) { 0 } else { 1 },
             userBlockedDate = unixTime.toString()
         )
 
@@ -388,6 +421,22 @@ class MessageActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val committedResponse: CommittedResponse = mapper.readValue(myResponse)
+
+                if (committedResponse.committed) {
+                    userBlockedStatus = userBlockingRequest.userBlockedStatus
+
+                    runOnUiThread {
+                        if (userBlockingRequest.userBlockedStatus > 0) {
+                            binding.messageEditorLayout.visibility = View.GONE
+                            binding.blockedUserNote.visibility = View.VISIBLE
+                            binding.userBlockingText.text = "Unblock User"
+                        } else {
+                            binding.messageEditorLayout.visibility = View.VISIBLE
+                            binding.blockedUserNote.visibility = View.GONE
+                            binding.userBlockingText.text = "Block User"
+                        }
+                    }
+                }
             }
         })
     }
