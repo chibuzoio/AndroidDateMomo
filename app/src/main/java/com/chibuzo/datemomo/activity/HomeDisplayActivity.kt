@@ -320,21 +320,23 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val postalCode = addresses[0].postalCode
                 val knownName = addresses[0].featureName
 
+                userUpdatedLocation = if (!city.isNullOrEmpty()) {
+                    city
+                } else if (!state.isNullOrEmpty()) {
+                    state
+                } else {
+                    country
+                }
+
                 if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
-                    userUpdatedLocation = city
-                    sharedPreferencesEditor.putString(getString(R.string.current_location), city)
+                    sharedPreferencesEditor.putString(getString(R.string.current_location), userUpdatedLocation)
                     sharedPreferencesEditor.apply()
 
                     requestProcess = getString(R.string.request_update_current_location)
                     updateCurrentLocation()
                 } else {
-                    if (knownName.isNullOrEmpty()) {
-                        sharedPreferencesEditor.putString(getString(R.string.updated_location), city)
-                        sharedPreferencesEditor.apply()
-                    } else {
-                        sharedPreferencesEditor.putString(getString(R.string.updated_location), knownName)
-                        sharedPreferencesEditor.apply()
-                    }
+                    sharedPreferencesEditor.putString(getString(R.string.updated_location), userUpdatedLocation)
+                    sharedPreferencesEditor.apply()
 
                     // notify user of location change here
                 }

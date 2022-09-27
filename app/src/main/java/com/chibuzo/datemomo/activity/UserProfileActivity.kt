@@ -119,10 +119,26 @@ class UserProfileActivity : AppCompatActivity() {
                 val postalCode = addresses[0].postalCode
                 val knownName = addresses[0].featureName
 
-                sharedPreferencesEditor.putString(getString(R.string.updated_location), city)
-                sharedPreferencesEditor.apply()
+                userUpdatedLocation = if (!city.isNullOrEmpty()) {
+                    city
+                } else if (!state.isNullOrEmpty()) {
+                    state
+                } else {
+                    country
+                }
 
-                // notify user of location change here
+                if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
+                    sharedPreferencesEditor.putString(getString(R.string.current_location), userUpdatedLocation)
+                    sharedPreferencesEditor.apply()
+
+                    requestProcess = getString(R.string.request_update_current_location)
+                    updateCurrentLocation()
+                } else {
+                    sharedPreferencesEditor.putString(getString(R.string.updated_location), userUpdatedLocation)
+                    sharedPreferencesEditor.apply()
+
+                    // notify user of location change here
+                }
             } catch (exception: Exception) {
                 exception.printStackTrace()
 
@@ -680,6 +696,50 @@ class UserProfileActivity : AppCompatActivity() {
         if (theBitmap != null) {
             updateProfilePicture()
         }
+    }
+
+    @Throws(IOException::class)
+    fun updateCurrentLocation() {
+        val mapper = jacksonObjectMapper()
+        val updateLocationRequest =
+            UpdateLocationRequest(sharedPreferences.getInt(getString(R.string.member_id), 0),
+                userUpdatedLocation)
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(updateLocationRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_update_location))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                runOnUiThread {
+
+                }
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+            }
+        })
     }
 
     @Throws(IOException::class)
