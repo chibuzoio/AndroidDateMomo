@@ -198,9 +198,23 @@ class HomeDisplayActivity : AppCompatActivity() {
             }
         })
 
-        slideUpAnimation.setAnimationListener(object : Animation.AnimationListener {
+        slideDownAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {
 
+            }
+
+            override fun onAnimationEnd(p0: Animation?) {
+                binding.floatingPictureUploader.visibility = View.GONE
+            }
+
+            override fun onAnimationRepeat(p0: Animation?) {
+
+            }
+        })
+
+        slideUpAnimation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(p0: Animation?) {
+                binding.floatingPictureUploader.visibility = View.VISIBLE
             }
 
             override fun onAnimationEnd(p0: Animation?) {
@@ -386,10 +400,25 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                 binding.homeDisplayRecyclerView.addOnScrollListener(object :
                     RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+
+                        when (newState) {
+                            RecyclerView.SCROLL_STATE_DRAGGING -> {
+                                binding.floatingPictureUploader.startAnimation(slideDownAnimation)
+                            }
+                            RecyclerView.SCROLL_STATE_IDLE -> {
+                                binding.floatingPictureUploader.startAnimation(slideUpAnimation)
+                            }
+                        }
+                    }
+
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         super.onScrolled(recyclerView, dx, dy)
 
+/*
                         binding.floatingPictureUploader.startAnimation(slideUpAnimation)
+*/
 
                         if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
                             requestProcess = getString(R.string.request_fetch_more_matched_users)
