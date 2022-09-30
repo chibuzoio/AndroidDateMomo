@@ -78,7 +78,7 @@
 
                         <TextView
                             android:id="@+id/userFullName"
-                            android:textSize="23sp"
+                            android:textSize="17sp"
                             android:textStyle="bold"
                             android:textColor="@color/edit_text"
                             android:layout_width="wrap_content"
@@ -94,7 +94,7 @@
 
                         <TextView
                             android:id="@+id/userStatusText"
-                            android:textSize="17sp"
+                            android:textSize="15sp"
                             android:layout_marginTop="7dp"
                             android:textColor="@color/edit_text"
                             android:layout_width="wrap_content"
@@ -151,7 +151,7 @@
 
                     <TextView
                         android:id="@+id/allLikesCount"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:layout_marginStart="11dp"
                         android:layout_marginBottom="7dp"
@@ -195,8 +195,7 @@
                                 <TextView
                                     android:id="@+id/firstLikerUsername"
                                     android:padding="7dp"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
+                                    android:textSize="13sp"
                                     android:layout_gravity="bottom"
                                     android:textColor="@color/white"
                                     android:gravity="center_vertical"
@@ -231,8 +230,7 @@
                                 <TextView
                                     android:id="@+id/secondLikerUsername"
                                     android:padding="7dp"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
+                                    android:textSize="13sp"
                                     android:layout_gravity="bottom"
                                     android:textColor="@color/white"
                                     android:gravity="center_vertical"
@@ -267,8 +265,7 @@
                                 <TextView
                                     android:id="@+id/thirdLikerUsername"
                                     android:padding="7dp"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
+                                    android:textSize="13sp"
                                     android:layout_gravity="bottom"
                                     android:textColor="@color/white"
                                     android:gravity="center_vertical"
@@ -317,8 +314,7 @@
                                 <TextView
                                     android:id="@+id/fourthLikerUsername"
                                     android:padding="7dp"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
+                                    android:textSize="13sp"
                                     android:layout_gravity="bottom"
                                     android:textColor="@color/white"
                                     android:gravity="center_vertical"
@@ -353,8 +349,7 @@
                                 <TextView
                                     android:id="@+id/fifthLikerUsername"
                                     android:padding="7dp"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
+                                    android:textSize="13sp"
                                     android:layout_gravity="bottom"
                                     android:textColor="@color/white"
                                     android:gravity="center_vertical"
@@ -389,8 +384,7 @@
                                 <TextView
                                     android:id="@+id/sixthLikerUsername"
                                     android:padding="7dp"
-                                    android:textSize="15sp"
-                                    android:textStyle="bold"
+                                    android:textSize="13sp"
                                     android:layout_gravity="bottom"
                                     android:textColor="@color/white"
                                     android:gravity="center_vertical"
@@ -435,7 +429,7 @@
 
                     <TextView
                         android:id="@+id/userSexualityTitle"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:text="My Sexuality"
                         android:layout_marginTop="15dp"
@@ -457,7 +451,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -466,7 +460,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -475,7 +469,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -484,7 +478,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -493,7 +487,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -502,7 +496,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -511,7 +505,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -520,7 +514,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -528,7 +522,7 @@
 
                     <TextView
                         android:id="@+id/userInterestTitle"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:text="My Interests"
                         android:layout_marginTop="5dp"
@@ -550,7 +544,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -559,7 +553,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -568,7 +562,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -577,7 +571,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -586,7 +580,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -595,7 +589,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -604,7 +598,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -613,7 +607,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -622,7 +616,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -631,7 +625,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -639,7 +633,7 @@
 
                     <TextView
                         android:id="@+id/userExperienceTitle"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:text="My Experiences"
                         android:layout_marginTop="5dp"
@@ -661,7 +655,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -670,7 +664,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -679,7 +673,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -688,7 +682,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -697,7 +691,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -706,7 +700,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -715,7 +709,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -724,7 +718,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -733,7 +727,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -742,7 +736,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -751,7 +745,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -760,7 +754,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -769,7 +763,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -778,7 +772,7 @@
                             android:visibility="gone"
                             android:layout_marginEnd="11dp"
                             android:layout_marginBottom="15dp"
-                            layout="@layout/include_blue_button"
+                            layout="@layout/include_blue_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 

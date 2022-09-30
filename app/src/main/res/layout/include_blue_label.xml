@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/blue_button"
+    android:id="@+id/blueLabelLayout"
+    android:paddingHorizontal="11dp"
+    android:paddingVertical="7dp"
+    android:elevation="11dp"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:text="Submit"
+        android:gravity="center"
+        android:id="@+id/blueLabelText"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+

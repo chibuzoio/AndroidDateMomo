@@ -168,40 +168,40 @@ class UserInformationActivity : AppCompatActivity() {
         binding.photoGalleryButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_gallery_blue))
         binding.photoGalleryButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
 
-        binding.userGay.blueButtonText.text = "Gay"
-        binding.userToyBoy.blueButtonText.text = "Toy Boy"
-        binding.userLesbian.blueButtonText.text = "Lesbian"
-        binding.userToyGirl.blueButtonText.text = "Toy Girl"
-        binding.userBisexual.blueButtonText.text = "Bisexual"
-        binding.userStraight.blueButtonText.text = "Straight"
-        binding.userSugarDaddy.blueButtonText.text = "Sugar Daddy"
-        binding.userSugarMommy.blueButtonText.text = "Sugar Mommy"
+        binding.userGay.blueLabelText.text = "Gay"
+        binding.userToyBoy.blueLabelText.text = "Toy Boy"
+        binding.userLesbian.blueLabelText.text = "Lesbian"
+        binding.userToyGirl.blueLabelText.text = "Toy Girl"
+        binding.userBisexual.blueLabelText.text = "Bisexual"
+        binding.userStraight.blueLabelText.text = "Straight"
+        binding.userSugarDaddy.blueLabelText.text = "Sugar Daddy"
+        binding.userSugarMommy.blueLabelText.text = "Sugar Mommy"
 
-        binding.gayInterest.blueButtonText.text = "Gay"
-        binding.toyBoyInterest.blueButtonText.text = "Toy Boy"
-        binding.lesbianInterest.blueButtonText.text = "Lesbian"
-        binding.toyGirlInterest.blueButtonText.text = "Toy Girl"
-        binding.bisexualInterest.blueButtonText.text = "Bisexual"
-        binding.straightInterest.blueButtonText.text = "Straight"
-        binding.friendshipInterest.blueButtonText.text = "Friendship"
-        binding.sugarDaddyInterest.blueButtonText.text = "Sugar Daddy"
-        binding.sugarMommyInterest.blueButtonText.text = "Sugar Mommy"
-        binding.relationshipInterest.blueButtonText.text = "Relationship"
+        binding.gayInterest.blueLabelText.text = "Gay"
+        binding.toyBoyInterest.blueLabelText.text = "Toy Boy"
+        binding.lesbianInterest.blueLabelText.text = "Lesbian"
+        binding.toyGirlInterest.blueLabelText.text = "Toy Girl"
+        binding.bisexualInterest.blueLabelText.text = "Bisexual"
+        binding.straightInterest.blueLabelText.text = "Straight"
+        binding.friendshipInterest.blueLabelText.text = "Friendship"
+        binding.sugarDaddyInterest.blueLabelText.text = "Sugar Daddy"
+        binding.sugarMommyInterest.blueLabelText.text = "Sugar Mommy"
+        binding.relationshipInterest.blueLabelText.text = "Relationship"
 
-        binding.sixtyNineExperience.blueButtonText.text = "69"
-        binding.analSexExperience.blueButtonText.text = "Anal Sex"
-        binding.orgySexExperience.blueButtonText.text = "Orgy Sex"
-        binding.poolSexExperience.blueButtonText.text = "Pool Sex"
-        binding.carSexExperience.blueButtonText.text = "Sexed In Car"
-        binding.threesomeExperience.blueButtonText.text = "Threesome"
-        binding.givenHeadExperience.blueButtonText.text = "Given Head"
-        binding.sexToyExperience.blueButtonText.text = "Used Sex Toys"
-        binding.missionaryExperience.blueButtonText.text = "Missionary"
-        binding.videoSexExperience.blueButtonText.text = "Video Sex Chat"
-        binding.publicSexExperience.blueButtonText.text = "Sexed In Public"
-        binding.receivedHeadExperience.blueButtonText.text = "Received Head"
-        binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
-        binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
+        binding.sixtyNineExperience.blueLabelText.text = "69"
+        binding.analSexExperience.blueLabelText.text = "Anal Sex"
+        binding.orgySexExperience.blueLabelText.text = "Orgy Sex"
+        binding.poolSexExperience.blueLabelText.text = "Pool Sex"
+        binding.carSexExperience.blueLabelText.text = "Sexed In Car"
+        binding.threesomeExperience.blueLabelText.text = "Threesome"
+        binding.givenHeadExperience.blueLabelText.text = "Given Head"
+        binding.sexToyExperience.blueLabelText.text = "Used Sex Toys"
+        binding.missionaryExperience.blueLabelText.text = "Missionary"
+        binding.videoSexExperience.blueLabelText.text = "Video Sex Chat"
+        binding.publicSexExperience.blueLabelText.text = "Sexed In Public"
+        binding.receivedHeadExperience.blueLabelText.text = "Received Head"
+        binding.cameraSexExperience.blueLabelText.text = "Sexed With Camera"
+        binding.oneNightStandExperience.blueLabelText.text = "One-night Stand"
 
         val userFullName = homeDisplayResponse.fullName.ifEmpty {
             homeDisplayResponse.userName.replaceFirstChar { it.uppercase() }
@@ -212,138 +212,138 @@ class UserInformationActivity : AppCompatActivity() {
         binding.userExperienceTitle.text = getString(R.string.title_experience, userFullName)
 
         binding.userStatusText.text = homeDisplayResponse.userStatus
-        binding.userLocation.text = homeDisplayResponse.currentLocation
+        binding.userLocation.text = homeDisplayResponse.currentLocation.ifEmpty { "Location Not Set" }
 
         binding.userFullName.text = getString(R.string.name_and_age_text,
             userFullName, homeDisplayResponse.age
         )
 
         if (homeDisplayResponse.bisexualCategory > 0) {
-            binding.userBisexual.blueButtonLayout.visibility = View.VISIBLE
+            binding.userBisexual.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.gayCategory > 0) {
-            binding.userGay.blueButtonLayout.visibility = View.VISIBLE
+            binding.userGay.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.lesbianCategory > 0) {
-            binding.userLesbian.blueButtonLayout.visibility = View.VISIBLE
+            binding.userLesbian.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.straightCategory > 0) {
-            binding.userStraight.blueButtonLayout.visibility = View.VISIBLE
+            binding.userStraight.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sugarDaddyCategory > 0) {
-            binding.userSugarDaddy.blueButtonLayout.visibility = View.VISIBLE
+            binding.userSugarDaddy.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sugarMommyCategory > 0) {
-            binding.userSugarMommy.blueButtonLayout.visibility = View.VISIBLE
+            binding.userSugarMommy.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.toyBoyCategory > 0) {
-            binding.userToyBoy.blueButtonLayout.visibility = View.VISIBLE
+            binding.userToyBoy.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.toyGirlCategory > 0) {
-            binding.userToyGirl.blueButtonLayout.visibility = View.VISIBLE
+            binding.userToyGirl.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.bisexualInterest > 0) {
-            binding.bisexualInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.bisexualInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.friendshipInterest > 0) {
-            binding.friendshipInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.friendshipInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.gayInterest > 0) {
-            binding.gayInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.gayInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.relationshipInterest > 0) {
-            binding.relationshipInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.relationshipInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.straightInterest > 0) {
-            binding.straightInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.straightInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.lesbianInterest > 0) {
-            binding.lesbianInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.lesbianInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sugarDaddyInterest > 0) {
-            binding.sugarDaddyInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.sugarDaddyInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sugarMommyInterest > 0) {
-            binding.sugarMommyInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.sugarMommyInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.toyBoyInterest > 0) {
-            binding.toyBoyInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.toyBoyInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.toyGirlInterest > 0) {
-            binding.toyGirlInterest.blueButtonLayout.visibility = View.VISIBLE
+            binding.toyGirlInterest.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.analSexExperience > 0) {
-            binding.analSexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.analSexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.missionaryExperience > 0) {
-            binding.missionaryExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.missionaryExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sixtyNineExperience > 0) {
-            binding.sixtyNineExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.sixtyNineExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.cameraSexExperience > 0) {
-            binding.cameraSexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.cameraSexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.carSexExperience > 0) {
-            binding.carSexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.carSexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.threesomeExperience > 0) {
-            binding.threesomeExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.threesomeExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.givenHeadExperience > 0) {
-            binding.givenHeadExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.givenHeadExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.receivedHeadExperience > 0) {
-            binding.receivedHeadExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.receivedHeadExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.oneNightStandExperience > 0) {
-            binding.oneNightStandExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.oneNightStandExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.orgySexExperience > 0) {
-            binding.orgySexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.orgySexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.poolSexExperience > 0) {
-            binding.poolSexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.poolSexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.sexToyExperience > 0) {
-            binding.sexToyExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.sexToyExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.videoSexExperience > 0) {
-            binding.videoSexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.videoSexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
 
         if (homeDisplayResponse.publicSexExperience > 0) {
-            binding.publicSexExperience.blueButtonLayout.visibility = View.VISIBLE
+            binding.publicSexExperience.blueLabelLayout.visibility = View.VISIBLE
         }
     }
 

@@ -122,40 +122,40 @@ class HomeDisplayActivity : AppCompatActivity() {
         checkMessageUpdate()
         checkNotificationUpdate()
 
-        binding.userGay.blueButtonText.text = "Gay"
-        binding.userToyBoy.blueButtonText.text = "Toy Boy"
-        binding.userLesbian.blueButtonText.text = "Lesbian"
-        binding.userToyGirl.blueButtonText.text = "Toy Girl"
-        binding.userBisexual.blueButtonText.text = "Bisexual"
-        binding.userStraight.blueButtonText.text = "Straight"
-        binding.userSugarDaddy.blueButtonText.text = "Sugar Daddy"
-        binding.userSugarMommy.blueButtonText.text = "Sugar Mommy"
+        binding.userGay.blueLabelText.text = "Gay"
+        binding.userToyBoy.blueLabelText.text = "Toy Boy"
+        binding.userLesbian.blueLabelText.text = "Lesbian"
+        binding.userToyGirl.blueLabelText.text = "Toy Girl"
+        binding.userBisexual.blueLabelText.text = "Bisexual"
+        binding.userStraight.blueLabelText.text = "Straight"
+        binding.userSugarDaddy.blueLabelText.text = "Sugar Daddy"
+        binding.userSugarMommy.blueLabelText.text = "Sugar Mommy"
 
-        binding.gayInterest.blueButtonText.text = "Gay"
-        binding.toyBoyInterest.blueButtonText.text = "Toy Boy"
-        binding.lesbianInterest.blueButtonText.text = "Lesbian"
-        binding.toyGirlInterest.blueButtonText.text = "Toy Girl"
-        binding.bisexualInterest.blueButtonText.text = "Bisexual"
-        binding.straightInterest.blueButtonText.text = "Straight"
-        binding.friendshipInterest.blueButtonText.text = "Friendship"
-        binding.sugarDaddyInterest.blueButtonText.text = "Sugar Daddy"
-        binding.sugarMommyInterest.blueButtonText.text = "Sugar Mommy"
-        binding.relationshipInterest.blueButtonText.text = "Relationship"
+        binding.gayInterest.blueLabelText.text = "Gay"
+        binding.toyBoyInterest.blueLabelText.text = "Toy Boy"
+        binding.lesbianInterest.blueLabelText.text = "Lesbian"
+        binding.toyGirlInterest.blueLabelText.text = "Toy Girl"
+        binding.bisexualInterest.blueLabelText.text = "Bisexual"
+        binding.straightInterest.blueLabelText.text = "Straight"
+        binding.friendshipInterest.blueLabelText.text = "Friendship"
+        binding.sugarDaddyInterest.blueLabelText.text = "Sugar Daddy"
+        binding.sugarMommyInterest.blueLabelText.text = "Sugar Mommy"
+        binding.relationshipInterest.blueLabelText.text = "Relationship"
 
-        binding.sixtyNineExperience.blueButtonText.text = "69"
-        binding.analSexExperience.blueButtonText.text = "Anal Sex"
-        binding.orgySexExperience.blueButtonText.text = "Orgy Sex"
-        binding.poolSexExperience.blueButtonText.text = "Pool Sex"
-        binding.carSexExperience.blueButtonText.text = "Sexed In Car"
-        binding.threesomeExperience.blueButtonText.text = "Threesome"
-        binding.givenHeadExperience.blueButtonText.text = "Given Head"
-        binding.sexToyExperience.blueButtonText.text = "Used Sex Toys"
-        binding.missionaryExperience.blueButtonText.text = "Missionary"
-        binding.videoSexExperience.blueButtonText.text = "Video Sex Chat"
-        binding.publicSexExperience.blueButtonText.text = "Sexed In Public"
-        binding.receivedHeadExperience.blueButtonText.text = "Received Head"
-        binding.cameraSexExperience.blueButtonText.text = "Sexed With Camera"
-        binding.oneNightStandExperience.blueButtonText.text = "One-night Stand"
+        binding.sixtyNineExperience.blueLabelText.text = "69"
+        binding.analSexExperience.blueLabelText.text = "Anal Sex"
+        binding.orgySexExperience.blueLabelText.text = "Orgy Sex"
+        binding.poolSexExperience.blueLabelText.text = "Pool Sex"
+        binding.carSexExperience.blueLabelText.text = "Sexed In Car"
+        binding.threesomeExperience.blueLabelText.text = "Threesome"
+        binding.givenHeadExperience.blueLabelText.text = "Given Head"
+        binding.sexToyExperience.blueLabelText.text = "Used Sex Toys"
+        binding.missionaryExperience.blueLabelText.text = "Missionary"
+        binding.videoSexExperience.blueLabelText.text = "Video Sex Chat"
+        binding.publicSexExperience.blueLabelText.text = "Sexed In Public"
+        binding.receivedHeadExperience.blueLabelText.text = "Received Head"
+        binding.cameraSexExperience.blueLabelText.text = "Sexed With Camera"
+        binding.oneNightStandExperience.blueLabelText.text = "One-night Stand"
 
         val mapper = jacksonObjectMapper()
 
@@ -455,38 +455,38 @@ class HomeDisplayActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
-            binding.userGay.blueButtonLayout.visibility = View.GONE
-            binding.userToyBoy.blueButtonLayout.visibility = View.GONE
-            binding.gayInterest.blueButtonLayout.visibility = View.GONE
-            binding.userLesbian.blueButtonLayout.visibility = View.GONE
-            binding.userToyGirl.blueButtonLayout.visibility = View.GONE
-            binding.userBisexual.blueButtonLayout.visibility = View.GONE
-            binding.userStraight.blueButtonLayout.visibility = View.GONE
-            binding.toyBoyInterest.blueButtonLayout.visibility = View.GONE
-            binding.userSugarDaddy.blueButtonLayout.visibility = View.GONE
-            binding.userSugarMommy.blueButtonLayout.visibility = View.GONE
-            binding.lesbianInterest.blueButtonLayout.visibility = View.GONE
-            binding.toyGirlInterest.blueButtonLayout.visibility = View.GONE
-            binding.bisexualInterest.blueButtonLayout.visibility = View.GONE
-            binding.carSexExperience.blueButtonLayout.visibility = View.GONE
-            binding.sexToyExperience.blueButtonLayout.visibility = View.GONE
-            binding.straightInterest.blueButtonLayout.visibility = View.GONE
-            binding.analSexExperience.blueButtonLayout.visibility = View.GONE
-            binding.orgySexExperience.blueButtonLayout.visibility = View.GONE
-            binding.poolSexExperience.blueButtonLayout.visibility = View.GONE
-            binding.friendshipInterest.blueButtonLayout.visibility = View.GONE
-            binding.sugarDaddyInterest.blueButtonLayout.visibility = View.GONE
-            binding.sugarMommyInterest.blueButtonLayout.visibility = View.GONE
-            binding.videoSexExperience.blueButtonLayout.visibility = View.GONE
-            binding.cameraSexExperience.blueButtonLayout.visibility = View.GONE
-            binding.givenHeadExperience.blueButtonLayout.visibility = View.GONE
-            binding.publicSexExperience.blueButtonLayout.visibility = View.GONE
-            binding.sixtyNineExperience.blueButtonLayout.visibility = View.GONE
-            binding.threesomeExperience.blueButtonLayout.visibility = View.GONE
-            binding.missionaryExperience.blueButtonLayout.visibility = View.GONE
-            binding.relationshipInterest.blueButtonLayout.visibility = View.GONE
-            binding.receivedHeadExperience.blueButtonLayout.visibility = View.GONE
-            binding.oneNightStandExperience.blueButtonLayout.visibility = View.GONE
+            binding.userGay.blueLabelLayout.visibility = View.GONE
+            binding.userToyBoy.blueLabelLayout.visibility = View.GONE
+            binding.gayInterest.blueLabelLayout.visibility = View.GONE
+            binding.userLesbian.blueLabelLayout.visibility = View.GONE
+            binding.userToyGirl.blueLabelLayout.visibility = View.GONE
+            binding.userBisexual.blueLabelLayout.visibility = View.GONE
+            binding.userStraight.blueLabelLayout.visibility = View.GONE
+            binding.toyBoyInterest.blueLabelLayout.visibility = View.GONE
+            binding.userSugarDaddy.blueLabelLayout.visibility = View.GONE
+            binding.userSugarMommy.blueLabelLayout.visibility = View.GONE
+            binding.lesbianInterest.blueLabelLayout.visibility = View.GONE
+            binding.toyGirlInterest.blueLabelLayout.visibility = View.GONE
+            binding.bisexualInterest.blueLabelLayout.visibility = View.GONE
+            binding.carSexExperience.blueLabelLayout.visibility = View.GONE
+            binding.sexToyExperience.blueLabelLayout.visibility = View.GONE
+            binding.straightInterest.blueLabelLayout.visibility = View.GONE
+            binding.analSexExperience.blueLabelLayout.visibility = View.GONE
+            binding.orgySexExperience.blueLabelLayout.visibility = View.GONE
+            binding.poolSexExperience.blueLabelLayout.visibility = View.GONE
+            binding.friendshipInterest.blueLabelLayout.visibility = View.GONE
+            binding.sugarDaddyInterest.blueLabelLayout.visibility = View.GONE
+            binding.sugarMommyInterest.blueLabelLayout.visibility = View.GONE
+            binding.videoSexExperience.blueLabelLayout.visibility = View.GONE
+            binding.cameraSexExperience.blueLabelLayout.visibility = View.GONE
+            binding.givenHeadExperience.blueLabelLayout.visibility = View.GONE
+            binding.publicSexExperience.blueLabelLayout.visibility = View.GONE
+            binding.sixtyNineExperience.blueLabelLayout.visibility = View.GONE
+            binding.threesomeExperience.blueLabelLayout.visibility = View.GONE
+            binding.missionaryExperience.blueLabelLayout.visibility = View.GONE
+            binding.relationshipInterest.blueLabelLayout.visibility = View.GONE
+            binding.receivedHeadExperience.blueLabelLayout.visibility = View.GONE
+            binding.oneNightStandExperience.blueLabelLayout.visibility = View.GONE
         } else {
             finishAffinity()
         }

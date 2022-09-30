@@ -247,100 +247,100 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             .transform(RoundedCorners(37))
             .into(homeDisplayModel.binding.userInformationImage)
 
-        homeDisplayModel.binding.userBisexual.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userBisexual.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].bisexualCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userGay.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userGay.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].gayCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userLesbian.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userLesbian.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].lesbianCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userStraight.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userStraight.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].straightCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userSugarDaddy.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userSugarDaddy.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].sugarDaddyCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userSugarMommy.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userSugarMommy.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].sugarMommyCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userToyBoy.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userToyBoy.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].toyBoyCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.userToyGirl.blueButtonLayout.visibility =
+        homeDisplayModel.binding.userToyGirl.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].toyGirlCategory > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.bisexualInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.bisexualInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].bisexualInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.friendshipInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.friendshipInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].friendshipInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.gayInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.gayInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].gayInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.straightInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.straightInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].straightInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.relationshipInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.relationshipInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].relationshipInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.lesbianInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.lesbianInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].lesbianInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.sugarDaddyInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.sugarDaddyInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].sugarDaddyInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.sugarMommyInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.sugarMommyInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].sugarMommyInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.toyBoyInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.toyBoyInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].toyBoyInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.toyGirlInterest.blueButtonLayout.visibility =
+        homeDisplayModel.binding.toyGirlInterest.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].toyGirlInterest > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.analSexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.analSexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].analSexExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.missionaryExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.missionaryExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].missionaryExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.sixtyNineExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.sixtyNineExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].sixtyNineExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.cameraSexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.cameraSexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].cameraSexExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.carSexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.carSexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].carSexExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.threesomeExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.threesomeExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].threesomeExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.givenHeadExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.givenHeadExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].givenHeadExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.receivedHeadExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.receivedHeadExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].receivedHeadExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.oneNightStandExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.oneNightStandExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].oneNightStandExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.orgySexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.orgySexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].orgySexExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.poolSexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.poolSexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].poolSexExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.sexToyExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.sexToyExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].sexToyExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.videoSexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.videoSexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].videoSexExperience > 0) { View.VISIBLE } else { View.GONE }
 
-        homeDisplayModel.binding.publicSexExperience.blueButtonLayout.visibility =
+        homeDisplayModel.binding.publicSexExperience.blueLabelLayout.visibility =
             if (homeDisplayResponses[position].publicSexExperience > 0) { View.VISIBLE } else { View.GONE }
 
         homeDisplayModel.binding.userInformationLayout.visibility = View.VISIBLE
