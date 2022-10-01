@@ -431,7 +431,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                                 slideUpTimer.removeCallbacks(slideUpTimerRunnable)
                             }
                             RecyclerView.SCROLL_STATE_IDLE -> {
-                                slideUpTimer.postDelayed(slideUpTimerRunnable, 1500)
+                                slideUpTimer.postDelayed(slideUpTimerRunnable, 1000)
                             }
                         }
                     }
