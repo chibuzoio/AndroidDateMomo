@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.7.20'
     repositories {
         mavenCentral()
     }
@@ -16,7 +16,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     viewBinding {
         enabled = true
@@ -25,9 +25,9 @@ android {
     defaultConfig {
         applicationId "com.chibuzo.datemomo"
         minSdk 21
-        targetSdk 32
-        versionCode 9
-        versionName "1.1.1"
+        targetSdk 33
+        versionCode 10
+        versionName "1.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'com.google.android.material:material:1.6.1'

@@ -345,6 +345,7 @@ class MessageActivity : AppCompatActivity() {
         hideSystemUI()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.messageInputField.isFocused) {
             binding.messageInputField.clearFocus()

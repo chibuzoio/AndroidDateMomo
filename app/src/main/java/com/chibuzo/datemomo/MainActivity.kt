@@ -740,6 +740,7 @@ class MainActivity : AppCompatActivity() {
         hideSystemUI()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         when {
             binding.pictureUploadLayout.isVisible -> {

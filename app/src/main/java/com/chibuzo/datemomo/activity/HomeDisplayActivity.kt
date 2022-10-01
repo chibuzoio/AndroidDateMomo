@@ -471,6 +471,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         isActivityActive = false
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
@@ -511,6 +512,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

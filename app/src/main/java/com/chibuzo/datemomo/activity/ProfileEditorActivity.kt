@@ -902,6 +902,7 @@ class ProfileEditorActivity : AppCompatActivity() {
         hideSystemUI()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         updateSexualityQualities()
 
