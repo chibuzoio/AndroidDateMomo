@@ -97,7 +97,7 @@
                                 android:layout_gravity="bottom"
                                 android:background="@drawable/transparent_gradient"
                                 android:layout_width="match_parent"
-                                android:layout_height="150dp">
+                                android:layout_height="125dp">
 
                                 <TextView
                                     android:id="@+id/userFullName"
@@ -129,31 +129,45 @@
                             <TextView
                                 android:id="@+id/userStatusText"
                                 android:textSize="15sp"
-                                android:layout_weight="8"
-                                android:layout_marginEnd="11dp"
                                 android:textColor="@color/edit_text"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
 
-                            <View
-                                android:layout_weight="0.3"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"/>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
                             <androidx.appcompat.widget.LinearLayoutCompat
-                                android:id="@+id/userMessageButton"
-                                android:padding="15dp"
-                                android:gravity="center"
-                                android:layout_weight="1.7"
-                                android:orientation="vertical"
-                                android:background="@drawable/message_status_counter"
-                                android:layout_width="0dp"
+                                android:layout_marginTop="23dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_horizontal"
+                                android:layout_marginHorizontal="11dp"
+                                android:layout_width="150dp"
                                 android:layout_height="wrap_content">
 
-                                <ImageView
-                                    android:src="@drawable/icon_message_white"
-                                    android:layout_width="25dp"
-                                    android:layout_height="25dp"/>
+                                <include
+                                    android:id="@+id/profileDisplayButton"
+                                    layout="@layout/include_icon_hollow_blue_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
+
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_marginTop="23dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_horizontal"
+                                android:layout_width="150dp"
+                                android:layout_height="wrap_content">
+
+                                <include
+                                    android:id="@+id/userMessageButton"
+                                    layout="@layout/include_icon_hollow_blue_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"/>
 
                             </androidx.appcompat.widget.LinearLayoutCompat>
 

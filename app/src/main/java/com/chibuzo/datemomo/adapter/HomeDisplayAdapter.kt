@@ -15,10 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.chibuzo.datemomo.model.HomeDisplayModel
-import com.chibuzo.datemomo.model.request.LikeUserRequest
-import com.chibuzo.datemomo.model.request.MessageRequest
-import com.chibuzo.datemomo.model.request.NotifyUserRequest
-import com.chibuzo.datemomo.model.request.UserInformationRequest
+import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.utility.Utility
@@ -67,14 +64,20 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         // Then, add collection of all user images, with their properties to homeDisplayResponses
 
         homeDisplayModel.binding.userImageContainer.setOnClickListener {
+            homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_pictures)
+            val userPictureRequest = UserPictureRequest(this.messageRequest.receiverId)
+            Log.e(TAG, "ReceiverId value here is ${this.messageRequest.receiverId}")
+            homeDisplayModel.homeDisplayActivity.fetchUserPictures(userPictureRequest)
+        }
+
+        homeDisplayModel.binding.profileDisplayButton.iconHollowButtonLayout.setOnClickListener {
+            homeDisplayModel.binding.profileDisplayButton.iconHollowButtonLayout.startAnimation(homeDisplayModel.buttonClickEffect)
             homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_information)
             homeDisplayModel.homeDisplayActivity.fetchUserInformation(userInformationRequest)
         }
 
-        homeDisplayModel.binding.userMessageButton.setOnClickListener {
-            // Use user messengerTableName to fetch requested user messageTableName
-            // Using messageTableName to fetch all the chats between host user and guest user
-            homeDisplayModel.binding.userMessageButton.startAnimation(homeDisplayModel.buttonClickEffect)
+        homeDisplayModel.binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {
+            homeDisplayModel.binding.userMessageButton.iconHollowButtonLayout.startAnimation(homeDisplayModel.buttonClickEffect)
             homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_messages)
             homeDisplayModel.homeDisplayActivity.fetchUserMessages(messageRequest)
         }

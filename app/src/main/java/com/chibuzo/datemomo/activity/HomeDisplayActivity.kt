@@ -182,6 +182,14 @@ class HomeDisplayActivity : AppCompatActivity() {
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
 
+        binding.profileDisplayButton.iconHollowButtonText.text = "View Profile"
+        binding.profileDisplayButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_view_blue))
+        binding.profileDisplayButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
+
+        binding.userMessageButton.iconHollowButtonText.text = "Message"
+        binding.userMessageButton.iconHollowButtonIcon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.icon_message_blue))
+        binding.userMessageButton.iconHollowButtonLayout.background = ContextCompat.getDrawable(this, R.drawable.hollow_blue_grey_button)
+
         slideUpTimerRunnable = Runnable {
             binding.floatingPictureUploader.startAnimation(slideUpAnimation)
         }
@@ -887,6 +895,63 @@ class HomeDisplayActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserPictures(userPictureRequest: UserPictureRequest) {
+        val mapper = jacksonObjectMapper()
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val activityStackModel: ActivityStackModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+
+                if (activityStackModel.activityStack.peek() != getString(R.string.activity_image_slider)) {
+                    activityStackModel.activityStack.push(getString(R.string.activity_image_slider))
+                }
+
+                val intent = Intent(this@HomeDisplayActivity, ImageSliderActivity::class.java)
+
+                val activityStackString = mapper.writeValueAsString(activityStackModel)
+                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                sharedPreferencesEditor.apply()
+
+                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+
+                intent.putExtra("memberId", userPictureRequest.memberId)
+                intent.putExtra("jsonResponse", myResponse)
+                intent.putExtra("currentPosition", 0)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)
