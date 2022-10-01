@@ -11,6 +11,8 @@ import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
@@ -28,8 +30,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
 import com.chibuzo.datemomo.control.AppBounceInterpolator
@@ -67,6 +67,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private val CAPTURE_IMAGE_REQUEST = 100
     private var requestProcess: String = ""
     private var totalAvailablePages: Int = 0
+    private lateinit var slideUpTimer: Handler
     private var isActivityActive: Boolean = true
     private var userUpdatedLocation: String = ""
     private var originalRequestProcess: String = ""
@@ -75,6 +76,8 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var slideUpAnimation: Animation
     private lateinit var slideDownAnimation: Animation
     private lateinit var messageRequest: MessageRequest
+    private lateinit var slideUpTimerRunnable: Runnable
+    private var canSlideDownFloatingButton: Boolean = true
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var homeDisplayModel: HomeDisplayModel
     private lateinit var binding: ActivityHomeDisplayBinding
@@ -108,6 +111,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         bundle = intent.extras!!
 
         buttonClickEffect = AlphaAnimation(1f, 0f)
+        slideUpTimer = Handler(Looper.getMainLooper())
 
         bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
         slideUpAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_up)
@@ -178,6 +182,10 @@ class HomeDisplayActivity : AppCompatActivity() {
 //        val bitmapImage = BitmapFactory.decodeResource(resources, R.drawable.motion_placeholder)
 //        Log.e(TAG, "bitmapImage width and height here are ${bitmapImage.width} and ${bitmapImage.height}")
 
+        slideUpTimerRunnable = Runnable {
+            binding.floatingPictureUploader.startAnimation(slideUpAnimation)
+        }
+
         val appBounceInterpolator = AppBounceInterpolator(0.2, 20.0)
         bounceAnimation.interpolator = appBounceInterpolator
 
@@ -200,7 +208,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         slideDownAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(p0: Animation?) {
-
+                canSlideDownFloatingButton = false
             }
 
             override fun onAnimationEnd(p0: Animation?) {
@@ -219,6 +227,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onAnimationEnd(p0: Animation?) {
                 binding.floatingPictureUploader.startAnimation(bounceAnimation)
+                canSlideDownFloatingButton = true
             }
 
             override fun onAnimationRepeat(p0: Animation?) {
@@ -405,20 +414,22 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                         when (newState) {
                             RecyclerView.SCROLL_STATE_DRAGGING -> {
-                                binding.floatingPictureUploader.startAnimation(slideDownAnimation)
+                                if (canSlideDownFloatingButton) {
+                                    binding.floatingPictureUploader.startAnimation(
+                                        slideDownAnimation
+                                    )
+                                }
+
+                                slideUpTimer.removeCallbacks(slideUpTimerRunnable)
                             }
                             RecyclerView.SCROLL_STATE_IDLE -> {
-                                binding.floatingPictureUploader.startAnimation(slideUpAnimation)
+                                slideUpTimer.postDelayed(slideUpTimerRunnable, 1500)
                             }
                         }
                     }
 
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         super.onScrolled(recyclerView, dx, dy)
-
-/*
-                        binding.floatingPictureUploader.startAnimation(slideUpAnimation)
-*/
 
                         if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
                             requestProcess = getString(R.string.request_fetch_more_matched_users)
