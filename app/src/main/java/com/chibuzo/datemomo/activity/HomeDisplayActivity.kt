@@ -405,6 +405,10 @@ class HomeDisplayActivity : AppCompatActivity() {
                     buttonClickEffect, binding, this
                 )
 
+                for (homeDisplayResponse in outerHomeDisplayResponse.homeDisplayResponses) {
+                    Log.e(TAG, "homeDisplayResponse value here is $homeDisplayResponse")
+                }
+
                 val homeDisplayAdapter =
                     HomeDisplayAdapter(
                         outerHomeDisplayResponse.homeDisplayResponses,
