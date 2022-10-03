@@ -352,10 +352,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
         homeDisplayModel.binding.userInformationLayout.visibility = View.VISIBLE
 
-        // prepare data composite here
-        val pictureCollectionModels: ArrayList<PictureCollectionModel> = arrayListOf()
         val userPictureResponses = homeDisplayResponses[position].userPictureResponses
-
+        val pictureCollectionModels = slicePictureResponses(context, userPictureResponses)
 
         val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         homeDisplayModel.binding.pictureCollectionRecycler.layoutManager = layoutManager
@@ -526,46 +524,39 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                         if (containsLeftPictureLayout && containsRightPictureLayout) {
                             if (pictureLayoutTypes[pictureLayoutTypes.size - 1] == context.getString(R.string.picture_layout_double_left)) {
                                 pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_right)
-                                pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_right))
                             }
 
                             if (pictureLayoutTypes[pictureLayoutTypes.size - 1] == context.getString(R.string.picture_layout_double_right)) {
                                 pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                                pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
                             }
                         } else {
                             if (!containsRightPictureLayout) {
                                 pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_right)
-                                pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_right))
                             }
 
                             if (!containsLeftPictureLayout) {
                                 pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                                pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
                             }
                         }
                     }
 
                     if (!containsLeftPictureLayout && !containsRightPictureLayout) {
                         pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
                     }
                 } else {
-                    if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_double_left)) {
-                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_right)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_right))
+                    pictureDisplayLayoutType = if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_double_left)) {
+                        context.getString(R.string.picture_layout_double_right)
                     } else if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_double_right)) {
-                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
+                        context.getString(R.string.picture_layout_double_left)
                     } else {
-                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
+                        context.getString(R.string.picture_layout_double_left)
                     }
                 }
             } else {
                 pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
             }
+
+            pictureLayoutTypes.add(pictureDisplayLayoutType)
 
             val localUserPictureResponses = arrayListOf(userPictureResponses[0],
                 userPictureResponses[1], userPictureResponses[2])
@@ -586,31 +577,27 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                     lastTwoPictureLayouts.add(pictureLayoutTypes[pictureLayoutTypes.size - 1])
                     lastTwoPictureLayouts.add(pictureLayoutTypes[pictureLayoutTypes.size - 2])
 
-                    if (lastTwoPictureLayouts.contains(context.getString(R.string.picture_layout_triple_bottom))) {
+                    pictureDisplayLayoutType = if (lastTwoPictureLayouts.contains(context.getString(R.string.picture_layout_triple_bottom))) {
                         if (lastTwoPictureLayouts.contains(context.getString(R.string.picture_layout_double_right))) {
-                            pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                            pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
+                            context.getString(R.string.picture_layout_double_left)
                         } else {
-                            pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_right)
-                            pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_right))
+                            context.getString(R.string.picture_layout_double_right)
                         }
                     } else {
-                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_triple_bottom))
+                        context.getString(R.string.picture_layout_triple_bottom)
                     }
                 } else {
-                    if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_triple_bottom)) {
-                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_double_left))
+                    pictureDisplayLayoutType = if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_triple_bottom)) {
+                        context.getString(R.string.picture_layout_double_left)
                     } else {
-                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
-                        pictureLayoutTypes.add(context.getString(R.string.picture_layout_triple_bottom))
+                        context.getString(R.string.picture_layout_triple_bottom)
                     }
                 }
             } else {
                 pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
-                pictureLayoutTypes.add(context.getString(R.string.picture_layout_triple_bottom))
             }
+
+            pictureLayoutTypes.add(pictureDisplayLayoutType)
 
             if (pictureDisplayLayoutType == context.getString(R.string.picture_layout_triple_bottom)) {
                 val localUserPictureResponses = arrayListOf(userPictureResponses[0],
@@ -635,6 +622,91 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
                 recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)
             }
+        }
+
+        if (userPictureResponses.size > 4) {
+            var pictureDisplayLayoutType = ""
+
+            if (pictureLayoutTypes.isNotEmpty()) {
+                var containsLeftPictureLayout = false
+                var containsRightPictureLayout = false
+                var containsTripleBottomPictureLayout = false
+
+                if (pictureLayoutTypes.size > 1) {
+                    val lastTwoPictureLayouts: ArrayList<String> = arrayListOf()
+                    lastTwoPictureLayouts.add(pictureLayoutTypes[pictureLayoutTypes.size - 1])
+                    lastTwoPictureLayouts.add(pictureLayoutTypes[pictureLayoutTypes.size - 2])
+
+                    if (lastTwoPictureLayouts.contains(context.getString(R.string.picture_layout_double_left))) {
+                        containsLeftPictureLayout = true
+                    }
+
+                    if (lastTwoPictureLayouts.contains(context.getString(R.string.picture_layout_double_right))) {
+                        containsRightPictureLayout = true
+                    }
+
+                    if (lastTwoPictureLayouts.contains(context.getString(R.string.picture_layout_triple_bottom))) {
+                        containsTripleBottomPictureLayout = true
+                    }
+
+                    if (containsLeftPictureLayout && containsRightPictureLayout) {
+                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
+                    }
+
+                    if (containsLeftPictureLayout && containsTripleBottomPictureLayout) {
+                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_right)
+                    }
+
+                    if (containsRightPictureLayout && containsTripleBottomPictureLayout) {
+                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
+                    }
+                } else {
+                    if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_triple_bottom)) {
+                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_double_left)
+                    }
+
+                    if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_double_right)) {
+                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
+                    }
+
+                    if (pictureLayoutTypes[0] == context.getString(R.string.picture_layout_double_left)) {
+                        pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
+                    }
+                }
+            } else {
+                pictureDisplayLayoutType = context.getString(R.string.picture_layout_triple_bottom)
+            }
+
+            pictureLayoutTypes.add(pictureDisplayLayoutType)
+
+            if (pictureDisplayLayoutType == context.getString(R.string.picture_layout_triple_bottom)) {
+                val localUserPictureResponses = arrayListOf(userPictureResponses[0],
+                    userPictureResponses[1], userPictureResponses[2], userPictureResponses[3])
+                val pictureCollectionModel = PictureCollectionModel(
+                    context.getString(R.string.picture_layout_triple_bottom),
+                    localUserPictureResponses
+                )
+
+                pictureCollectionModels.add(pictureCollectionModel)
+
+                userPictureResponses.removeAt(0)
+                userPictureResponses.removeAt(1)
+                userPictureResponses.removeAt(2)
+                userPictureResponses.removeAt(3)
+            } else {
+                val localUserPictureResponses = arrayListOf(userPictureResponses[0],
+                    userPictureResponses[1], userPictureResponses[2])
+                val pictureCollectionModel = PictureCollectionModel(
+                    pictureDisplayLayoutType, localUserPictureResponses)
+
+                pictureCollectionModels.add(pictureCollectionModel)
+
+                userPictureResponses.removeAt(0)
+                userPictureResponses.removeAt(1)
+                userPictureResponses.removeAt(2)
+            }
+
+            recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)
         }
     }
 
