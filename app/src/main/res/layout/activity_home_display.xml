@@ -54,6 +54,7 @@
             android:layout_height="match_parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/floatingInformationLayout"
                 android:elevation="11dp"
                 android:layout_margin="11dp"
                 android:orientation="vertical"
@@ -63,11 +64,13 @@
 
                 <ScrollView
                     android:scrollbars="none"
+                    android:background="@drawable/home_card_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:orientation="vertical"
+                        android:background="@drawable/home_card_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -529,6 +532,12 @@
                             </com.google.android.flexbox.FlexboxLayout>
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/pictureCollectionRecycler"
+                            android:layout_marginTop="15dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 

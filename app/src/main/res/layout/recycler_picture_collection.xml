@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/tripleBottomPictureLayout"
+        android:visibility="gone"
+        layout="@layout/include_triple_bottom_picture_layout"/>
+
+    <include
+        android:id="@+id/doubleRightPictureLayout"
+        android:visibility="gone"
+        layout="@layout/include_double_right_picture_layout"/>
+
+    <include
+        android:id="@+id/doubleLeftPictureLayout"
+        android:visibility="gone"
+        layout="@layout/include_double_left_picture_layout"/>
+
+    <include
+        android:id="@+id/singlePictureLayout"
+        android:visibility="gone"
+        layout="@layout/include_single_picture_layout"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+

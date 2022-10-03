@@ -1,6 +1,5 @@
 package com.chibuzo.datemomo.model.response
 
-import com.chibuzo.datemomo.model.UserPictureModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,7 +18,7 @@ data class HomeDisplayResponse(var memberId: Int,
                                var messengerTableName: String,
 
                                var liked: Boolean,
-                               var userPictureModels: ArrayList<UserPictureModel>,
+                               var userPictureResponses: ArrayList<UserPictureResponse>,
 
                                var bisexualCategory: Int,
                                var gayCategory: Int,

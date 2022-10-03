@@ -62,6 +62,11 @@
     <string name="dialog_user_logout">userLogoutDialog</string>
     <string name="dialog_network_retry">networkRetryDialog</string>
 
+    <string name="picture_layout_single">SINGLE PICTURE LAYOUT</string>
+    <string name="picture_layout_double_left">DOUBLE LEFT PICTURE LAYOUT</string>
+    <string name="picture_layout_double_right">DOUBLE RIGHT PICTURE LAYOUT</string>
+    <string name="picture_layout_triple_bottom">TRIPLE BOTTOM PICTURE LAYOUT</string>
+
     <string name="user_logout_title">Logout</string>
     <string name="server_error_title">Server Error</string>
     <string name="network_error_title">Network Error</string>
