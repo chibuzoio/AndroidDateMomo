@@ -5,28 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/bigPictureView"
-        android:background="@color/blue"
+    <FrameLayout
+        android:id="@+id/bigPictureLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+
+        <View
+            android:id="@+id/bigPicturePlaceholder"
+            android:background="@color/grey_picture_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/bigPictureView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/firstSmallPictureView"
-            android:background="@color/red"
+        <FrameLayout
+            android:id="@+id/firstSmallPictureLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
 
-        <View
-            android:id="@+id/secondSmallPictureView"
-            android:background="@color/purple"
+            <View
+                android:id="@+id/firstSmallPicturePlaceholder"
+                android:background="@color/grey_picture_placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/firstSmallPictureView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/secondSmallPictureLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/secondSmallPicturePlaceholder"
+                android:background="@color/grey_picture_placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/secondSmallPictureView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -5,7 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <FrameLayout
+        android:id="@+id/singlePictureLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <View
+            android:id="@+id/singlePicturePlaceholder"
+            android:background="@color/grey_picture_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/singlePictureView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </FrameLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
 
