@@ -379,7 +379,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                         Log.e(TAG, "IndexOutOfBoundsException was caught, with message = ${exception.message}")
                     }
                     else -> {
-                        Log.e(TAG, "Error message from here is ${exception.message}")
+                        Log.e(TAG, "Error message from line 382 here is ${exception.message}")
                     }
                 }
             }
@@ -404,10 +404,6 @@ class HomeDisplayActivity : AppCompatActivity() {
                     deviceWidth, requestProcess, bounceAnimation,
                     buttonClickEffect, binding, this
                 )
-
-                for (homeDisplayResponse in outerHomeDisplayResponse.homeDisplayResponses) {
-                    Log.e(TAG, "homeDisplayResponse value here is $homeDisplayResponse")
-                }
 
                 val homeDisplayAdapter =
                     HomeDisplayAdapter(
@@ -451,7 +447,7 @@ class HomeDisplayActivity : AppCompatActivity() {
             }
         } catch (exception: IOException) {
             exception.printStackTrace()
-            Log.e(TAG, "Error message from here is ${exception.message}")
+            Log.e(TAG, "Error message from line 450 here is ${exception.message}")
         }
     }
 
