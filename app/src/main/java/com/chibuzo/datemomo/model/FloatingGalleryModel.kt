@@ -7,7 +7,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FloatingGalleryModel(var floatingLayoutWidth: Int,
                                 var leftRightBigPictureWidth: Int,
+                                var tripleBottomLayoutHeight: Int,
                                 var leftRightBigPictureHeight: Int,
+                                var singlePictureLayoutHeight: Int,
+                                var doubleLeftRightLayoutHeight: Int,
+                                var floatingGalleryLayoutHeight: Int,
                                 var leftRightPictureWidthHeight: Int,
                                 var tripleBottomBigPictureHeight: Int,
                                 var binding: ActivityHomeDisplayBinding,

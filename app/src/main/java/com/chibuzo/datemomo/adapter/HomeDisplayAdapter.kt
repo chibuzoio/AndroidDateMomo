@@ -358,12 +358,30 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         val userPictureResponses = homeDisplayResponses[position].userPictureResponses
         val pictureCollectionModels = slicePictureResponses(context, userPictureResponses)
 
+        var galleryLayoutHeight = 0
+
+        for (pictureCollectionModel in pictureCollectionModels) {
+            when (pictureCollectionModel.pictureLayoutType) {
+                context.getString(R.string.picture_layout_single) ->
+                    galleryLayoutHeight += homeDisplayModel.floatingGalleryModel.singlePictureLayoutHeight
+                context.getString(R.string.picture_layout_double_left) ->
+                    galleryLayoutHeight += homeDisplayModel.floatingGalleryModel.doubleLeftRightLayoutHeight
+                context.getString(R.string.picture_layout_double_right) ->
+                    galleryLayoutHeight += homeDisplayModel.floatingGalleryModel.doubleLeftRightLayoutHeight
+                context.getString(R.string.picture_layout_triple_bottom) ->
+                    galleryLayoutHeight += homeDisplayModel.floatingGalleryModel.tripleBottomLayoutHeight
+            }
+        }
+
+        homeDisplayModel.floatingGalleryModel.floatingGalleryLayoutHeight = galleryLayoutHeight
+
         val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         homeDisplayModel.binding.pictureCollectionRecycler.layoutManager = layoutManager
         homeDisplayModel.binding.pictureCollectionRecycler.itemAnimator = DefaultItemAnimator()
 
         val pictureCollectionAdapter = PictureCollectionAdapter(pictureCollectionModels, homeDisplayModel.floatingGalleryModel)
         homeDisplayModel.binding.pictureCollectionRecycler.adapter = pictureCollectionAdapter
+        homeDisplayModel.binding.pictureCollectionRecycler.layoutParams.height = galleryLayoutHeight
     }
 
     @Throws(IOException::class)
@@ -620,9 +638,9 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
                     pictureCollectionModels.add(pictureCollectionModel)
 
-                    userPictureResponses.removeAt(0)
-                    userPictureResponses.removeAt(1)
                     userPictureResponses.removeAt(2)
+                    userPictureResponses.removeAt(1)
+                    userPictureResponses.removeAt(0)
 
                     recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)
                 }
@@ -693,10 +711,10 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
                     pictureCollectionModels.add(pictureCollectionModel)
 
-                    userPictureResponses.removeAt(0)
-                    userPictureResponses.removeAt(1)
-                    userPictureResponses.removeAt(2)
                     userPictureResponses.removeAt(3)
+                    userPictureResponses.removeAt(2)
+                    userPictureResponses.removeAt(1)
+                    userPictureResponses.removeAt(0)
                 } else {
                     val localUserPictureResponses = arrayListOf(userPictureResponses[0],
                         userPictureResponses[1], userPictureResponses[2])
@@ -705,9 +723,9 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
                     pictureCollectionModels.add(pictureCollectionModel)
 
-                    userPictureResponses.removeAt(0)
-                    userPictureResponses.removeAt(1)
                     userPictureResponses.removeAt(2)
+                    userPictureResponses.removeAt(1)
+                    userPictureResponses.removeAt(0)
                 }
 
                 recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)

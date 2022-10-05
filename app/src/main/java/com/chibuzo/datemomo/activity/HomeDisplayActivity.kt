@@ -408,10 +408,18 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val leftRightBigPictureWidth = floatingLayoutWidth - leftRightPictureWidthHeight
                 val leftRightBigPictureHeight = leftRightPictureWidthHeight * 2
 
+                val doubleLeftRightLayoutHeight = leftRightBigPictureHeight
+                val singlePictureLayoutHeight = tripleBottomBigPictureHeight
+                val tripleBottomLayoutHeight = tripleBottomBigPictureHeight + (floatingLayoutWidth / 3)
+
                 val floatingGalleryModel = FloatingGalleryModel(
                     floatingLayoutWidth = floatingLayoutWidth,
                     leftRightBigPictureWidth = leftRightBigPictureWidth,
+                    tripleBottomLayoutHeight = tripleBottomLayoutHeight,
                     leftRightBigPictureHeight = leftRightBigPictureHeight,
+                    singlePictureLayoutHeight = singlePictureLayoutHeight,
+                    doubleLeftRightLayoutHeight = doubleLeftRightLayoutHeight,
+                    floatingGalleryLayoutHeight = 0,
                     leftRightPictureWidthHeight = leftRightPictureWidthHeight,
                     tripleBottomBigPictureHeight = tripleBottomBigPictureHeight,
                     binding = binding,
