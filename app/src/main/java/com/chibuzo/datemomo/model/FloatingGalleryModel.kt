@@ -1,11 +1,11 @@
 package com.chibuzo.datemomo.model
 
-import com.chibuzo.datemomo.activity.HomeDisplayActivity
 import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FloatingGalleryModel(var floatingLayoutWidth: Int,
+data class FloatingGalleryModel(var profileOwnerId: Int,
+                                var floatingLayoutWidth: Int,
                                 var leftRightBigPictureWidth: Int,
                                 var tripleBottomLayoutHeight: Int,
                                 var leftRightBigPictureHeight: Int,
@@ -14,7 +14,6 @@ data class FloatingGalleryModel(var floatingLayoutWidth: Int,
                                 var floatingGalleryLayoutHeight: Int,
                                 var leftRightPictureWidthHeight: Int,
                                 var tripleBottomBigPictureHeight: Int,
-                                var binding: ActivityHomeDisplayBinding,
-                                var homeDisplayActivity: HomeDisplayActivity)
+                                var binding: ActivityHomeDisplayBinding)
 
 

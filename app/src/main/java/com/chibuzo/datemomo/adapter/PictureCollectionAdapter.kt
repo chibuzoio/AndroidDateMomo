@@ -1,19 +1,29 @@
 package com.chibuzo.datemomo.adapter
 
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.ImageSliderActivity
 import com.chibuzo.datemomo.databinding.RecyclerPictureCollectionBinding
 import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.PictureCollectionModel
+import com.chibuzo.datemomo.model.request.UserPictureRequest
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import okhttp3.*
+import java.io.IOException
 
 class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<PictureCollectionModel>,
                                private val floatingGalleryModel: FloatingGalleryModel) :
     RecyclerView.Adapter<PictureCollectionAdapter.MyViewHolder>() {
+    private val buttonClickEffect = AlphaAnimation(1f, 0f)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerPictureCollectionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -109,9 +119,14 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[0].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[0].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.singlePictureOuterLayout.singlePictureView)
+
+            holder.binding.singlePictureOuterLayout.singlePictureLayout.setOnClickListener {
+                holder.binding.singlePictureOuterLayout.singlePictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[0].imagePosition)
+            }
         }
 
         if (pictureCollectionModels[position].pictureLayoutType == holder.itemView.context.getString(R.string.picture_layout_double_left)) {
@@ -123,23 +138,38 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[0].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[0].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.doubleLeftPictureLayout.firstSmallPictureView)
 
-            Glide.with(holder.itemView.context)
-                .load(holder.itemView.context.getString(R.string.date_momo_api)
-                        + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[1].imageName)
-                .transform(CenterCrop())
-                .into(holder.binding.doubleLeftPictureLayout.secondSmallPictureView)
+            holder.binding.doubleLeftPictureLayout.firstSmallPictureLayout.setOnClickListener {
+                holder.binding.doubleLeftPictureLayout.firstSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[0].imagePosition)
+            }
 
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[2].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[1].userPictureResponse.imageName)
+                .transform(CenterCrop())
+                .into(holder.binding.doubleLeftPictureLayout.secondSmallPictureView)
+
+            holder.binding.doubleLeftPictureLayout.secondSmallPictureLayout.setOnClickListener {
+                holder.binding.doubleLeftPictureLayout.secondSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[1].imagePosition)
+            }
+
+            Glide.with(holder.itemView.context)
+                .load(holder.itemView.context.getString(R.string.date_momo_api)
+                        + holder.itemView.context.getString(R.string.api_image)
+                        + pictureCollectionModels[position].galleryPictureModels[2].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.doubleLeftPictureLayout.bigPictureView)
+
+            holder.binding.doubleLeftPictureLayout.bigPictureLayout.setOnClickListener {
+                holder.binding.doubleLeftPictureLayout.bigPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[2].imagePosition)
+            }
         }
 
         if (pictureCollectionModels[position].pictureLayoutType == holder.itemView.context.getString(R.string.picture_layout_double_right)) {
@@ -151,23 +181,38 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[0].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[0].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.doubleRightPictureLayout.bigPictureView)
 
-            Glide.with(holder.itemView.context)
-                .load(holder.itemView.context.getString(R.string.date_momo_api)
-                        + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[1].imageName)
-                .transform(CenterCrop())
-                .into(holder.binding.doubleRightPictureLayout.firstSmallPictureView)
+            holder.binding.doubleRightPictureLayout.bigPictureLayout.setOnClickListener {
+                holder.binding.doubleRightPictureLayout.bigPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[0].imagePosition)
+            }
 
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[2].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[1].userPictureResponse.imageName)
+                .transform(CenterCrop())
+                .into(holder.binding.doubleRightPictureLayout.firstSmallPictureView)
+
+            holder.binding.doubleRightPictureLayout.firstSmallPictureLayout.setOnClickListener {
+                holder.binding.doubleRightPictureLayout.firstSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[1].imagePosition)
+            }
+
+            Glide.with(holder.itemView.context)
+                .load(holder.itemView.context.getString(R.string.date_momo_api)
+                        + holder.itemView.context.getString(R.string.api_image)
+                        + pictureCollectionModels[position].galleryPictureModels[2].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.doubleRightPictureLayout.secondSmallPictureView)
+
+            holder.binding.doubleRightPictureLayout.secondSmallPictureLayout.setOnClickListener {
+                holder.binding.doubleRightPictureLayout.secondSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[2].imagePosition)
+            }
         }
 
         if (pictureCollectionModels[position].pictureLayoutType == holder.itemView.context.getString(R.string.picture_layout_triple_bottom)) {
@@ -179,30 +224,50 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[0].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[0].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.tripleBottomPictureLayout.bigPictureView)
 
+            holder.binding.tripleBottomPictureLayout.bigPictureLayout.setOnClickListener {
+                holder.binding.tripleBottomPictureLayout.bigPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[0].imagePosition)
+            }
+
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[1].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[1].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.tripleBottomPictureLayout.firstSmallPictureView)
 
-            Glide.with(holder.itemView.context)
-                .load(holder.itemView.context.getString(R.string.date_momo_api)
-                        + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[2].imageName)
-                .transform(CenterCrop())
-                .into(holder.binding.tripleBottomPictureLayout.secondSmallPictureView)
+            holder.binding.tripleBottomPictureLayout.firstSmallPictureLayout.setOnClickListener {
+                holder.binding.tripleBottomPictureLayout.firstSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[1].imagePosition)
+            }
 
             Glide.with(holder.itemView.context)
                 .load(holder.itemView.context.getString(R.string.date_momo_api)
                         + holder.itemView.context.getString(R.string.api_image)
-                        + pictureCollectionModels[position].userPictureResponses[3].imageName)
+                        + pictureCollectionModels[position].galleryPictureModels[2].userPictureResponse.imageName)
+                .transform(CenterCrop())
+                .into(holder.binding.tripleBottomPictureLayout.secondSmallPictureView)
+
+            holder.binding.tripleBottomPictureLayout.secondSmallPictureLayout.setOnClickListener {
+                holder.binding.tripleBottomPictureLayout.secondSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[2].imagePosition)
+            }
+
+            Glide.with(holder.itemView.context)
+                .load(holder.itemView.context.getString(R.string.date_momo_api)
+                        + holder.itemView.context.getString(R.string.api_image)
+                        + pictureCollectionModels[position].galleryPictureModels[3].userPictureResponse.imageName)
                 .transform(CenterCrop())
                 .into(holder.binding.tripleBottomPictureLayout.thirdSmallPictureView)
+
+            holder.binding.tripleBottomPictureLayout.thirdSmallPictureLayout.setOnClickListener {
+                holder.binding.tripleBottomPictureLayout.thirdSmallPictureLayout.startAnimation(buttonClickEffect)
+                fetchUserPictures(holder.itemView.context, pictureCollectionModels[position].galleryPictureModels[3].imagePosition)
+            }
         }
     }
 
@@ -212,6 +277,44 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
 
     class MyViewHolder(val binding: RecyclerPictureCollectionBinding) :
         RecyclerView.ViewHolder(binding.root)
+
+    @Throws(IOException::class)
+    fun fetchUserPictures(context: Context, currentPosition: Int) {
+        val mapper = jacksonObjectMapper()
+        val userPictureRequest = UserPictureRequest(
+            floatingGalleryModel.profileOwnerId
+        )
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(context.getString(R.string.date_momo_api) +
+                    context.getString(R.string.api_user_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val intent = Intent(context, ImageSliderActivity::class.java)
+                intent.putExtra("currentPosition", currentPosition)
+                intent.putExtra("jsonResponse", myResponse)
+                context.startActivity(intent)
+            }
+        })
+    }
 }
 
 

@@ -413,6 +413,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val tripleBottomLayoutHeight = tripleBottomBigPictureHeight + (floatingLayoutWidth / 3)
 
                 val floatingGalleryModel = FloatingGalleryModel(
+                    profileOwnerId = 0,
                     floatingLayoutWidth = floatingLayoutWidth,
                     leftRightBigPictureWidth = leftRightBigPictureWidth,
                     tripleBottomLayoutHeight = tripleBottomLayoutHeight,
@@ -422,8 +423,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     floatingGalleryLayoutHeight = 0,
                     leftRightPictureWidthHeight = leftRightPictureWidthHeight,
                     tripleBottomBigPictureHeight = tripleBottomBigPictureHeight,
-                    binding = binding,
-                    homeDisplayActivity = this
+                    binding = binding
                 )
 
                 homeDisplayModel = HomeDisplayModel(

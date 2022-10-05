@@ -19,6 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.activity.HomeDisplayActivity
 import com.chibuzo.datemomo.databinding.RecyclerHomeDisplayBinding
+import com.chibuzo.datemomo.model.GalleryPictureModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
 import com.chibuzo.datemomo.model.PictureCollectionModel
 import com.chibuzo.datemomo.model.request.*
@@ -374,6 +375,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         }
 
         homeDisplayModel.floatingGalleryModel.floatingGalleryLayoutHeight = galleryLayoutHeight
+        homeDisplayModel.floatingGalleryModel.profileOwnerId = homeDisplayResponses[position].memberId
 
         val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         homeDisplayModel.binding.pictureCollectionRecycler.layoutManager = layoutManager
@@ -464,7 +466,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                var committedResponse = CommittedResponse(false)
+                var committedResponse: CommittedResponse
 
                 try {
                     committedResponse = mapper.readValue(myResponse)
@@ -482,21 +484,32 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
     private fun slicePictureResponses(context: Context, userPictureResponses: ArrayList<UserPictureResponse>):
             ArrayList<PictureCollectionModel> {
+        val imagePositionCollection = arrayListOf<Int>()
         val pictureLayoutTypes: ArrayList<String> = arrayListOf()
         val pictureCollectionModels: ArrayList<PictureCollectionModel> = arrayListOf()
-        recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)
+
+        for ((index, _) in userPictureResponses.withIndex()) {
+            imagePositionCollection.add(index)
+        }
+
+        userPictureResponses.reverse()
+
+        recurSlicePictureResponses(context, pictureLayoutTypes,
+            userPictureResponses, pictureCollectionModels, imagePositionCollection)
         return pictureCollectionModels
     }
 
     private fun recurSlicePictureResponses(context: Context, pictureLayoutTypes: ArrayList<String>,
                                            userPictureResponses: ArrayList<UserPictureResponse>,
-                                           pictureCollectionModels: ArrayList<PictureCollectionModel>) {
+                                           pictureCollectionModels: ArrayList<PictureCollectionModel>,
+                                           imagePositionCollection: ArrayList<Int>) {
         try {
             if (userPictureResponses.size == 1) {
-                val localUserPictureResponses = arrayListOf(userPictureResponses[0])
+                val galleryPictureModel =
+                    GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0])
                 val pictureCollectionModel = PictureCollectionModel(
-                    context.getString(R.string.picture_layout_single),
-                    localUserPictureResponses
+                    pictureLayoutType = context.getString(R.string.picture_layout_single),
+                    galleryPictureModels = arrayListOf(galleryPictureModel)
                 )
 
                 pictureLayoutTypes.add(context.getString(R.string.picture_layout_single))
@@ -504,19 +517,21 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             }
 
             if (userPictureResponses.size == 2) {
-                var localUserPictureResponses = arrayListOf(userPictureResponses[0])
+                var galleryPictureModel =
+                    GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0])
                 var pictureCollectionModel = PictureCollectionModel(
-                    context.getString(R.string.picture_layout_single),
-                    localUserPictureResponses
+                    pictureLayoutType = context.getString(R.string.picture_layout_single),
+                    galleryPictureModels = arrayListOf(galleryPictureModel)
                 )
 
                 pictureLayoutTypes.add(context.getString(R.string.picture_layout_single))
                 pictureCollectionModels.add(pictureCollectionModel)
 
-                localUserPictureResponses = arrayListOf(userPictureResponses[1])
+                galleryPictureModel =
+                    GalleryPictureModel(imagePositionCollection[1], userPictureResponses[1])
                 pictureCollectionModel = PictureCollectionModel(
-                    context.getString(R.string.picture_layout_single),
-                    localUserPictureResponses
+                    pictureLayoutType = context.getString(R.string.picture_layout_single),
+                    galleryPictureModels = arrayListOf(galleryPictureModel)
                 )
 
                 pictureLayoutTypes.add(context.getString(R.string.picture_layout_single))
@@ -580,11 +595,13 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
                 pictureLayoutTypes.add(pictureDisplayLayoutType)
 
-                val localUserPictureResponses = arrayListOf(userPictureResponses[0],
-                    userPictureResponses[1], userPictureResponses[2])
+                val galleryPictureModels = arrayListOf(
+                    GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0]),
+                    GalleryPictureModel(imagePositionCollection[1], userPictureResponses[1]),
+                    GalleryPictureModel(imagePositionCollection[2], userPictureResponses[2]))
                 val pictureCollectionModel = PictureCollectionModel(
-                    pictureDisplayLayoutType.ifEmpty { context.getString(R.string.picture_layout_double_left) },
-                    localUserPictureResponses
+                    pictureLayoutType = pictureDisplayLayoutType.ifEmpty { context.getString(R.string.picture_layout_double_left) },
+                    galleryPictureModels = galleryPictureModels
                 )
 
                 pictureCollectionModels.add(pictureCollectionModel)
@@ -622,19 +639,25 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                 pictureLayoutTypes.add(pictureDisplayLayoutType)
 
                 if (pictureDisplayLayoutType == context.getString(R.string.picture_layout_triple_bottom)) {
-                    val localUserPictureResponses = arrayListOf(userPictureResponses[0],
-                        userPictureResponses[1], userPictureResponses[2], userPictureResponses[3])
+                    val galleryPictureModels = arrayListOf(
+                        GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0]),
+                        GalleryPictureModel(imagePositionCollection[1], userPictureResponses[1]),
+                        GalleryPictureModel(imagePositionCollection[2], userPictureResponses[2]),
+                        GalleryPictureModel(imagePositionCollection[3], userPictureResponses[3]))
                     val pictureCollectionModel = PictureCollectionModel(
-                        context.getString(R.string.picture_layout_triple_bottom),
-                        localUserPictureResponses
+                        pictureLayoutType = context.getString(R.string.picture_layout_triple_bottom),
+                        galleryPictureModels = galleryPictureModels
                     )
 
                     pictureCollectionModels.add(pictureCollectionModel)
                 } else {
-                    val localUserPictureResponses = arrayListOf(userPictureResponses[0],
-                        userPictureResponses[1], userPictureResponses[2])
+                    val galleryPictureModels = arrayListOf(
+                        GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0]),
+                        GalleryPictureModel(imagePositionCollection[1], userPictureResponses[1]),
+                        GalleryPictureModel(imagePositionCollection[2], userPictureResponses[2]))
                     val pictureCollectionModel = PictureCollectionModel(
-                        pictureDisplayLayoutType, localUserPictureResponses)
+                        pictureLayoutType = pictureDisplayLayoutType,
+                        galleryPictureModels = galleryPictureModels)
 
                     pictureCollectionModels.add(pictureCollectionModel)
 
@@ -642,7 +665,12 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                     userPictureResponses.removeAt(1)
                     userPictureResponses.removeAt(0)
 
-                    recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)
+                    imagePositionCollection.removeAt(2)
+                    imagePositionCollection.removeAt(1)
+                    imagePositionCollection.removeAt(0)
+
+                    recurSlicePictureResponses(context, pictureLayoutTypes,
+                        userPictureResponses, pictureCollectionModels, imagePositionCollection)
                 }
             }
 
@@ -702,11 +730,14 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                 pictureLayoutTypes.add(pictureDisplayLayoutType)
 
                 if (pictureDisplayLayoutType == context.getString(R.string.picture_layout_triple_bottom)) {
-                    val localUserPictureResponses = arrayListOf(userPictureResponses[0],
-                        userPictureResponses[1], userPictureResponses[2], userPictureResponses[3])
+                    val galleryPictureModels = arrayListOf(
+                        GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0]),
+                        GalleryPictureModel(imagePositionCollection[1], userPictureResponses[1]),
+                        GalleryPictureModel(imagePositionCollection[2], userPictureResponses[2]),
+                        GalleryPictureModel(imagePositionCollection[3], userPictureResponses[3]))
                     val pictureCollectionModel = PictureCollectionModel(
-                        context.getString(R.string.picture_layout_triple_bottom),
-                        localUserPictureResponses
+                        pictureLayoutType = context.getString(R.string.picture_layout_triple_bottom),
+                        galleryPictureModels = galleryPictureModels
                     )
 
                     pictureCollectionModels.add(pictureCollectionModel)
@@ -715,20 +746,34 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
                     userPictureResponses.removeAt(2)
                     userPictureResponses.removeAt(1)
                     userPictureResponses.removeAt(0)
+
+                    imagePositionCollection.removeAt(3)
+                    imagePositionCollection.removeAt(2)
+                    imagePositionCollection.removeAt(1)
+                    imagePositionCollection.removeAt(0)
                 } else {
-                    val localUserPictureResponses = arrayListOf(userPictureResponses[0],
-                        userPictureResponses[1], userPictureResponses[2])
+                    val galleryPictureModels = arrayListOf(
+                        GalleryPictureModel(imagePositionCollection[0], userPictureResponses[0]),
+                        GalleryPictureModel(imagePositionCollection[1], userPictureResponses[1]),
+                        GalleryPictureModel(imagePositionCollection[2], userPictureResponses[2]))
                     val pictureCollectionModel = PictureCollectionModel(
-                        pictureDisplayLayoutType, localUserPictureResponses)
+                        pictureLayoutType = pictureDisplayLayoutType,
+                        galleryPictureModels = galleryPictureModels
+                    )
 
                     pictureCollectionModels.add(pictureCollectionModel)
 
                     userPictureResponses.removeAt(2)
                     userPictureResponses.removeAt(1)
                     userPictureResponses.removeAt(0)
+
+                    imagePositionCollection.removeAt(2)
+                    imagePositionCollection.removeAt(1)
+                    imagePositionCollection.removeAt(0)
                 }
 
-                recurSlicePictureResponses(context, pictureLayoutTypes, userPictureResponses, pictureCollectionModels)
+                recurSlicePictureResponses(context, pictureLayoutTypes,
+                    userPictureResponses, pictureCollectionModels, imagePositionCollection)
             }
         } catch (exception: IndexOutOfBoundsException) {
             exception.printStackTrace()
