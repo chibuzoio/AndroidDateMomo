@@ -12,6 +12,7 @@ data class HomeDisplayModel(var deviceWidth: Int,
                             var bounceAnimation: Animation,
                             var buttonClickEffect: AlphaAnimation,
                             var binding: ActivityHomeDisplayBinding,
-                            var homeDisplayActivity: HomeDisplayActivity)
+                            var homeDisplayActivity: HomeDisplayActivity,
+                            var floatingGalleryModel: FloatingGalleryModel)
 
 

@@ -63,6 +63,7 @@
                 android:layout_height="match_parent">
 
                 <ScrollView
+                    android:id="@+id/floatingInformationScroller"
                     android:scrollbars="none"
                     android:background="@drawable/home_card_view"
                     android:layout_width="match_parent"

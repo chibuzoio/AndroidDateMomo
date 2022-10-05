@@ -32,6 +32,7 @@ import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
 import com.chibuzo.datemomo.control.AppBounceInterpolator
 import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
@@ -400,9 +401,27 @@ class HomeDisplayActivity : AppCompatActivity() {
                 binding.homeDisplayRecyclerView.layoutManager = layoutManager
                 binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
+                val floatingLayoutWidth = deviceWidth - (binding.floatingInformationLayout.marginLeft +
+                        binding.floatingInformationLayout.marginRight)
+                val leftRightPictureWidthHeight = ((40 / 100F) * floatingLayoutWidth.toFloat()).toInt()
+                val tripleBottomBigPictureHeight = ((60 / 100F) * floatingLayoutWidth.toFloat()).toInt()
+                val leftRightBigPictureWidth = floatingLayoutWidth - leftRightPictureWidthHeight
+                val leftRightBigPictureHeight = leftRightPictureWidthHeight * 2
+
+                val floatingGalleryModel = FloatingGalleryModel(
+                    floatingLayoutWidth = floatingLayoutWidth,
+                    leftRightBigPictureWidth = leftRightBigPictureWidth,
+                    leftRightBigPictureHeight = leftRightBigPictureHeight,
+                    leftRightPictureWidthHeight = leftRightPictureWidthHeight,
+                    tripleBottomBigPictureHeight = tripleBottomBigPictureHeight,
+                    binding = binding,
+                    homeDisplayActivity = this
+                )
+
                 homeDisplayModel = HomeDisplayModel(
                     deviceWidth, requestProcess, bounceAnimation,
-                    buttonClickEffect, binding, this
+                    buttonClickEffect, binding, this,
+                    floatingGalleryModel
                 )
 
                 val homeDisplayAdapter =
