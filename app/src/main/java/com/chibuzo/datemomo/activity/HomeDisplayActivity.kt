@@ -426,6 +426,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                     binding = binding
                 )
 
+                binding.innerArchLayout.layoutParams.width = floatingLayoutWidth
+
                 homeDisplayModel = HomeDisplayModel(
                     deviceWidth, requestProcess, bounceAnimation,
                     buttonClickEffect, binding, this,

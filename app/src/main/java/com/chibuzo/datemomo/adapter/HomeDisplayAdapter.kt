@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.chibuzo.datemomo.R
-import com.chibuzo.datemomo.activity.HomeDisplayActivity
 import com.chibuzo.datemomo.databinding.RecyclerHomeDisplayBinding
 import com.chibuzo.datemomo.model.GalleryPictureModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
@@ -61,6 +58,8 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
         holder.binding.userImageBack.layoutParams.height = allImageHeight
         holder.binding.userImageLayout.layoutParams.width = allImageWidth
         holder.binding.userImageLayout.layoutParams.height = allImageHeight
+
+        holder.binding.profilePictureCounter.text = homeDisplayResponses[position].userPictureResponses.size.toString()
 
         Glide.with(holder.itemView.context)
             .asGif()

@@ -48,6 +48,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/userInformationLayout"
             android:visibility="gone"
+            android:orientation="vertical"
             android:layout_marginBottom="53dp"
             android:background="@color/background_cover"
             android:layout_width="match_parent"
@@ -537,12 +538,97 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/pictureCollectionRecycler"
                             android:layout_marginTop="15dp"
+                            android:nestedScrollingEnabled="false"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </ScrollView>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:visibility="gone"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <View
+                    android:background="@color/light_grey"
+                    android:layout_width="11dp"
+                    android:layout_height="match_parent"/>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/innerArchLayout"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <View
+                        android:layout_gravity="top"
+                        android:foregroundGravity="top"
+                        android:background="@color/light_grey"
+                        android:layout_width="match_parent"
+                        android:layout_height="11dp"/>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_gravity="top"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="11dp">
+
+                        <ImageView
+                            android:layout_gravity="start"
+                            android:foregroundGravity="left"
+                            android:src="@drawable/top_left_arch"
+                            android:layout_width="11dp"
+                            android:layout_height="11dp"/>
+
+                        <ImageView
+                            android:layout_gravity="end"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/top_right_arch"
+                            android:layout_width="11dp"
+                            android:layout_height="11dp"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_gravity="bottom"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="11dp">
+
+                        <ImageView
+                            android:layout_gravity="start"
+                            android:foregroundGravity="left"
+                            android:src="@drawable/bottom_left_arch"
+                            android:layout_width="11dp"
+                            android:layout_height="11dp"/>
+
+                        <ImageView
+                            android:layout_gravity="end"
+                            android:foregroundGravity="right"
+                            android:src="@drawable/bottom_right_arch"
+                            android:layout_width="11dp"
+                            android:layout_height="11dp"/>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <View
+                        android:layout_gravity="bottom"
+                        android:foregroundGravity="bottom"
+                        android:background="@color/light_grey"
+                        android:layout_width="match_parent"
+                        android:layout_height="11dp"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:background="@color/light_grey"
+                    android:layout_width="11dp"
+                    android:layout_height="match_parent"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
