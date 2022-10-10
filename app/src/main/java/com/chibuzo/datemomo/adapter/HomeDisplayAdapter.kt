@@ -355,10 +355,11 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
         homeDisplayModel.binding.userInformationLayout.visibility = View.VISIBLE
 
-        val userPictureResponses = homeDisplayResponses[position].userPictureResponses
-        val pictureCollectionModels = slicePictureResponses(context, userPictureResponses)
-
         var galleryLayoutHeight = 0
+        val userPictureResponses = arrayListOf<UserPictureResponse>()
+        userPictureResponses.addAll(homeDisplayResponses[position].userPictureResponses)
+
+        val pictureCollectionModels = slicePictureResponses(context, userPictureResponses)
 
         for (pictureCollectionModel in pictureCollectionModels) {
             when (pictureCollectionModel.pictureLayoutType) {
@@ -495,6 +496,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
         recurSlicePictureResponses(context, pictureLayoutTypes,
             userPictureResponses, pictureCollectionModels, imagePositionCollection)
+
         return pictureCollectionModels
     }
 
