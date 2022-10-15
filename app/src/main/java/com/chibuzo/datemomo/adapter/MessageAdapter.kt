@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.RecyclerMessageBinding
 import com.chibuzo.datemomo.model.MessageModel
@@ -107,14 +108,52 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                 holder.binding.receiverMessageLayout.visibility = View.GONE
 
                 val senderMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
-                holder.binding.senderMessageText.text = senderMessage
+
+                if (senderMessage == holder.itemView.context.getString(R.string.sticker_anim_wave)) {
+                    holder.binding.senderMessageText.visibility = View.VISIBLE
+                    holder.binding.senderMessageImage.visibility = View.GONE
+
+                    if (senderMessage.contains("anim")) {
+                        Glide.with(holder.itemView.context)
+                            .asGif()
+                            .load(R.drawable.anime_waving_hand)
+                            .into(holder.binding.senderMessageImage)
+                    } else {
+                        Glide.with(holder.itemView.context)
+                            .load(R.drawable.anime_waving_hand)
+                            .into(holder.binding.senderMessageImage)
+                    }
+                } else {
+                    holder.binding.senderMessageText.visibility = View.VISIBLE
+                    holder.binding.senderMessageImage.visibility = View.GONE
+                    holder.binding.senderMessageText.text = senderMessage
+                }
             }
             messageModel.receiverId -> {
                 holder.binding.receiverMessageLayout.visibility = View.VISIBLE
                 holder.binding.senderMessageLayout.visibility = View.GONE
 
                 val receiverMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
-                holder.binding.receiverMessageText.text = receiverMessage
+
+                if (receiverMessage == holder.itemView.context.getString(R.string.sticker_anim_wave)) {
+                    holder.binding.receiverMessageImage.visibility = View.VISIBLE
+                    holder.binding.receiverMessageText.visibility = View.GONE
+
+                    if (receiverMessage.contains("anim")) {
+                        Glide.with(holder.itemView.context)
+                            .asGif()
+                            .load(R.drawable.anime_waving_hand)
+                            .into(holder.binding.receiverMessageImage)
+                    } else {
+                        Glide.with(holder.itemView.context)
+                            .load(R.drawable.anime_waving_hand)
+                            .into(holder.binding.receiverMessageImage)
+                    }
+                } else {
+                    holder.binding.receiverMessageText.visibility = View.VISIBLE
+                    holder.binding.receiverMessageImage.visibility = View.GONE
+                    holder.binding.receiverMessageText.text = receiverMessage
+                }
             }
             else -> {
                 holder.binding.receiverMessageLayout.visibility = View.GONE
@@ -124,6 +163,37 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
     }
 
     override fun getItemCount(): Int {
+        messageModel.binding.wavingHandSenderAnime.setOnClickListener {
+            var senderMessage = messageModel.context.getString(R.string.sticker_anim_wave)
+            senderMessage = Utility.encodeEmoji(senderMessage).toString()
+
+            val messageResponse = MessageResponse(
+                0, messageModel.senderId, senderMessage,
+                0, 0, 0, ""
+            )
+
+            val insertPosition = itemCount
+
+            messageResponses.add(messageResponse)
+
+            notifyItemInserted(insertPosition)
+
+            messageModel.binding.messageRecyclerView.layoutManager!!.scrollToPosition(
+                messageResponses.size - 1
+            )
+            messageModel.binding.welcomeMessageLayout.visibility = View.GONE
+            messageModel.binding.messageInputField.setText("")
+
+            val postMessageRequest = PostMessageRequest(
+                messageModel.senderId,
+                messageModel.receiverId, insertPosition, senderMessage
+            )
+
+            postSenderMessage(messageModel.context, postMessageRequest)
+
+            messageModel.messageActivity.checkUnseenMessages()
+        }
+
         messageModel.binding.messageSenderLayout.setOnClickListener {
             var senderMessage = messageModel.binding.messageInputField.text.toString().trim()
 

@@ -21,6 +21,10 @@
     <string name="activity_user_experience">UserExperienceActivity</string>
     <string name="activity_user_information">UserInformationActivity</string>
 
+    <!-- Sticker Text Representations -->
+    <!-- Prefix static images with "stat-" -->
+    <string name="sticker_anim_wave">&lt;{#anim-wave#}&gt;</string>
+
     <string name="clicked_home_menu">clickedHomeMenu</string>
     <string name="clicked_account_menu">clickedAccountMenu</string>
     <string name="clicked_generic_menu">clickedGenericMenu</string>

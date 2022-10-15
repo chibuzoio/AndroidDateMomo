@@ -241,11 +241,6 @@ class MessageActivity : AppCompatActivity() {
 
         }
 
-        binding.wavingHandSenderAnime.setOnClickListener {
-            // send waving hand as message to recipient
-
-        }
-
         Glide.with(this)
             .asGif()
             .load(R.drawable.anime_waving_hand)
