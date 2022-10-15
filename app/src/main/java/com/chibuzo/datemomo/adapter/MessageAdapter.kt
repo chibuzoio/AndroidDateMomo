@@ -1,10 +1,14 @@
 package com.chibuzo.datemomo.adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
@@ -110,8 +114,10 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                 val senderMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
 
                 if (senderMessage == holder.itemView.context.getString(R.string.sticker_anim_wave)) {
-                    holder.binding.senderMessageText.visibility = View.VISIBLE
-                    holder.binding.senderMessageImage.visibility = View.GONE
+                    holder.binding.senderMessageLowerLayout.background = ColorDrawable(ContextCompat.getColor(holder.itemView.context, R.color.white))
+                    holder.binding.senderMessageUpperLayout.visibility = View.INVISIBLE
+                    holder.binding.senderMessageImage.visibility = View.VISIBLE
+                    holder.binding.senderMessageText.visibility = View.GONE
 
                     if (senderMessage.contains("anim")) {
                         Glide.with(holder.itemView.context)
@@ -124,6 +130,8 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                             .into(holder.binding.senderMessageImage)
                     }
                 } else {
+                    holder.binding.senderMessageLowerLayout.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.blue_message_lower_layout)
+                    holder.binding.senderMessageUpperLayout.visibility = View.VISIBLE
                     holder.binding.senderMessageText.visibility = View.VISIBLE
                     holder.binding.senderMessageImage.visibility = View.GONE
                     holder.binding.senderMessageText.text = senderMessage
@@ -136,6 +144,8 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                 val receiverMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
 
                 if (receiverMessage == holder.itemView.context.getString(R.string.sticker_anim_wave)) {
+                    holder.binding.receiverMessageLowerLayout.background = ColorDrawable(ContextCompat.getColor(holder.itemView.context, R.color.white))
+                    holder.binding.receiverMessageUpperLayout.visibility = View.INVISIBLE
                     holder.binding.receiverMessageImage.visibility = View.VISIBLE
                     holder.binding.receiverMessageText.visibility = View.GONE
 
@@ -150,6 +160,8 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                             .into(holder.binding.receiverMessageImage)
                     }
                 } else {
+                    holder.binding.receiverMessageLowerLayout.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.grey_message_lower_layout)
+                    holder.binding.receiverMessageUpperLayout.visibility = View.VISIBLE
                     holder.binding.receiverMessageText.visibility = View.VISIBLE
                     holder.binding.receiverMessageImage.visibility = View.GONE
                     holder.binding.receiverMessageText.text = receiverMessage

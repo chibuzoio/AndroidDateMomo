@@ -17,6 +17,7 @@
         android:layout_height="wrap_content">
 
         <FrameLayout
+            android:id="@+id/senderMessageUpperLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -43,6 +44,7 @@
         </FrameLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/senderMessageLowerLayout"
             android:orientation="vertical"
             android:background="@drawable/blue_message_lower_layout"
             android:layout_width="wrap_content"
@@ -62,8 +64,8 @@
                 android:visibility="gone"
                 android:layout_gravity="center"
                 android:foregroundGravity="center"
-                android:layout_width="65dp"
-                android:layout_height="65dp"/>
+                android:layout_width="70dp"
+                android:layout_height="70dp"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -80,6 +82,7 @@
         android:layout_height="wrap_content">
 
         <FrameLayout
+            android:id="@+id/receiverMessageUpperLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -106,6 +109,7 @@
         </FrameLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/receiverMessageLowerLayout"
             android:orientation="vertical"
             android:background="@drawable/grey_message_lower_layout"
             android:layout_width="wrap_content"
@@ -125,8 +129,8 @@
                 android:visibility="gone"
                 android:layout_gravity="center"
                 android:foregroundGravity="center"
-                android:layout_width="55dp"
-                android:layout_height="55dp"/>
+                android:layout_width="85dp"
+                android:layout_height="85dp"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
