@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Base64
 import android.util.DisplayMetrics
+import com.chibuzo.datemomo.R
 import java.io.ByteArrayOutputStream
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
@@ -16,6 +17,14 @@ import java.util.concurrent.TimeUnit
 class Utility {
 
     companion object {
+
+        fun selectChosenSticker(context: Context, sticker: String): Int {
+            when (sticker) {
+                context.getString(R.string.sticker_anim_wave) -> return R.drawable.anime_waving_hand
+            }
+
+            return -1
+        }
 
         fun encodeEmoji(message: String?): String? {
             return try {

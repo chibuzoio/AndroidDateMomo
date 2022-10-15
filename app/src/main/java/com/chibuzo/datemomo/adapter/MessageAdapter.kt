@@ -111,23 +111,30 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                 holder.binding.senderMessageLayout.visibility = View.VISIBLE
                 holder.binding.receiverMessageLayout.visibility = View.GONE
 
-                val senderMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
+                val senderMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message).toString()
 
-                if (senderMessage == holder.itemView.context.getString(R.string.sticker_anim_wave)) {
+                if (senderMessage.contains("<{#") && senderMessage.contains("#}>")) {
                     holder.binding.senderMessageLowerLayout.background = ColorDrawable(ContextCompat.getColor(holder.itemView.context, R.color.white))
                     holder.binding.senderMessageUpperLayout.visibility = View.INVISIBLE
-                    holder.binding.senderMessageImage.visibility = View.VISIBLE
                     holder.binding.senderMessageText.visibility = View.GONE
 
-                    if (senderMessage.contains("anim")) {
-                        Glide.with(holder.itemView.context)
-                            .asGif()
-                            .load(R.drawable.anime_waving_hand)
-                            .into(holder.binding.senderMessageImage)
+                    val chosenSticker = Utility.selectChosenSticker(holder.itemView.context, senderMessage)
+
+                    if (chosenSticker != -1) {
+                        holder.binding.senderMessageImage.visibility = View.VISIBLE
+
+                        if (senderMessage.contains("anim")) {
+                            Glide.with(holder.itemView.context)
+                                .asGif()
+                                .load(chosenSticker)
+                                .into(holder.binding.senderMessageImage)
+                        } else {
+                            Glide.with(holder.itemView.context)
+                                .load(chosenSticker)
+                                .into(holder.binding.senderMessageImage)
+                        }
                     } else {
-                        Glide.with(holder.itemView.context)
-                            .load(R.drawable.anime_waving_hand)
-                            .into(holder.binding.senderMessageImage)
+                        holder.binding.senderMessageImage.visibility = View.GONE
                     }
                 } else {
                     holder.binding.senderMessageLowerLayout.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.blue_message_lower_layout)
@@ -141,23 +148,30 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
                 holder.binding.receiverMessageLayout.visibility = View.VISIBLE
                 holder.binding.senderMessageLayout.visibility = View.GONE
 
-                val receiverMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message)
+                val receiverMessage = Utility.decodeEmoji(messageResponses[messageModel.currentPosition].message).toString()
 
-                if (receiverMessage == holder.itemView.context.getString(R.string.sticker_anim_wave)) {
+                if (receiverMessage.contains("<{#") && receiverMessage.contains("#}>")) {
                     holder.binding.receiverMessageLowerLayout.background = ColorDrawable(ContextCompat.getColor(holder.itemView.context, R.color.white))
                     holder.binding.receiverMessageUpperLayout.visibility = View.INVISIBLE
-                    holder.binding.receiverMessageImage.visibility = View.VISIBLE
                     holder.binding.receiverMessageText.visibility = View.GONE
 
-                    if (receiverMessage.contains("anim")) {
-                        Glide.with(holder.itemView.context)
-                            .asGif()
-                            .load(R.drawable.anime_waving_hand)
-                            .into(holder.binding.receiverMessageImage)
+                    val chosenSticker = Utility.selectChosenSticker(holder.itemView.context, receiverMessage)
+
+                    if (chosenSticker != -1) {
+                        holder.binding.receiverMessageImage.visibility = View.VISIBLE
+
+                        if (receiverMessage.contains("anim")) {
+                            Glide.with(holder.itemView.context)
+                                .asGif()
+                                .load(chosenSticker)
+                                .into(holder.binding.receiverMessageImage)
+                        } else {
+                            Glide.with(holder.itemView.context)
+                                .load(chosenSticker)
+                                .into(holder.binding.receiverMessageImage)
+                        }
                     } else {
-                        Glide.with(holder.itemView.context)
-                            .load(R.drawable.anime_waving_hand)
-                            .into(holder.binding.receiverMessageImage)
+                        holder.binding.receiverMessageImage.visibility = View.GONE
                     }
                 } else {
                     holder.binding.receiverMessageLowerLayout.background = ContextCompat.getDrawable(holder.itemView.context, R.drawable.grey_message_lower_layout)
