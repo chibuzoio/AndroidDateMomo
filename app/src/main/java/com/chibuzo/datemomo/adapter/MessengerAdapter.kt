@@ -68,10 +68,23 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             messengerResponses[position].userName.replaceFirstChar { it.uppercase() }
         } else { messengerResponses[position].fullName }
 
-        val decodedLastMessage = Utility.decodeEmoji(messengerResponses[position].lastMessage)
+        val decodedLastMessage = Utility.decodeEmoji(messengerResponses[position].lastMessage).toString()
 
-        holder.binding.lastMessage.text = if (decodedLastMessage!!.length > 35) {
-            decodedLastMessage.substring(0, 35) + "..." } else { decodedLastMessage }
+        if (decodedLastMessage.contains("<{#") && decodedLastMessage.contains("#}>")) {
+            holder.binding.lastMessageImage.visibility = View.VISIBLE
+            holder.binding.lastMessageText.visibility = View.GONE
+
+            val chosenSticker = Utility.selectChosenSticker(holder.itemView.context, decodedLastMessage)
+
+            Glide.with(holder.itemView.context)
+                .load(chosenSticker)
+                .into(holder.binding.lastMessageImage)
+        } else {
+            holder.binding.lastMessageText.text = if (decodedLastMessage.length > 35) {
+                decodedLastMessage.substring(0, 35) + "..." } else { decodedLastMessage }
+            holder.binding.lastMessageText.visibility = View.VISIBLE
+            holder.binding.lastMessageImage.visibility = View.GONE
+        }
 
         holder.binding.messageStatusTime.text = Utility.getTimeDifference(messengerResponses[position].lastMessageDate.toLong())
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
