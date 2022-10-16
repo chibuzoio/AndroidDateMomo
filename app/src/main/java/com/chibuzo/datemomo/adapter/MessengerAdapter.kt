@@ -46,14 +46,6 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
                 .itemView.context.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        if (messengerResponses[position].fullName.isEmpty()) {
-            messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
-                "Delete chats with ${messengerResponses[position].userName.replaceFirstChar { it.uppercase() }}?"
-        } else {
-            messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
-                "Delete chats with ${messengerResponses[position].fullName}?"
-        }
-
         val messengerPropertyLeftPadding = holder.binding.messengerPropertyLayout.paddingLeft
         val imageLayoutHeight = ((messengerModel.deviceWidth - messengerPropertyLeftPadding) * 16) / 100
         val imageHeight = imageLayoutHeight - ((imageLayoutHeight * 5) / 100)
@@ -73,12 +65,9 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             .transform(CircleCrop(), CenterCrop())
             .into(holder.binding.messengerProfilePicture)
 
-        if (messengerResponses[position].fullName == "") {
-            holder.binding.userFullName.text = messengerResponses[position].userName
-                .replaceFirstChar { it.uppercase() }
-        } else {
-            holder.binding.userFullName.text = messengerResponses[position].fullName
-        }
+        holder.binding.userFullName.text = if (messengerResponses[position].fullName == "") {
+            messengerResponses[position].userName.replaceFirstChar { it.uppercase() }
+        } else { messengerResponses[position].fullName }
 
         val decodedLastMessage = Utility.decodeEmoji(messengerResponses[position].lastMessage)
 
@@ -199,6 +188,11 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
         }
 
         messengerModel.binding.deleteChatsMenu.setOnClickListener {
+            messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
+                if (messengerResponses[messengerModel.currentPosition].fullName.isEmpty()) {
+                    "Delete chats with ${messengerResponses[messengerModel.currentPosition].userName.replaceFirstChar { it.uppercase() }}?"
+                } else { "Delete chats with ${messengerResponses[messengerModel.currentPosition].fullName}?" }
+
             messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.VISIBLE
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
         }
