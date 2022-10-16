@@ -148,6 +148,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             * notifyItemRangeInserted(insertIndex, items.size())
             * notifyItemChanged(updateIndex)
             * notifyItemRemoved(removeIndex)
+            * notifyItemRangeChanged(fromIndex, itemCount)
             * notifyItemRangeRemoved(startIndex, count)
             * notifyItemMoved(fromPosition, toPosition)
             * notifyDataSetChanged()

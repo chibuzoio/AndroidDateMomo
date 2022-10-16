@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
-import com.chibuzo.datemomo.activity.MessengerActivity
 import com.chibuzo.datemomo.activity.UserExperienceActivity
 import com.chibuzo.datemomo.databinding.RecyclerMessengerBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
@@ -179,6 +178,7 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
             messengerResponses.removeAt(messengerModel.currentPosition)
             notifyItemRemoved(messengerModel.currentPosition)
+            notifyItemRangeChanged(messengerModel.currentPosition, itemCount)
         }
 
         messengerModel.binding.userInfoMenu.setOnClickListener {
@@ -207,6 +207,7 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
 
         holder.binding.messengerPropertyLayout.setOnClickListener {
             messengerModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_messages)
+            messengerModel.currentPosition = position
 
             val messageRequest = MessageRequest(
                 sharedPreferences.getInt("memberId", 0),

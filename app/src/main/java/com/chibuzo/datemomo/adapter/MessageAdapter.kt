@@ -57,6 +57,7 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
             messageModel.messageActivity.deleteSingleMessage(deleteChatRequest)
             messageResponses.removeAt(messageModel.currentPosition)
             notifyItemRemoved(messageModel.currentPosition)
+            notifyItemRangeChanged(messageModel.currentPosition, itemCount)
 
             messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
             messageModel.binding.messengerMenuLayout.visibility = View.GONE
@@ -78,6 +79,7 @@ class MessageAdapter(private var messageResponses: ArrayList<MessageResponse>, p
             messageModel.messageActivity.deleteSingleMessage(deleteChatRequest)
             messageResponses.removeAt(messageModel.currentPosition)
             notifyItemRemoved(messageModel.currentPosition)
+            notifyItemRangeChanged(messageModel.currentPosition, itemCount)
 
             messageModel.binding.deleteForEveryoneMenu.visibility = View.VISIBLE
             messageModel.binding.messengerMenuLayout.visibility = View.GONE
