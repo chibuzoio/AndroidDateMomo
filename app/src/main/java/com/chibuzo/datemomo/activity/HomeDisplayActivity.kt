@@ -857,7 +857,9 @@ class HomeDisplayActivity : AppCompatActivity() {
             binding.moreMatchedUserProgressBar.visibility = View.VISIBLE
 
             var tenIterationCounter = 0
-            val homeDisplayRequest = HomeDisplayRequest(arrayListOf())
+            val homeDisplayRequest = HomeDisplayRequest(
+                sharedPreferences.getInt(getString(R.string.member_id), 0),
+                arrayListOf())
 
             for (index in outerHomeDisplayResponse.thousandRandomCounter.indices) {
                 if (index > lastDisplayPage) {
