@@ -34,8 +34,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.chibuzo.datemomo.activity.HomeDisplayActivity
 import com.chibuzo.datemomo.activity.UserBioActivity
 import com.chibuzo.datemomo.databinding.ActivityMainBinding
-import com.chibuzo.datemomo.model.ActivityStackModel
-import com.chibuzo.datemomo.model.ExperimentalStackModel
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.UserNameModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
@@ -51,7 +50,6 @@ import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -781,7 +779,7 @@ class MainActivity : AppCompatActivity() {
         binding.loginPassword.leftIconInputField.genericInputField.clearFocus()
         binding.userAgeInput.genericInputField.clearFocus()
 
-        val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(binding.loginUserName.leftIconInputField.genericInputField.windowToken, 0)
     }
 
@@ -1074,8 +1072,7 @@ class MainActivity : AppCompatActivity() {
 
                 try {
                     val activityInstanceStack = Stack<ActivitySavedInstance>()
-
-                    val outerHomeDisplayResponse = mapper.readValue(myResponse) as OuterHomeDisplayResponse
+                    val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
 
                     val homeDisplayInstance = HomeDisplayInstance(
                         scrollToPosition = 0,
@@ -1084,7 +1081,7 @@ class MainActivity : AppCompatActivity() {
                         activity = getString(R.string.activity_home_display),
                         activityStateData = homeDisplayInstance)
                     activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceStackString = mapper.writeValueAsString(ExperimentalStackModel(activityInstanceStack))
+                    val activityInstanceStackString = mapper.writeValueAsString(ActivityInstanceModel(activityInstanceStack))
                     sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
                     sharedPreferencesEditor.apply()
 
@@ -1094,7 +1091,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                 } catch (exception: IOException) {
                     exception.printStackTrace()
-                    Log.e(TAG, "Error message from line 1089 here is ${exception.message}")
+                    Log.e(TAG, "Error message from line 1096 here is ${exception.message}")
                 }
             }
         })

@@ -31,15 +31,15 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
 import com.chibuzo.datemomo.control.AppBounceInterpolator
 import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
+import com.chibuzo.datemomo.model.instance.ImageSliderInstance
 import com.chibuzo.datemomo.model.request.*
-import com.chibuzo.datemomo.model.response.CommittedResponse
-import com.chibuzo.datemomo.model.response.HomeDisplayResponse
-import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
-import com.chibuzo.datemomo.model.response.PictureUpdateResponse
+import com.chibuzo.datemomo.model.response.*
 import com.chibuzo.datemomo.service.LocationTracker
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -964,24 +964,32 @@ class HomeDisplayActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_image_slider)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_image_slider))
+                val userPictureResponses: ArrayList<UserPictureResponse> = mapper.readValue(myResponse)
+                val imageSliderInstance = ImageSliderInstance(
+                    memberId = userPictureRequest.memberId,
+                    currentPosition = 0,
+                    userPictureResponses = userPictureResponses)
+
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_image_slider),
+                    activityStateData = imageSliderInstance
+                )
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_image_slider)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
+                    sharedPreferencesEditor.apply()
                 }
 
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
+
+                val activitySavedInstanceString = mapper.writeValueAsString(imageSliderInstance)
                 val intent = Intent(this@HomeDisplayActivity, ImageSliderActivity::class.java)
-
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
-
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                intent.putExtra("memberId", userPictureRequest.memberId)
-                intent.putExtra("jsonResponse", myResponse)
-                intent.putExtra("currentPosition", 0)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })

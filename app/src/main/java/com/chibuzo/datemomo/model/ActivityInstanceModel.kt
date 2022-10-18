@@ -4,6 +4,6 @@ import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import java.util.*
 
 @kotlinx.serialization.Serializable
-data class ExperimentalStackModel(var activityInstanceStack: Stack<ActivitySavedInstance>)
+data class ActivityInstanceModel(var activityInstanceStack: Stack<ActivitySavedInstance>)
 
 

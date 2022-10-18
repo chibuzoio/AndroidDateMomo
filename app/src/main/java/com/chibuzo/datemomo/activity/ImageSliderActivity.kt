@@ -17,8 +17,8 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.ImageSliderAdapter
 import com.chibuzo.datemomo.databinding.ActivityImageSliderBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.instance.ImageSliderInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
-import com.chibuzo.datemomo.model.response.UserPictureResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ImageSliderActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -36,8 +35,8 @@ class ImageSliderActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityImageSliderBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var imageSliderInstance: ImageSliderInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var userPictureComposite: ArrayList<UserPictureResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,11 +100,11 @@ class ImageSliderActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userPictureComposite = mapper.readValue(bundle.getString("jsonResponse")!!)
+            imageSliderInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
 
-            binding.genericPicturePager.adapter = ImageSliderAdapter(this, userPictureComposite)
+            binding.genericPicturePager.adapter = ImageSliderAdapter(this, imageSliderInstance.userPictureResponses)
             /*binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())*/
-            binding.genericPicturePager.setCurrentItem(bundle.getInt("currentPosition"), true)
+            binding.genericPicturePager.setCurrentItem(imageSliderInstance.currentPosition, true)
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
@@ -154,7 +153,7 @@ class ImageSliderActivity : AppCompatActivity() {
     fun fetchUserInformation() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val userInformationRequest = UserInformationRequest(bundle.getInt("memberId"))
+        val userInformationRequest = UserInformationRequest(imageSliderInstance.memberId)
         val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
