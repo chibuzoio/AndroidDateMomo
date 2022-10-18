@@ -23,6 +23,8 @@ import com.chibuzo.datemomo.adapter.NotificationAdapter
 import com.chibuzo.datemomo.databinding.ActivityNotificationBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.NotificationInstance
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.ReadStatusRequest
 import com.chibuzo.datemomo.model.request.UserInformationRequest
@@ -47,9 +49,10 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
     private lateinit var readStatusRequest: ReadStatusRequest
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var notificationInstance: NotificationInstance
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var userInformationRequest: UserInformationRequest
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var notificationResponseArray: ArrayList<NotificationResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -161,12 +164,13 @@ class NotificationActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            notificationResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            notificationInstance = activitySavedInstance.activityStateData as NotificationInstance
 
             val allLikersModel = AllLikersModel(
                 sharedPreferences.getInt(getString(R.string.member_id), 0), deviceWidth, "", this)
 
-            if (notificationResponseArray.size > 0) {
+            if (notificationInstance.notificationResponses.size > 0) {
                 binding.emptyNotificationDialog.dialogActivityLayout.visibility = View.GONE
 
                 val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -174,7 +178,7 @@ class NotificationActivity : AppCompatActivity() {
                 binding.notificationRecyclerView.itemAnimator = DefaultItemAnimator()
 
                 val notificationAdapter =
-                    NotificationAdapter(notificationResponseArray, allLikersModel)
+                    NotificationAdapter(notificationInstance.notificationResponses, allLikersModel)
                 binding.notificationRecyclerView.adapter = notificationAdapter
             } else {
                 binding.emptyNotificationDialog.dialogActivityLayout.visibility = View.VISIBLE

@@ -1085,8 +1085,8 @@ class MainActivity : AppCompatActivity() {
                     sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
                     sharedPreferencesEditor.apply()
 
-                    val activitySavedInstanceString = mapper.writeValueAsString(homeDisplayInstance)
-                    val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                    val intent = Intent(this@MainActivity, HomeDisplayActivity::class.java)
                     intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                     startActivity(intent)
                 } catch (exception: IOException) {

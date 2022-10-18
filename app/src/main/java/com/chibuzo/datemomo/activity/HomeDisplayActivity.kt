@@ -38,6 +38,7 @@ import com.chibuzo.datemomo.model.HomeDisplayModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
 import com.chibuzo.datemomo.model.instance.ImageSliderInstance
+import com.chibuzo.datemomo.model.instance.NotificationInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.*
 import com.chibuzo.datemomo.service.LocationTracker
@@ -54,6 +55,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -82,6 +84,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var homeDisplayInstance: HomeDisplayInstance
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var outerHomeDisplayResponse: OuterHomeDisplayResponse
     private lateinit var homeDisplayResponseArray: ArrayList<HomeDisplayResponse>
@@ -389,7 +392,8 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
 
         try {
-            homeDisplayInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            homeDisplayInstance = activitySavedInstance.activityStateData as HomeDisplayInstance
             outerHomeDisplayResponse = homeDisplayInstance.outerHomeDisplayResponse
 
             if (outerHomeDisplayResponse.homeDisplayResponses.size > 0) {
@@ -1096,28 +1100,33 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val notificationResponses: ArrayList<NotificationResponse> = mapper.readValue(myResponse)
+                val notificationInstance = NotificationInstance(notificationResponses)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_notification),
+                    activityStateData = notificationInstance
+                )
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_notification)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_notification))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_notification)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
                     sharedPreferencesEditor.apply()
                 }
-
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
 
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }
 
-                val intent = Intent(baseContext, NotificationActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@HomeDisplayActivity, NotificationActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
