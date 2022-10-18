@@ -25,9 +25,10 @@ import com.chibuzo.datemomo.adapter.MessageAdapter
 import com.chibuzo.datemomo.databinding.ActivityMessageBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.MessageModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.MessageInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
-import com.chibuzo.datemomo.model.response.MessageResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -45,10 +46,11 @@ class MessageActivity : AppCompatActivity() {
     private lateinit var messageModel: MessageModel
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var binding: ActivityMessageBinding
+    private lateinit var messageInstance: MessageInstance
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var viewRootHeightArray: MutableSet<Int>
-    private lateinit var messageResponseArray: ArrayList<MessageResponse>
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -305,9 +307,10 @@ class MessageActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            messageResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            messageInstance = activitySavedInstance.activityStateData as MessageInstance
 
-            if (messageResponseArray.isEmpty()) {
+            if (messageInstance.messageResponses.isEmpty()) {
                 binding.welcomeMessageLayout.visibility = View.VISIBLE
             } else {
                 binding.welcomeMessageLayout.visibility = View.GONE
@@ -321,10 +324,10 @@ class MessageActivity : AppCompatActivity() {
                 bundle.getInt("receiverId"), this,
                 0, binding, this)
 
-            messageAdapter = MessageAdapter(messageResponseArray, messageModel)
+            messageAdapter = MessageAdapter(messageInstance.messageResponses, messageModel)
             binding.messageRecyclerView.adapter = messageAdapter
 
-            (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageResponseArray.size - 1)
+            (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageInstance.messageResponses.size - 1)
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
@@ -567,14 +570,14 @@ class MessageActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
 
                 try {
-                    messageResponseArray = mapper.readValue(myResponse)
+                    messageInstance.messageResponses = mapper.readValue(myResponse)
 
-                    if (messageResponseArray.size > 0) {
+                    if (messageInstance.messageResponses.size > 0) {
                         runOnUiThread {
-                            messageAdapter = MessageAdapter(messageResponseArray, messageModel)
+                            messageAdapter = MessageAdapter(messageInstance.messageResponses, messageModel)
                             binding.messageRecyclerView.swapAdapter(messageAdapter, true)
                             (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(
-                                messageResponseArray.size - 1
+                                messageInstance.messageResponses.size - 1
                             )
                         }
                     }

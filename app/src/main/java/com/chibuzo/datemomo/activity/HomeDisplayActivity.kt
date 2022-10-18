@@ -35,10 +35,7 @@ import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
-import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
-import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
-import com.chibuzo.datemomo.model.instance.ImageSliderInstance
-import com.chibuzo.datemomo.model.instance.NotificationInstance
+import com.chibuzo.datemomo.model.instance.*
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.*
 import com.chibuzo.datemomo.service.LocationTracker
@@ -1219,30 +1216,36 @@ class HomeDisplayActivity : AppCompatActivity() {
                     binding.userInformationLayout.visibility = View.GONE
                 }
 
-                val activityStackModel: ActivityStackModel =
+                val messageResponses: ArrayList<MessageResponse> = mapper.readValue(myResponse)
+                val messageInstance = MessageInstance(
+                    senderId = messageRequest.senderId,
+                    fullName = messageRequest.fullName,
+                    userName = messageRequest.userName,
+                    receiverId = messageRequest.receiverId,
+                    lastActiveTime = messageRequest.lastActiveTime,
+                    profilePicture = messageRequest.profilePicture,
+                    userBlockedStatus = messageRequest.userBlockedStatus,
+                    messageResponses = messageResponses)
+
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_message),
+                    activityStateData = messageInstance)
+
+                val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_message)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_message))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_message)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
 
-                val intent = Intent(baseContext, MessageActivity::class.java)
-                intent.putExtra("userBlockedStatus", messageRequest.userBlockedStatus)
-                intent.putExtra("profilePicture", messageRequest.profilePicture)
-                intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
-                intent.putExtra("receiverId", messageRequest.receiverId)
-                intent.putExtra("userName", messageRequest.userName)
-                intent.putExtra("senderId", messageRequest.senderId)
-                intent.putExtra("fullName", messageRequest.fullName)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@HomeDisplayActivity, MessageActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
