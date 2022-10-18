@@ -17,6 +17,7 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.ImageSliderAdapter
 import com.chibuzo.datemomo.databinding.ActivityImageSliderBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.ImageSliderInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.utility.Utility
@@ -36,6 +37,7 @@ class ImageSliderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityImageSliderBinding
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var imageSliderInstance: ImageSliderInstance
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +102,8 @@ class ImageSliderActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            imageSliderInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            imageSliderInstance = activitySavedInstance.activityStateData as ImageSliderInstance
 
             binding.genericPicturePager.adapter = ImageSliderAdapter(this, imageSliderInstance.userPictureResponses)
             /*binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())*/

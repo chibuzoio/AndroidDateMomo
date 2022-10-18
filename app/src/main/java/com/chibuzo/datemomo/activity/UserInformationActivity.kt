@@ -21,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityUserInformationBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
@@ -46,6 +47,7 @@ class UserInformationActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var binding: ActivityUserInformationBinding
     private lateinit var homeDisplayResponse: HomeDisplayResponse
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +82,8 @@ class UserInformationActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            homeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            homeDisplayResponse = activitySavedInstance.activityStateData as HomeDisplayResponse
         } catch (exception: IOException) {
             exception.printStackTrace()
             finish()

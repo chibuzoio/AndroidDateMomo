@@ -964,9 +964,6 @@ class HomeDisplayActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val activityInstanceModel: ActivityInstanceModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
-
                 val userPictureResponses: ArrayList<UserPictureResponse> = mapper.readValue(myResponse)
                 val imageSliderInstance = ImageSliderInstance(
                     memberId = userPictureRequest.memberId,
@@ -978,6 +975,9 @@ class HomeDisplayActivity : AppCompatActivity() {
                     activityStateData = imageSliderInstance
                 )
 
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
+
                 if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_image_slider)) {
                     activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
                     val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
@@ -987,7 +987,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
 
-                val activitySavedInstanceString = mapper.writeValueAsString(imageSliderInstance)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
                 val intent = Intent(this@HomeDisplayActivity, ImageSliderActivity::class.java)
                 intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
@@ -1026,28 +1026,32 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val homeDisplayResponse: HomeDisplayResponse = mapper.readValue(myResponse)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_user_information),
+                    activityStateData = homeDisplayResponse
+                )
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_information)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
 
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }
 
-                val intent = Intent(baseContext, UserInformationActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@HomeDisplayActivity, UserInformationActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
