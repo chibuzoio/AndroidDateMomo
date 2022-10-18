@@ -41,6 +41,7 @@ import com.chibuzo.datemomo.model.response.*
 import com.chibuzo.datemomo.service.LocationTracker
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -83,7 +84,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var outerHomeDisplayResponse: OuterHomeDisplayResponse
-    private lateinit var homeDisplayResponseArray: ArrayList<HomeDisplayResponse>
+    private lateinit var moreHomeDisplayResponses: ArrayList<HomeDisplayResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -908,14 +909,14 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                 override fun onResponse(call: Call, response: Response) {
                     val myResponse: String = response.body()!!.string()
-                    homeDisplayResponseArray = mapper.readValue(myResponse)
+                    moreHomeDisplayResponses = mapper.readValue(myResponse)
 
                     runOnUiThread {
                         val scrollToPosition = outerHomeDisplayResponse.homeDisplayResponses.size
 
                         binding.moreMatchedUserProgressBar.visibility = View.GONE
 
-                        outerHomeDisplayResponse.homeDisplayResponses.addAll(homeDisplayResponseArray)
+                        outerHomeDisplayResponse.homeDisplayResponses.addAll(moreHomeDisplayResponses)
                         totalAvailablePages = outerHomeDisplayResponse.homeDisplayResponses.size
 
                         binding.homeDisplayRecyclerView.adapter!!.notifyItemRangeInserted(
@@ -924,6 +925,35 @@ class HomeDisplayActivity : AppCompatActivity() {
                         lastDisplayPage = outerHomeDisplayResponse.homeDisplayResponses.size - 1
 
                         binding.homeDisplayRecyclerView.layoutManager!!.scrollToPosition(scrollToPosition)
+
+                        val homeDisplayInstance = HomeDisplayInstance(
+                            scrollToPosition = scrollToPosition,
+                            outerHomeDisplayResponse = outerHomeDisplayResponse)
+                        activitySavedInstance = ActivitySavedInstance(
+                            activity = getString(R.string.activity_home_display),
+                            activityStateData = homeDisplayInstance)
+
+                        val activityInstanceModel: ActivityInstanceModel =
+                            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                        try {
+                            if (activityInstanceModel.activityInstanceStack.peek().activity == getString(
+                                    R.string.activity_home_display
+                                )
+                            ) {
+                                activityInstanceModel.activityInstanceStack.pop()
+                                activityInstanceModel.activityInstanceStack.push(
+                                    activitySavedInstance
+                                )
+                            } else {
+                                activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                            }
+
+                            commitInstanceModel(mapper, activityInstanceModel)
+                        } catch (exception: EmptyStackException) {
+                            exception.printStackTrace()
+                            Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                        }
                     }
                 }
             })
@@ -970,19 +1000,30 @@ class HomeDisplayActivity : AppCompatActivity() {
                     currentPosition = 0,
                     userPictureResponses = userPictureResponses)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_image_slider),
-                    activityStateData = imageSliderInstance
-                )
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_image_slider)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_image_slider),
+                        activityStateData = imageSliderInstance)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_image_slider
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
@@ -1028,19 +1069,31 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 val homeDisplayResponse: HomeDisplayResponse = mapper.readValue(myResponse)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_user_information),
-                    activityStateData = homeDisplayResponse
-                )
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_information)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_information),
+                        activityStateData = homeDisplayResponse
+                    )
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_information
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
@@ -1099,19 +1152,31 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val notificationResponses: ArrayList<NotificationResponse> = mapper.readValue(myResponse)
                 val notificationInstance = NotificationInstance(notificationResponses)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_notification),
-                    activityStateData = notificationInstance
-                )
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_notification)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_notification),
+                        activityStateData = notificationInstance
+                    )
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_notification
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 runOnUiThread {
@@ -1226,18 +1291,30 @@ class HomeDisplayActivity : AppCompatActivity() {
                     userBlockedStatus = messageRequest.userBlockedStatus,
                     messageResponses = messageResponses)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_message),
-                    activityStateData = messageInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_message)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_message),
+                        activityStateData = messageInstance)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_message
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
@@ -1291,18 +1368,30 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val messengerResponses: ArrayList<MessengerResponse> = mapper.readValue(myResponse)
                 val messengerInstance = MessengerInstance(messengerResponses)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_messenger),
-                    activityStateData = messengerInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_messenger)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_messenger),
+                        activityStateData = messengerInstance)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_messenger
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
@@ -1360,18 +1449,30 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
                 val userAccountInstance = UserAccountInstance(userLikerResponses)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_user_account),
-                    activityStateData = userAccountInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_account)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_account),
+                        activityStateData = userAccountInstance)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_account
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
@@ -1425,19 +1526,30 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
                 val userProfileInstance = UserProfileInstance(userLikerResponses)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_user_profile),
-                    activityStateData = userProfileInstance
-                )
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_profile)) {
-                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                    sharedPreferencesEditor.apply()
+                try {
+                    updateHomeDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_profile),
+                        activityStateData = userProfileInstance)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_profile
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
@@ -1452,6 +1564,35 @@ class HomeDisplayActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+    }
+
+    private fun updateHomeDisplayInstance(activityInstanceModel: ActivityInstanceModel) {
+        if (activityInstanceModel.activityInstanceStack.peek().activity == getString(R.string.activity_home_display)) {
+            val scrollToPosition =
+                (binding.homeDisplayRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            activityInstanceModel.activityInstanceStack.pop()
+
+            val homeDisplayInstance = HomeDisplayInstance(
+                scrollToPosition = scrollToPosition,
+                outerHomeDisplayResponse = outerHomeDisplayResponse
+            )
+            activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_home_display),
+                activityStateData = homeDisplayInstance
+            )
+
+            activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+        }
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     private fun hideSystemUI() {
