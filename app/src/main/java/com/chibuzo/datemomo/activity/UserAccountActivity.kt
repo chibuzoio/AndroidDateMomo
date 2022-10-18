@@ -23,11 +23,12 @@ import com.chibuzo.datemomo.MainActivity
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityUserAccountBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.UserAccountInstance
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
-import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -35,7 +36,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class UserAccountActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -46,9 +46,10 @@ class UserAccountActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserAccountBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userAccountInstance: UserAccountInstance
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var userInformationRequest: UserInformationRequest
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var userLikedResponseArray: ArrayList<UserLikerResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +88,7 @@ class UserAccountActivity : AppCompatActivity() {
         checkNotificationUpdate()
 
         binding.fourthLikedFrameLayout.setOnClickListener {
-            if (userLikedResponseArray.size > 4) {
+            if (userAccountInstance.userLikerResponses.size > 4) {
                 val mapper = jacksonObjectMapper()
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
@@ -104,32 +105,32 @@ class UserAccountActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
                 }
 
-                val userLikedResponseString = mapper.writeValueAsString(userLikedResponseArray)
+                val userLikedResponseString = mapper.writeValueAsString(userAccountInstance.userLikerResponses)
 
                 val intent = Intent(baseContext, AllLikedActivity::class.java)
                 intent.putExtra("jsonResponse", userLikedResponseString)
                 startActivity(intent)
             } else {
-                userInformationRequest = UserInformationRequest(userLikedResponseArray[3].memberId)
+                userInformationRequest = UserInformationRequest(userAccountInstance.userLikerResponses[3].memberId)
                 requestProcess = getString(R.string.request_fetch_user_information)
                 fetchUserInformation()
             }
         }
 
         binding.thirdLikedFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikedResponseArray[2].memberId)
+            userInformationRequest = UserInformationRequest(userAccountInstance.userLikerResponses[2].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.secondLikedFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikedResponseArray[1].memberId)
+            userInformationRequest = UserInformationRequest(userAccountInstance.userLikerResponses[1].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.firstLikedFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikedResponseArray[0].memberId)
+            userInformationRequest = UserInformationRequest(userAccountInstance.userLikerResponses[0].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
@@ -198,27 +199,28 @@ class UserAccountActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userLikedResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            userAccountInstance = activitySavedInstance.activityStateData as UserAccountInstance
 
-            if (userLikedResponseArray.isEmpty()) {
+            if (userAccountInstance.userLikerResponses.isEmpty()) {
                 binding.userLikedDisplayLayout.visibility = View.GONE
             } else {
-                if (userLikedResponseArray.size == 1) {
+                if (userAccountInstance.userLikerResponses.size == 1) {
                     initializeFirstLikedLayout()
                 }
 
-                if (userLikedResponseArray.size == 2) {
+                if (userAccountInstance.userLikerResponses.size == 2) {
                     initializeSecondLikedLayout()
                     initializeFirstLikedLayout()
                 }
 
-                if (userLikedResponseArray.size == 3) {
+                if (userAccountInstance.userLikerResponses.size == 3) {
                     initializeSecondLikedLayout()
                     initializeFirstLikedLayout()
                     initializeThirdLikedLayout()
                 }
 
-                if (userLikedResponseArray.size >= 4) {
+                if (userAccountInstance.userLikerResponses.size >= 4) {
                     initializeFourthLikedLayout()
                     initializeSecondLikedLayout()
                     initializeFirstLikedLayout()
@@ -823,25 +825,26 @@ class UserAccountActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikedResponseArray[3].profilePicture)
+                    + userAccountInstance.userLikerResponses[3].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.fourthLikedImage)
 
-        binding.fourthLikedUsername.text = if (userLikedResponseArray[3].fullName != "") {
+        binding.fourthLikedUsername.text = if (userAccountInstance.userLikerResponses[3].fullName != "") {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[3].fullName, userLikedResponseArray[3].age
+                userAccountInstance.userLikerResponses[3].fullName,
+                userAccountInstance.userLikerResponses[3].age
             )
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[3].userName.replaceFirstChar { it.uppercase() },
-                userLikedResponseArray[3].age
+                userAccountInstance.userLikerResponses[3].userName.replaceFirstChar { it.uppercase() },
+                userAccountInstance.userLikerResponses[3].age
             )
         }
 
-        if (userLikedResponseArray.size > 4) {
-            val moreLikedCount = userLikedResponseArray.size - 3
+        if (userAccountInstance.userLikerResponses.size > 4) {
+            val moreLikedCount = userAccountInstance.userLikerResponses.size - 3
             binding.moreLikedCount.visibility = View.VISIBLE
             binding.moreLikedCover.visibility = View.VISIBLE
             binding.moreLikedCount.text = getString(R.string.more_liked_count, moreLikedCount)
@@ -856,20 +859,21 @@ class UserAccountActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikedResponseArray[2].profilePicture)
+                    + userAccountInstance.userLikerResponses[2].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.thirdLikedImage)
 
-        binding.thirdLikedUsername.text = if (userLikedResponseArray[2].fullName != "") {
+        binding.thirdLikedUsername.text = if (userAccountInstance.userLikerResponses[2].fullName != "") {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[2].fullName, userLikedResponseArray[2].age
+                userAccountInstance.userLikerResponses[2].fullName,
+                userAccountInstance.userLikerResponses[2].age
             )
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[2].userName.replaceFirstChar { it.uppercase() },
-                userLikedResponseArray[2].age
+                userAccountInstance.userLikerResponses[2].userName.replaceFirstChar { it.uppercase() },
+                userAccountInstance.userLikerResponses[2].age
             )
         }
     }
@@ -879,20 +883,21 @@ class UserAccountActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikedResponseArray[1].profilePicture)
+                    + userAccountInstance.userLikerResponses[1].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.secondLikedImage)
 
-        binding.secondLikedUsername.text = if (userLikedResponseArray[1].fullName != "") {
+        binding.secondLikedUsername.text = if (userAccountInstance.userLikerResponses[1].fullName != "") {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[1].fullName, userLikedResponseArray[1].age
+                userAccountInstance.userLikerResponses[1].fullName,
+                userAccountInstance.userLikerResponses[1].age
             )
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[1].userName.replaceFirstChar { it.uppercase() },
-                userLikedResponseArray[1].age
+                userAccountInstance.userLikerResponses[1].userName.replaceFirstChar { it.uppercase() },
+                userAccountInstance.userLikerResponses[1].age
             )
         }
     }
@@ -902,20 +907,21 @@ class UserAccountActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikedResponseArray[0].profilePicture)
+                    + userAccountInstance.userLikerResponses[0].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.firstLikedImage)
 
-        binding.firstLikedUsername.text = if (userLikedResponseArray[0].fullName != "") {
+        binding.firstLikedUsername.text = if (userAccountInstance.userLikerResponses[0].fullName != "") {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[0].fullName, userLikedResponseArray[0].age
+                userAccountInstance.userLikerResponses[0].fullName,
+                userAccountInstance.userLikerResponses[0].age
             )
         } else {
             getString(
                 R.string.name_and_age_text,
-                userLikedResponseArray[0].userName.replaceFirstChar { it.uppercase() },
-                userLikedResponseArray[0].age
+                userAccountInstance.userLikerResponses[0].userName.replaceFirstChar { it.uppercase() },
+                userAccountInstance.userLikerResponses[0].age
             )
         }
     }

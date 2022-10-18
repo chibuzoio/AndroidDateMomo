@@ -52,7 +52,6 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -977,12 +976,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                 )
 
                 val activityInstanceModel: ActivityInstanceModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
                 if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_image_slider)) {
                     activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
@@ -1035,12 +1034,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                 )
 
                 val activityInstanceModel: ActivityInstanceModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
                 if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_information)) {
                     activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
@@ -1106,12 +1105,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                 )
 
                 val activityInstanceModel: ActivityInstanceModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_stack), "")!!)
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
                 if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_notification)) {
                     activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
@@ -1232,12 +1231,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                     activityStateData = messageInstance)
 
                 val activityInstanceModel: ActivityInstanceModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
                 if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_message)) {
                     activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
-                    val activityInstanceStackString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
@@ -1289,28 +1288,32 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val messengerResponses: ArrayList<MessengerResponse> = mapper.readValue(myResponse)
+                val messengerInstance = MessengerInstance(messengerResponses)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_messenger),
+                    activityStateData = messengerInstance)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_messenger)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_messenger))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_messenger)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
 
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }
 
-                val intent = Intent(baseContext, MessengerActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@HomeDisplayActivity, MessengerActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
@@ -1354,24 +1357,28 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
+                val userAccountInstance = UserAccountInstance(userLikerResponses)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_user_account),
+                    activityStateData = userAccountInstance)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_account)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_account))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_account)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
 
-                val intent = Intent(baseContext, UserAccountActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@HomeDisplayActivity, UserAccountActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
@@ -1415,28 +1422,33 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
+                val userProfileInstance = UserProfileInstance(userLikerResponses)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_user_profile),
+                    activityStateData = userProfileInstance
+                )
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_profile)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_profile))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(R.string.activity_user_profile)) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
 
                 runOnUiThread {
                     binding.userInformationLayout.visibility = View.GONE
                 }
 
-                val intent = Intent(baseContext, UserProfileActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@HomeDisplayActivity, UserProfileActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })

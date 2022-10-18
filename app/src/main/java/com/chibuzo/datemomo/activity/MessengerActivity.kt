@@ -25,10 +25,11 @@ import com.chibuzo.datemomo.databinding.ActivityMessengerBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.MessengerModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.MessengerInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
-import com.chibuzo.datemomo.model.response.MessengerResponse
 import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -37,7 +38,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -50,10 +50,11 @@ class MessengerActivity : AppCompatActivity() {
     private lateinit var messageRequest: MessageRequest
     private lateinit var binding: ActivityMessengerBinding
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var messengerInstance: MessengerInstance
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var outerHomeDisplayResponse: OuterHomeDisplayResponse
-    private lateinit var messengerResponseArray: ArrayList<MessengerResponse>
     private lateinit var homeDisplayResponseArray: ArrayList<HomeDisplayResponse>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -147,9 +148,10 @@ class MessengerActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            messengerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            messengerInstance = activitySavedInstance.activityStateData as MessengerInstance
 
-            if (messengerResponseArray.isNotEmpty()) {
+            if (messengerInstance.messengerResponses.isNotEmpty()) {
                 val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
                 binding.messengerRecyclerView.layoutManager = layoutManager
                 binding.messengerRecyclerView.itemAnimator = DefaultItemAnimator()
@@ -159,7 +161,7 @@ class MessengerActivity : AppCompatActivity() {
                     binding, this
                 )
 
-                val messengerAdapter = MessengerAdapter(messengerResponseArray, messengerModel)
+                val messengerAdapter = MessengerAdapter(messengerInstance.messengerResponses, messengerModel)
                 binding.messengerRecyclerView.adapter = messengerAdapter
             } else {
                 binding.emptyMessengerLayout.visibility = View.VISIBLE

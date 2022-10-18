@@ -192,6 +192,16 @@ class AllLikedActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
 
+                /*
+                * 1. ResponsesArray
+                * 2. InstanceModel
+                * 3. ActivitySavedInstance
+                * 4. ActivityInstanceModel
+                * 5. Check if activity is in stack
+                * 6. ActivitySavedInstanceString
+                * 7. Intent and startActivity
+                * */
+
                 val activityStackModel: ActivityStackModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
