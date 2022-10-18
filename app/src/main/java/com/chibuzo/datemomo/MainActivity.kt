@@ -35,12 +35,16 @@ import com.chibuzo.datemomo.activity.HomeDisplayActivity
 import com.chibuzo.datemomo.activity.UserBioActivity
 import com.chibuzo.datemomo.databinding.ActivityMainBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.ExperimentalStackModel
 import com.chibuzo.datemomo.model.UserNameModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
 import com.chibuzo.datemomo.model.request.AuthenticationRequest
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.PictureUploadRequest
 import com.chibuzo.datemomo.model.request.RegistrationRequest
 import com.chibuzo.datemomo.model.response.AuthenticationResponse
+import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
 import com.chibuzo.datemomo.model.response.PictureUploadResponse
 import com.chibuzo.datemomo.model.response.RegistrationResponse
 import com.chibuzo.datemomo.utility.Utility
@@ -1068,17 +1072,30 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
 
-                val activityStack = Stack<String>()
-                activityStack.push(getString(R.string.activity_home_display))
-                val activityStackString = mapper.writeValueAsString(ActivityStackModel(activityStack))
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
-                sharedPreferencesEditor.apply()
+                try {
+                    val activityInstanceStack = Stack<ActivitySavedInstance>()
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
+                    val outerHomeDisplayResponse = mapper.readValue(myResponse) as OuterHomeDisplayResponse
 
-                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
-                startActivity(intent)
+                    val homeDisplayInstance = HomeDisplayInstance(
+                        scrollToPosition = 0,
+                        outerHomeDisplayResponse = outerHomeDisplayResponse)
+                    val activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_home_display),
+                        activityStateData = homeDisplayInstance)
+                    activityInstanceStack.push(activitySavedInstance)
+                    val activityInstanceStackString = mapper.writeValueAsString(ExperimentalStackModel(activityInstanceStack))
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_stack), activityInstanceStackString)
+                    sharedPreferencesEditor.apply()
+
+                    val activitySavedInstanceString = mapper.writeValueAsString(homeDisplayInstance)
+                    val intent = Intent(baseContext, HomeDisplayActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
+                } catch (exception: IOException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Error message from line 1089 here is ${exception.message}")
+                }
             }
         })
     }

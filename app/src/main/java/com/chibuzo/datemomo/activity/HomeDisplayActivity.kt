@@ -34,6 +34,7 @@ import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
+import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
@@ -80,6 +81,7 @@ class HomeDisplayActivity : AppCompatActivity() {
     private lateinit var homeDisplayModel: HomeDisplayModel
     private lateinit var binding: ActivityHomeDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var homeDisplayInstance: HomeDisplayInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var outerHomeDisplayResponse: OuterHomeDisplayResponse
     private lateinit var homeDisplayResponseArray: ArrayList<HomeDisplayResponse>
@@ -387,9 +389,8 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
 
         try {
-            val mapper = jacksonObjectMapper()
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            outerHomeDisplayResponse = mapper.readValue(bundle.getString("jsonResponse")!!)
+            homeDisplayInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            outerHomeDisplayResponse = homeDisplayInstance.outerHomeDisplayResponse
 
             if (outerHomeDisplayResponse.homeDisplayResponses.size > 0) {
                 binding.emptyTimelineDialog.dialogActivityLayout.visibility = View.GONE
@@ -440,6 +441,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                         homeDisplayModel
                     )
                 binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
+
+                binding.homeDisplayRecyclerView.layoutManager!!.scrollToPosition(homeDisplayInstance.scrollToPosition)
 
                 binding.homeDisplayRecyclerView.addOnScrollListener(object :
                     RecyclerView.OnScrollListener() {
