@@ -29,7 +29,10 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityUserProfileBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.UserProfileInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.PictureUpdateResponse
@@ -58,8 +61,9 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserProfileBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userProfileInstance: UserProfileInstance
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var userInformationRequest: UserInformationRequest
-    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -159,51 +163,53 @@ class UserProfileActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            userProfileInstance = activitySavedInstance.activityStateData as UserProfileInstance
 
-            if (userLikerResponseArray.size > 1) {
-                binding.allLikesCount.text = getString(R.string.many_likers_count, userLikerResponseArray.size)
+            if (userProfileInstance.userLikerResponses.size > 1) {
+                binding.allLikesCount.text = getString(R.string.many_likers_count,
+                    userProfileInstance.userLikerResponses.size)
             }
 
-            if (userLikerResponseArray.size == 1) {
+            if (userProfileInstance.userLikerResponses.size == 1) {
                 binding.allLikesCount.text = getString(R.string.single_liker_count)
             }
 
-            if (userLikerResponseArray.isEmpty()) {
+            if (userProfileInstance.userLikerResponses.isEmpty()) {
                 binding.allLikersDisplayLayout.visibility = View.GONE
             } else {
                 binding.allLikersFirstLayout.visibility = View.VISIBLE
 
-                if (userLikerResponseArray.size == 1) {
+                if (userProfileInstance.userLikerResponses.size == 1) {
                     initializeFirstLikerLayout()
                 }
 
-                if (userLikerResponseArray.size == 2) {
+                if (userProfileInstance.userLikerResponses.size == 2) {
                     initializeSecondLikerLayout()
                     initializeFirstLikerLayout()
                 }
 
-                if (userLikerResponseArray.size >= 3) {
+                if (userProfileInstance.userLikerResponses.size >= 3) {
                     initializeSecondLikerLayout()
                     initializeFirstLikerLayout()
                     initializeThirdLikerLayout()
                 }
 
-                if (userLikerResponseArray.size <= 3) {
+                if (userProfileInstance.userLikerResponses.size <= 3) {
                     binding.allLikersSecondLayout.visibility = View.GONE
-                } else if (userLikerResponseArray.size > 3) {
+                } else if (userProfileInstance.userLikerResponses.size > 3) {
                     binding.allLikersSecondLayout.visibility = View.VISIBLE
 
-                    if (userLikerResponseArray.size == 4) {
+                    if (userProfileInstance.userLikerResponses.size == 4) {
                         initializeFourthLikerLayout()
                     }
 
-                    if (userLikerResponseArray.size == 5) {
+                    if (userProfileInstance.userLikerResponses.size == 5) {
                         initializeFourthLikerLayout()
                         initializeFifthLikerLayout()
                     }
 
-                    if (userLikerResponseArray.size >= 6) {
+                    if (userProfileInstance.userLikerResponses.size >= 6) {
                         initializeFourthLikerLayout()
                         initializeSixthLikerLayout()
                         initializeFifthLikerLayout()
@@ -305,7 +311,7 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
         binding.sixthLikerFrameLayout.setOnClickListener {
-            if (userLikerResponseArray.size > 6) {
+            if (userProfileInstance.userLikerResponses.size > 6) {
                 val mapper = jacksonObjectMapper()
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
@@ -322,44 +328,44 @@ class UserProfileActivity : AppCompatActivity() {
                     sharedPreferencesEditor.apply()
                 }
 
-                val userLikerResponseString = mapper.writeValueAsString(userLikerResponseArray)
+                val userLikerResponseString = mapper.writeValueAsString(userProfileInstance.userLikerResponses)
 
                 val intent = Intent(baseContext, AllLikersActivity::class.java)
                 intent.putExtra("jsonResponse", userLikerResponseString)
                 startActivity(intent)
             } else {
-                userInformationRequest = UserInformationRequest(userLikerResponseArray[5].memberId)
+                userInformationRequest = UserInformationRequest(userProfileInstance.userLikerResponses[5].memberId)
                 requestProcess = getString(R.string.request_fetch_user_information)
                 fetchUserInformation()
             }
         }
 
         binding.fifthLikerFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikerResponseArray[4].memberId)
+            userInformationRequest = UserInformationRequest(userProfileInstance.userLikerResponses[4].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.fourthLikerFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikerResponseArray[3].memberId)
+            userInformationRequest = UserInformationRequest(userProfileInstance.userLikerResponses[3].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.thirdLikerFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikerResponseArray[2].memberId)
+            userInformationRequest = UserInformationRequest(userProfileInstance.userLikerResponses[2].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.secondLikerFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikerResponseArray[1].memberId)
+            userInformationRequest = UserInformationRequest(userProfileInstance.userLikerResponses[1].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
 
         binding.firstLikerFrameLayout.setOnClickListener {
-            userInformationRequest = UserInformationRequest(userLikerResponseArray[0].memberId)
+            userInformationRequest = UserInformationRequest(userProfileInstance.userLikerResponses[0].memberId)
             requestProcess = getString(R.string.request_fetch_user_information)
             fetchUserInformation()
         }
@@ -644,6 +650,8 @@ class UserProfileActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
             when (activityStackModel.activityStack.peek()) {
@@ -657,8 +665,11 @@ class UserProfileActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 else -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                    val intent = Intent(this, HomeDisplayActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
             }
         } catch (exception: EmptyStackException) {
@@ -967,25 +978,26 @@ class UserProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikerResponseArray[5].profilePicture)
+                    + userProfileInstance.userLikerResponses[5].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.sixthLikerImage)
 
-        if (userLikerResponseArray[5].fullName != "") {
+        if (userProfileInstance.userLikerResponses[5].fullName != "") {
             binding.sixthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[5].fullName, userLikerResponseArray[5].age
+                userProfileInstance.userLikerResponses[5].fullName,
+                userProfileInstance.userLikerResponses[5].age
             )
         } else {
             binding.sixthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[5].userName.replaceFirstChar { it.uppercase() },
-                userLikerResponseArray[5].age
+                userProfileInstance.userLikerResponses[5].userName.replaceFirstChar { it.uppercase() },
+                userProfileInstance.userLikerResponses[5].age
             )
         }
 
-        if (userLikerResponseArray.size > 6) {
-            val moreLikersCount = userLikerResponseArray.size - 5
+        if (userProfileInstance.userLikerResponses.size > 6) {
+            val moreLikersCount = userProfileInstance.userLikerResponses.size - 5
             binding.moreLikersCount.visibility = View.VISIBLE
             binding.moreLikersCover.visibility = View.VISIBLE
             binding.moreLikersCount.text = getString(R.string.more_likers_count, moreLikersCount)
@@ -1000,20 +1012,21 @@ class UserProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikerResponseArray[4].profilePicture)
+                    + userProfileInstance.userLikerResponses[4].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.fifthLikerImage)
 
-        if (userLikerResponseArray[4].fullName != "") {
+        if (userProfileInstance.userLikerResponses[4].fullName != "") {
             binding.fifthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[4].fullName, userLikerResponseArray[4].age
+                userProfileInstance.userLikerResponses[4].fullName,
+                userProfileInstance.userLikerResponses[4].age
             )
         } else {
             binding.fifthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[4].userName.replaceFirstChar { it.uppercase() },
-                userLikerResponseArray[4].age
+                userProfileInstance.userLikerResponses[4].userName.replaceFirstChar { it.uppercase() },
+                userProfileInstance.userLikerResponses[4].age
             )
         }
     }
@@ -1023,20 +1036,21 @@ class UserProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikerResponseArray[3].profilePicture)
+                    + userProfileInstance.userLikerResponses[3].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.fourthLikerImage)
 
-        if (userLikerResponseArray[3].fullName != "") {
+        if (userProfileInstance.userLikerResponses[3].fullName != "") {
             binding.fourthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[3].fullName, userLikerResponseArray[3].age
+                userProfileInstance.userLikerResponses[3].fullName,
+                userProfileInstance.userLikerResponses[3].age
             )
         } else {
             binding.fourthLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[3].userName.replaceFirstChar { it.uppercase() },
-                userLikerResponseArray[3].age
+                userProfileInstance.userLikerResponses[3].userName.replaceFirstChar { it.uppercase() },
+                userProfileInstance.userLikerResponses[3].age
             )
         }
     }
@@ -1046,20 +1060,21 @@ class UserProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikerResponseArray[2].profilePicture)
+                    + userProfileInstance.userLikerResponses[2].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.thirdLikerImage)
 
-        if (userLikerResponseArray[2].fullName != "") {
+        if (userProfileInstance.userLikerResponses[2].fullName != "") {
             binding.thirdLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[2].fullName, userLikerResponseArray[2].age
+                userProfileInstance.userLikerResponses[2].fullName,
+                userProfileInstance.userLikerResponses[2].age
             )
         } else {
             binding.thirdLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[2].userName.replaceFirstChar { it.uppercase() },
-                userLikerResponseArray[2].age
+                userProfileInstance.userLikerResponses[2].userName.replaceFirstChar { it.uppercase() },
+                userProfileInstance.userLikerResponses[2].age
             )
         }
     }
@@ -1069,20 +1084,21 @@ class UserProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikerResponseArray[1].profilePicture)
+                    + userProfileInstance.userLikerResponses[1].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.secondLikerImage)
 
-        if (userLikerResponseArray[1].fullName != "") {
+        if (userProfileInstance.userLikerResponses[1].fullName != "") {
             binding.secondLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[1].fullName, userLikerResponseArray[1].age
+                userProfileInstance.userLikerResponses[1].fullName,
+                userProfileInstance.userLikerResponses[1].age
             )
         } else {
             binding.secondLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[1].userName.replaceFirstChar { it.uppercase() },
-                userLikerResponseArray[1].age
+                userProfileInstance.userLikerResponses[1].userName.replaceFirstChar { it.uppercase() },
+                userProfileInstance.userLikerResponses[1].age
             )
         }
     }
@@ -1092,20 +1108,21 @@ class UserProfileActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + userLikerResponseArray[0].profilePicture)
+                    + userProfileInstance.userLikerResponses[0].profilePicture)
             .transform(CenterCrop(), RoundedCorners(33))
             .into(binding.firstLikerImage)
 
-        if (userLikerResponseArray[0].fullName != "") {
+        if (userProfileInstance.userLikerResponses[0].fullName != "") {
             binding.firstLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[0].fullName, userLikerResponseArray[0].age
+                userProfileInstance.userLikerResponses[0].fullName,
+                userProfileInstance.userLikerResponses[0].age
             )
         } else {
             binding.firstLikerUsername.text = getString(
                 R.string.name_and_age_text,
-                userLikerResponseArray[0].userName.replaceFirstChar { it.uppercase() },
-                userLikerResponseArray[0].age
+                userProfileInstance.userLikerResponses[0].userName.replaceFirstChar { it.uppercase() },
+                userProfileInstance.userLikerResponses[0].age
             )
         }
     }

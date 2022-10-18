@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.NotificationAdapter
 import com.chibuzo.datemomo.databinding.ActivityNotificationBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
@@ -195,6 +196,8 @@ class NotificationActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
 
         try {
             when (activityStackModel.activityStack.peek()) {
@@ -208,8 +211,11 @@ class NotificationActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 else -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                    val intent = Intent(this, HomeDisplayActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
             }
         } catch (exception: EmptyStackException) {

@@ -22,6 +22,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.chibuzo.datemomo.MainActivity
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityUserAccountBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.UserAccountInstance
@@ -355,6 +356,8 @@ class UserAccountActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
             when (activityStackModel.activityStack.peek()) {
@@ -368,8 +371,11 @@ class UserAccountActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 else -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                    val intent = Intent(this, HomeDisplayActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
             }
         } catch (exception: EmptyStackException) {

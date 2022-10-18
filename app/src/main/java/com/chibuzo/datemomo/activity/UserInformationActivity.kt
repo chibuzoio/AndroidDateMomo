@@ -20,6 +20,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityUserInformationBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.request.MessageRequest
@@ -356,6 +357,8 @@ class UserInformationActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
             when (activityStackModel.activityStack.peek()) {
@@ -377,8 +380,11 @@ class UserInformationActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 getString(R.string.activity_home_display) -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                    val intent = Intent(this, HomeDisplayActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
                 getString(R.string.activity_user_profile) -> {
                     requestProcess = getString(R.string.request_fetch_user_likers)

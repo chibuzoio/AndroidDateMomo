@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.ImageSliderAdapter
 import com.chibuzo.datemomo.databinding.ActivityImageSliderBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.ImageSliderInstance
@@ -125,6 +126,8 @@ class ImageSliderActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityStackModel: ActivityStackModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
             when (activityStackModel.activityStack.peek()) {
