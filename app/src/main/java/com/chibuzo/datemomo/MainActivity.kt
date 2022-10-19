@@ -1077,9 +1077,13 @@ class MainActivity : AppCompatActivity() {
                     val homeDisplayInstance = HomeDisplayInstance(
                         scrollToPosition = 0,
                         outerHomeDisplayResponse = outerHomeDisplayResponse)
+
+                    val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                     val activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_home_display),
-                        activityStateData = homeDisplayInstance)
+                        activityStateData = activityStateData)
+
                     activityInstanceStack.push(activitySavedInstance)
                     val activityInstanceModelString = mapper.writeValueAsString(ActivityInstanceModel(activityInstanceStack))
                     sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)

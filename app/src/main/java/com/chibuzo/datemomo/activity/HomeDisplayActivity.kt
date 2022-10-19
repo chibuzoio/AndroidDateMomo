@@ -390,8 +390,13 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         try {
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-            homeDisplayInstance = activitySavedInstance.activityStateData as HomeDisplayInstance
+Log.e(TAG, "Execution got to 1")
+            val activityStateData = activitySavedInstance.activityStateData
+            Log.e(TAG, "Execution got to 2")
+            homeDisplayInstance = mapper.readValue(activityStateData)
+            Log.e(TAG, "Execution got to 3")
             outerHomeDisplayResponse = homeDisplayInstance.outerHomeDisplayResponse
+            Log.e(TAG, "Execution got to 4")
 
             if (outerHomeDisplayResponse.homeDisplayResponses.size > 0) {
                 binding.emptyTimelineDialog.dialogActivityLayout.visibility = View.GONE
@@ -929,9 +934,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                         val homeDisplayInstance = HomeDisplayInstance(
                             scrollToPosition = scrollToPosition,
                             outerHomeDisplayResponse = outerHomeDisplayResponse)
+
+                        val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                         activitySavedInstance = ActivitySavedInstance(
                             activity = getString(R.string.activity_home_display),
-                            activityStateData = homeDisplayInstance)
+                            activityStateData = activityStateData)
 
                         val activityInstanceModel: ActivityInstanceModel =
                             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
@@ -1000,6 +1008,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                     currentPosition = 0,
                     userPictureResponses = userPictureResponses)
 
+                val activityStateData = mapper.writeValueAsString(imageSliderInstance)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1009,7 +1019,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_image_slider),
-                        activityStateData = imageSliderInstance)
+                        activityStateData = activityStateData)
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
                             R.string.activity_image_slider
@@ -1069,6 +1079,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val myResponse: String = response.body()!!.string()
                 val homeDisplayResponse: HomeDisplayResponse = mapper.readValue(myResponse)
 
+                val activityStateData = mapper.writeValueAsString(homeDisplayResponse)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1078,7 +1090,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_user_information),
-                        activityStateData = homeDisplayResponse
+                        activityStateData = activityStateData
                     )
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
@@ -1152,6 +1164,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val notificationResponses: ArrayList<NotificationResponse> = mapper.readValue(myResponse)
                 val notificationInstance = NotificationInstance(notificationResponses)
 
+                val activityStateData = mapper.writeValueAsString(notificationInstance)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1161,7 +1175,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_notification),
-                        activityStateData = notificationInstance
+                        activityStateData = activityStateData
                     )
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
@@ -1291,6 +1305,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                     userBlockedStatus = messageRequest.userBlockedStatus,
                     messageResponses = messageResponses)
 
+                val activityStateData = mapper.writeValueAsString(messageInstance)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1300,7 +1316,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_message),
-                        activityStateData = messageInstance)
+                        activityStateData = activityStateData)
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
                             R.string.activity_message
@@ -1368,6 +1384,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val messengerResponses: ArrayList<MessengerResponse> = mapper.readValue(myResponse)
                 val messengerInstance = MessengerInstance(messengerResponses)
 
+                val activityStateData = mapper.writeValueAsString(messengerInstance)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1377,7 +1395,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_messenger),
-                        activityStateData = messengerInstance)
+                        activityStateData = activityStateData)
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
                             R.string.activity_messenger
@@ -1449,6 +1467,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
                 val userAccountInstance = UserAccountInstance(userLikerResponses)
 
+                val activityStateData = mapper.writeValueAsString(userAccountInstance)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1458,7 +1478,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_user_account),
-                        activityStateData = userAccountInstance)
+                        activityStateData = activityStateData)
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
                             R.string.activity_user_account
@@ -1526,6 +1546,8 @@ class HomeDisplayActivity : AppCompatActivity() {
                 val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
                 val userProfileInstance = UserProfileInstance(userLikerResponses)
 
+                val activityStateData = mapper.writeValueAsString(userProfileInstance)
+
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
@@ -1535,7 +1557,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     // Always do this below the method above, updateHomeDisplayInstance
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_user_profile),
-                        activityStateData = userProfileInstance)
+                        activityStateData = activityStateData)
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
                             R.string.activity_user_profile
@@ -1574,12 +1596,14 @@ class HomeDisplayActivity : AppCompatActivity() {
 
             val homeDisplayInstance = HomeDisplayInstance(
                 scrollToPosition = scrollToPosition,
-                outerHomeDisplayResponse = outerHomeDisplayResponse
-            )
+                outerHomeDisplayResponse = outerHomeDisplayResponse)
+
+            val mapper = jacksonObjectMapper()
+            val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
             activitySavedInstance = ActivitySavedInstance(
                 activity = getString(R.string.activity_home_display),
-                activityStateData = homeDisplayInstance
-            )
+                activityStateData = activityStateData)
 
             activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
         }

@@ -201,7 +201,9 @@ class UserAccountActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-            userAccountInstance = activitySavedInstance.activityStateData as UserAccountInstance
+
+            val activityStateData = activitySavedInstance.activityStateData
+            userAccountInstance = mapper.readValue(activityStateData)
 
             if (userAccountInstance.userLikerResponses.isEmpty()) {
                 binding.userLikedDisplayLayout.visibility = View.GONE
@@ -354,18 +356,16 @@ class UserAccountActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val activityStackModel: ActivityStackModel =
-            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
         val activityInstanceModel: ActivityInstanceModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
-            when (activityStackModel.activityStack.peek()) {
+            when (activityInstanceModel.activityInstanceStack.peek().activity) {
                 getString(R.string.activity_user_account) -> {
-                    activityStackModel.activityStack.pop()
+                    activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()

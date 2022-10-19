@@ -124,18 +124,16 @@ class ImageSliderActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val activityStackModel: ActivityStackModel =
-            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
         val activityInstanceModel: ActivityInstanceModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
-            when (activityStackModel.activityStack.peek()) {
+            when (activityInstanceModel.activityInstanceStack.peek().activity) {
                 getString(R.string.activity_image_slider) -> {
-                    activityStackModel.activityStack.pop()
+                    activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()

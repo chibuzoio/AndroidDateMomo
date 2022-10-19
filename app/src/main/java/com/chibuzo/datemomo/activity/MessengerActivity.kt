@@ -150,7 +150,9 @@ class MessengerActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-            messengerInstance = activitySavedInstance.activityStateData as MessengerInstance
+
+            val activityStateData = activitySavedInstance.activityStateData
+            messengerInstance = mapper.readValue(activityStateData)
 
             if (messengerInstance.messengerResponses.isNotEmpty()) {
                 val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -184,24 +186,23 @@ class MessengerActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val activityStackModel: ActivityStackModel =
-            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
         val activityInstanceModel: ActivityInstanceModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
-            when (activityStackModel.activityStack.peek()) {
+            when (activityInstanceModel.activityInstanceStack.peek().activity) {
                 getString(R.string.activity_messenger) -> {
-                    activityStackModel.activityStack.pop()
+                    activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()
                 }
                 else -> {
                     activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    Log.e(TAG, "The activity in activitySavedInstance is ${activitySavedInstance.activity}")
                     val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
                     val intent = Intent(this, HomeDisplayActivity::class.java)
                     intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
