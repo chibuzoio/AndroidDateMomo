@@ -150,9 +150,7 @@ class MessengerActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-
-            val activityStateData = activitySavedInstance.activityStateData
-            messengerInstance = mapper.readValue(activityStateData)
+            messengerInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             if (messengerInstance.messengerResponses.isNotEmpty()) {
                 val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)

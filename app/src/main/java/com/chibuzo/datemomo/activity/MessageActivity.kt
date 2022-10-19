@@ -309,9 +309,7 @@ class MessageActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-
-            val activityStateData = activitySavedInstance.activityStateData
-            messageInstance = mapper.readValue(activityStateData)
+            messageInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             if (messageInstance.messageResponses.isEmpty()) {
                 binding.welcomeMessageLayout.visibility = View.VISIBLE

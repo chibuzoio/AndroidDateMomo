@@ -164,9 +164,7 @@ class UserProfileActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-
-            val activityStateData = activitySavedInstance.activityStateData
-            userProfileInstance = mapper.readValue(activityStateData)
+            userProfileInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             if (userProfileInstance.userLikerResponses.size > 1) {
                 binding.allLikesCount.text = getString(R.string.many_likers_count,

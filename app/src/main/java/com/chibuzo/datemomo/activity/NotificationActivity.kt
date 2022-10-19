@@ -166,9 +166,7 @@ class NotificationActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-
-            val activityStateData = activitySavedInstance.activityStateData
-            notificationInstance = mapper.readValue(activityStateData)
+            notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             val allLikersModel = AllLikersModel(
                 sharedPreferences.getInt(getString(R.string.member_id), 0), deviceWidth, "", this)

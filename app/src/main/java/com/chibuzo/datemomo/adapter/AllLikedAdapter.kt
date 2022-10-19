@@ -13,7 +13,7 @@ import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.response.UserLikerResponse
 
-class AllLikedAdapter(private var userLikerResponses: Array<UserLikerResponse>, private var allLikersModel: AllLikersModel) :
+class AllLikedAdapter(private var userLikerResponses: ArrayList<UserLikerResponse>, private var allLikersModel: AllLikersModel) :
     RecyclerView.Adapter<AllLikedAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {

@@ -104,7 +104,7 @@ class ImageSliderActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-            imageSliderInstance = activitySavedInstance.activityStateData as ImageSliderInstance
+            imageSliderInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             binding.genericPicturePager.adapter = ImageSliderAdapter(this, imageSliderInstance.userPictureResponses)
             /*binding.genericPicturePager.setPageTransformer(ZoomOutPageTransformer())*/

@@ -84,9 +84,7 @@ class UserInformationActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-
-            val activityStateData = activitySavedInstance.activityStateData
-            homeDisplayResponse = mapper.readValue(activityStateData)
+            homeDisplayResponse = mapper.readValue(activitySavedInstance.activityStateData)
         } catch (exception: IOException) {
             exception.printStackTrace()
             finish()

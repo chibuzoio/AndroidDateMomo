@@ -390,13 +390,8 @@ class HomeDisplayActivity : AppCompatActivity() {
 
         try {
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-Log.e(TAG, "Execution got to 1")
-            val activityStateData = activitySavedInstance.activityStateData
-            Log.e(TAG, "Execution got to 2")
-            homeDisplayInstance = mapper.readValue(activityStateData)
-            Log.e(TAG, "Execution got to 3")
+            homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
             outerHomeDisplayResponse = homeDisplayInstance.outerHomeDisplayResponse
-            Log.e(TAG, "Execution got to 4")
 
             if (outerHomeDisplayResponse.homeDisplayResponses.size > 0) {
                 binding.emptyTimelineDialog.dialogActivityLayout.visibility = View.GONE

@@ -201,9 +201,7 @@ class UserAccountActivity : AppCompatActivity() {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
-
-            val activityStateData = activitySavedInstance.activityStateData
-            userAccountInstance = mapper.readValue(activityStateData)
+            userAccountInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             if (userAccountInstance.userLikerResponses.isEmpty()) {
                 binding.userLikedDisplayLayout.visibility = View.GONE

@@ -20,8 +20,11 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.AllLikedAdapter
 import com.chibuzo.datemomo.adapter.AllLikersAdapter
 import com.chibuzo.datemomo.databinding.ActivityAllLikedBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.AllLikedInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.UserLikerResponse
@@ -41,9 +44,10 @@ class AllLikedActivity : AppCompatActivity() {
     private var leastRootViewHeight: Int = 0
     private lateinit var binding: ActivityAllLikedBinding
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var allLikedInstance: AllLikedInstance
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var userInformationRequest: UserInformationRequest
-    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,7 +112,8 @@ class AllLikedActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            allLikedInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.allLikedRecyclerView.layoutManager = layoutManager
@@ -118,7 +123,7 @@ class AllLikedActivity : AppCompatActivity() {
                 AllLikersModel(sharedPreferences.getInt(getString(R.string.member_id), 0),
                     deviceWidth, "", this)
 
-            val allLikersAdapter = AllLikedAdapter(userLikerResponseArray, allLikersModel)
+            val allLikersAdapter = AllLikedAdapter(allLikedInstance.userLikerResponses, allLikersModel)
             binding.allLikedRecyclerView.adapter = allLikersAdapter
         } catch (exception: IOException) {
             exception.printStackTrace()
@@ -130,16 +135,16 @@ class AllLikedActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val activityStackModel: ActivityStackModel =
-            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
-            when (activityStackModel.activityStack.peek()) {
+            when (activityInstanceModel.activityInstanceStack.peek().activity) {
                 getString(R.string.activity_all_liked) -> {
-                    activityStackModel.activityStack.pop()
+                    activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    val activityStackString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityStackString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()
