@@ -17,12 +17,13 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.ImageSliderAdapter
 import com.chibuzo.datemomo.databinding.ActivityImageSliderBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.ImageSliderInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
+import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -185,27 +186,69 @@ class ImageSliderActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val homeDisplayResponse: HomeDisplayResponse = mapper.readValue(myResponse)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activityStateData = mapper.writeValueAsString(homeDisplayResponse)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    updateImageSliderInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateAllLikersInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_information),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_information
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, UserInformationActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@ImageSliderActivity, UserInformationActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
+    }
+
+    private fun updateImageSliderInstance(activityInstanceModel: ActivityInstanceModel) {
+        if (activityInstanceModel.activityInstanceStack.peek().activity == getString(R.string.activity_image_slider)) {
+            activityInstanceModel.activityInstanceStack.pop()
+
+            imageSliderInstance.currentPosition = binding.genericPicturePager.currentItem
+
+            val mapper = jacksonObjectMapper()
+            val activityStateData = mapper.writeValueAsString(imageSliderInstance)
+
+            activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_image_slider),
+                activityStateData = activityStateData)
+
+            activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+        }
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     private fun triggerRequestProcess() {

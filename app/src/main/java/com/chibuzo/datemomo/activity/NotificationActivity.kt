@@ -31,7 +31,6 @@ import com.chibuzo.datemomo.model.request.ReadStatusRequest
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
-import com.chibuzo.datemomo.model.response.NotificationResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -39,7 +38,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class NotificationActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0

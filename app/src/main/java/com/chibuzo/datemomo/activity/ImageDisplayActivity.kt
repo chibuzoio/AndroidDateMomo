@@ -47,7 +47,6 @@ class ImageDisplayActivity : AppCompatActivity() {
     private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var pictureCompositeModel: PictureCompositeModel
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-//    private lateinit var userPictureResponseArray: ArrayList<UserPictureResponse>
     private lateinit var pictureCompositeModelArray: ArrayList<PictureCompositeModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {

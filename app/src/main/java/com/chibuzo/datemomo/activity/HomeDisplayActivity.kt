@@ -1157,7 +1157,9 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val notificationResponses: ArrayList<NotificationResponse> = mapper.readValue(myResponse)
-                val notificationInstance = NotificationInstance(notificationResponses)
+                val notificationInstance = NotificationInstance(
+                    scrollToPosition = 0,
+                    notificationResponses = notificationResponses)
 
                 val activityStateData = mapper.writeValueAsString(notificationInstance)
 
@@ -1294,6 +1296,7 @@ class HomeDisplayActivity : AppCompatActivity() {
                     senderId = messageRequest.senderId,
                     fullName = messageRequest.fullName,
                     userName = messageRequest.userName,
+                    scrollToPosition = messageResponses.size - 1,
                     receiverId = messageRequest.receiverId,
                     lastActiveTime = messageRequest.lastActiveTime,
                     profilePicture = messageRequest.profilePicture,
@@ -1377,7 +1380,9 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val messengerResponses: ArrayList<MessengerResponse> = mapper.readValue(myResponse)
-                val messengerInstance = MessengerInstance(messengerResponses)
+                val messengerInstance = MessengerInstance(
+                    scrollToPosition = 0,
+                    messengerResponses = messengerResponses)
 
                 val activityStateData = mapper.writeValueAsString(messengerInstance)
 
