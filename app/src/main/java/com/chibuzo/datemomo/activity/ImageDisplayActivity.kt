@@ -18,19 +18,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.ImageDisplayAdapter
 import com.chibuzo.datemomo.databinding.ActivityImageDisplayBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.PictureCompositeModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.AllLikersInstance
+import com.chibuzo.datemomo.model.instance.ImageDisplayInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
-import com.chibuzo.datemomo.model.response.UserPictureResponse
+import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ImageDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -39,9 +43,11 @@ class ImageDisplayActivity : AppCompatActivity() {
     private var requestProcess: String = ""
     private lateinit var binding: ActivityImageDisplayBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var imageDisplayInstance: ImageDisplayInstance
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var pictureCompositeModel: PictureCompositeModel
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
-    private lateinit var userPictureResponseArray: ArrayList<UserPictureResponse>
+//    private lateinit var userPictureResponseArray: ArrayList<UserPictureResponse>
     private lateinit var pictureCompositeModelArray: ArrayList<PictureCompositeModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,12 +109,13 @@ class ImageDisplayActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userPictureResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            imageDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
             pictureCompositeModelArray = ArrayList()
             pictureCompositeModel = PictureCompositeModel(ArrayList())
 
-            userPictureResponseArray.forEachIndexed { index, userPictureResponse ->
+            imageDisplayInstance.userPictureResponses.forEachIndexed { index, userPictureResponse ->
                 pictureCompositeModel.userPictureResponses.add(userPictureResponse)
 
                 if (((index + 1) % 3) == 0) {
@@ -117,7 +124,8 @@ class ImageDisplayActivity : AppCompatActivity() {
                     pictureCompositeModel = PictureCompositeModel(ArrayList())
                 }
 
-                if ((index == (userPictureResponseArray.size - 1)) && ((userPictureResponseArray.size % 3) != 0)) {
+                if ((index == (imageDisplayInstance.userPictureResponses.size - 1))
+                    && ((imageDisplayInstance.userPictureResponses.size % 3) != 0)) {
                     pictureCompositeModelArray.add(pictureCompositeModel)
                 }
             }
@@ -131,6 +139,7 @@ class ImageDisplayActivity : AppCompatActivity() {
 
             val imageDisplayAdapter = ImageDisplayAdapter(pictureCompositeModelArray, allLikersModel)
             binding.imageDisplayRecyclerView.adapter = imageDisplayAdapter
+            binding.imageDisplayRecyclerView.layoutManager!!.scrollToPosition(imageDisplayInstance.scrollToPosition)
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
@@ -207,27 +216,73 @@ class ImageDisplayActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val homeDisplayResponse: HomeDisplayResponse = mapper.readValue(myResponse)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activityStateData = mapper.writeValueAsString(homeDisplayResponse)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    updateImageDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateAllLikersInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_information),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_information
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(AllLikedActivity.TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, UserInformationActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@ImageDisplayActivity, UserInformationActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
+    }
+
+    private fun updateImageDisplayInstance(activityInstanceModel: ActivityInstanceModel) {
+        if (activityInstanceModel.activityInstanceStack.peek().activity == getString(R.string.activity_image_display)) {
+            val scrollToPosition =
+                (binding.imageDisplayRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            activityInstanceModel.activityInstanceStack.pop()
+
+            val imageDisplayInstance = ImageDisplayInstance(
+                scrollToPosition = scrollToPosition,
+                userPictureResponses = imageDisplayInstance.userPictureResponses)
+
+            val mapper = jacksonObjectMapper()
+            val activityStateData = mapper.writeValueAsString(imageDisplayInstance)
+
+            activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_image_display),
+                activityStateData = activityStateData)
+
+            activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+        }
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     private fun triggerRequestProcess() {

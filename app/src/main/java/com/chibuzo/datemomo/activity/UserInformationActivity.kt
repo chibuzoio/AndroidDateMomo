@@ -357,6 +357,8 @@ class UserInformationActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         val activityInstanceModel: ActivityInstanceModel =
             mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+        val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
 
         try {
             when (activityInstanceModel.activityInstanceStack.peek().activity) {
@@ -378,8 +380,6 @@ class UserInformationActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 getString(R.string.activity_home_display) -> {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
                     val intent = Intent(this, HomeDisplayActivity::class.java)
                     intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                     startActivity(intent)
@@ -389,8 +389,9 @@ class UserInformationActivity : AppCompatActivity() {
                     fetchUserLikers()
                 }
                 getString(R.string.activity_image_display) -> {
-                    requestProcess = getString(R.string.request_fetch_user_pictures)
-                    fetchUserPictures()
+                    val intent = Intent(this, ImageDisplayActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
                 getString(R.string.activity_image_slider) -> {
                     requestProcess = getString(R.string.request_fetch_user_pictures)
@@ -401,12 +402,14 @@ class UserInformationActivity : AppCompatActivity() {
                     fetchLikedUsers()
                 }
                 getString(R.string.activity_all_likers) -> {
-                    requestProcess = getString(R.string.request_fetch_user_likers)
-                    fetchUserLikers()
+                    val intent = Intent(this, AllLikersActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
                 getString(R.string.activity_all_liked) -> {
-                    requestProcess = getString(R.string.request_fetch_liked_users)
-                    fetchLikedUsers()
+                    val intent = Intent(this, AllLikedActivity::class.java)
+                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                    startActivity(intent)
                 }
                 getString(R.string.activity_notification) -> {
                     requestProcess = getString(R.string.request_fetch_notifications)

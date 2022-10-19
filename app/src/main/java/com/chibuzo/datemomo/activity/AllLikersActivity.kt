@@ -19,13 +19,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.AllLikersAdapter
 import com.chibuzo.datemomo.databinding.ActivityAllLikersBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.AllLikersInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
-import com.chibuzo.datemomo.model.request.UserLikerRequest
+import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -40,9 +44,10 @@ class AllLikersActivity : AppCompatActivity() {
     private var leastRootViewHeight: Int = 0
     private lateinit var binding: ActivityAllLikersBinding
     private lateinit var buttonClickEffect: AlphaAnimation
+    private lateinit var allLikersInstance: AllLikersInstance
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var userInformationRequest: UserInformationRequest
-    private lateinit var userLikerResponseArray: Array<UserLikerResponse>
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,7 +112,8 @@ class AllLikersActivity : AppCompatActivity() {
         try {
             val mapper = jacksonObjectMapper()
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            userLikerResponseArray = mapper.readValue(bundle.getString("jsonResponse")!!)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            allLikersInstance = mapper.readValue(activitySavedInstance.activityStateData)
 
 /*
             userLikerResponseArray = emptyArray()
@@ -139,8 +145,9 @@ class AllLikersActivity : AppCompatActivity() {
                 AllLikersModel(sharedPreferences.getInt(getString(R.string.member_id), 0),
                     deviceWidth, "", this)
 
-            val allLikersAdapter = AllLikersAdapter(userLikerResponseArray, allLikersModel)
+            val allLikersAdapter = AllLikersAdapter(allLikersInstance.userLikerResponses, allLikersModel)
             binding.allLikersRecyclerView.adapter = allLikersAdapter
+            binding.allLikersRecyclerView.layoutManager!!.scrollToPosition(allLikersInstance.scrollToPosition)
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
@@ -214,31 +221,77 @@ class AllLikersActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val homeDisplayResponse: HomeDisplayResponse = mapper.readValue(myResponse)
 
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+                val activityStateData = mapper.writeValueAsString(homeDisplayResponse)
 
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_information)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_user_information))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    updateAllLikersInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateAllLikersInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_information),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_information
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(AllLikedActivity.TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, UserInformationActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@AllLikersActivity, UserInformationActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
     }
 
+    private fun updateAllLikersInstance(activityInstanceModel: ActivityInstanceModel) {
+        if (activityInstanceModel.activityInstanceStack.peek().activity == getString(R.string.activity_all_likers)) {
+            val scrollToPosition =
+                (binding.allLikersRecyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            activityInstanceModel.activityInstanceStack.pop()
+
+            val allLikersInstance = AllLikersInstance(
+                scrollToPosition = scrollToPosition,
+                userLikerResponses = allLikersInstance.userLikerResponses)
+
+            val mapper = jacksonObjectMapper()
+            val activityStateData = mapper.writeValueAsString(allLikersInstance)
+
+            activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_all_likers),
+                activityStateData = activityStateData)
+
+            activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+        }
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
+    }
+
     private fun append(userLikerResponse: UserLikerResponse): Array<UserLikerResponse> {
-        val userLikerResponseList = userLikerResponseArray.toMutableList()
+        val userLikerResponseList = allLikersInstance.userLikerResponses.toMutableList()
         userLikerResponseList.add(userLikerResponse)
         return userLikerResponseList.toTypedArray()
     }
