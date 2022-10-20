@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -15,9 +14,12 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.bumptech.glide.Glide
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityUserBioBinding
-import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.ActivityInstanceModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
 import com.chibuzo.datemomo.model.request.UserBioRequest
+import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
 import com.chibuzo.datemomo.model.response.UserBioResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -863,17 +865,27 @@ class UserBioActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val activityInstanceStack = Stack<ActivitySavedInstance>()
+                val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
 
-                val activityStack = Stack<String>()
-                activityStack.push(getString(R.string.activity_home_display))
-                val activityStackString = mapper.writeValueAsString(ActivityStackModel(activityStack))
-                sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                val homeDisplayInstance = HomeDisplayInstance(
+                    scrollToPosition = 0,
+                    outerHomeDisplayResponse = outerHomeDisplayResponse)
+
+                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
+                val activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_home_display),
+                    activityStateData = activityStateData)
+
+                activityInstanceStack.push(activitySavedInstance)
+                val activityInstanceModelString = mapper.writeValueAsString(ActivityInstanceModel(activityInstanceStack))
+                sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                 sharedPreferencesEditor.apply()
 
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@UserBioActivity, HomeDisplayActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
