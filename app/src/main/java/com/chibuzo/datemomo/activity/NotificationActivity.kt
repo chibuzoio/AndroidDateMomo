@@ -207,11 +207,8 @@ class NotificationActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 else -> {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
-                    val intent = Intent(this, HomeDisplayActivity::class.java)
-                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
-                    startActivity(intent)
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
                 }
             }
         } catch (exception: EmptyStackException) {

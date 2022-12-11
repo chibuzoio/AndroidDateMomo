@@ -1,7 +1,6 @@
 package com.chibuzo.datemomo.activity
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
@@ -13,20 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
-import com.chibuzo.datemomo.adapter.AllLikersAdapter
 import com.chibuzo.datemomo.databinding.ActivityUserExperienceBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
-import com.chibuzo.datemomo.model.instance.MessageInstance
 import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.request.UserReportRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
-import com.chibuzo.datemomo.model.response.MessageResponse
 import com.chibuzo.datemomo.model.response.UserExperienceResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature

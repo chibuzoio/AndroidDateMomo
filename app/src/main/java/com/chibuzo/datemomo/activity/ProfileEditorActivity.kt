@@ -24,16 +24,20 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.databinding.ActivityProfileEditorBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.HomeDisplayInstance
+import com.chibuzo.datemomo.model.instance.UserProfileInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
+import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
 import com.chibuzo.datemomo.model.response.PictureUpdateResponse
+import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -50,6 +54,7 @@ class ProfileEditorActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var viewRootHeightArray: MutableSet<Int>
     private lateinit var binding: ActivityProfileEditorBinding
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var updateSexualityRequest: UpdateSexualityRequest
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -1093,8 +1098,45 @@ class ProfileEditorActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
+                var homeDisplayInstance = HomeDisplayInstance(
+                    scrollToPosition = 0,
+                    outerHomeDisplayResponse = outerHomeDisplayResponse)
+
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_home_display)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
+                try {
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_home_display),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_home_display
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@ProfileEditorActivity, HomeDisplayActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
@@ -1119,8 +1161,6 @@ class ProfileEditorActivity : AppCompatActivity() {
             .post(requestBody)
             .build()
 
-        finish()
-
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
@@ -1136,8 +1176,37 @@ class ProfileEditorActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val intent = Intent(baseContext, UserProfileActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
+                val userProfileInstance = UserProfileInstance(userLikerResponses)
+
+                val activityStateData = mapper.writeValueAsString(userProfileInstance)
+
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_profile),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_profile
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@ProfileEditorActivity, UserProfileActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
@@ -1312,6 +1381,16 @@ class ProfileEditorActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     private fun hideSystemUI() {
