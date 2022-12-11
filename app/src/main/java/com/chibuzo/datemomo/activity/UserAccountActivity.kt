@@ -98,15 +98,15 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_all_liked)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    allLikedInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(allLikedInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_all_liked)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        allLikedInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(allLikedInstance)
+
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_all_liked),
                         activityStateData = activityStateData)
@@ -630,8 +630,9 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                // This is not required here because messenger activity always
-                // needs to be refreshed when it's newly navigated to
+                try {
+                    // This is not required here because messenger activity always
+                    // needs to be refreshed when it's newly navigated to
 /*
                 if (activityInstanceModel.activityInstanceStack.peek().activity ==
                     getString(R.string.activity_messenger)) {
@@ -640,9 +641,8 @@ class UserAccountActivity : AppCompatActivity() {
                 }
 */
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
+                    val activityStateData = mapper.writeValueAsString(messengerInstance)
 
-                try {
                     updateUserAccountInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateAllLikersInstance
@@ -716,15 +716,15 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_notification)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(notificationInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_notification)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(notificationInstance)
+
                     updateUserAccountInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateAllLikersInstance
@@ -833,15 +833,15 @@ class UserAccountActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_home_display)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_home_display)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                     updateUserAccountInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateAllLikersInstance

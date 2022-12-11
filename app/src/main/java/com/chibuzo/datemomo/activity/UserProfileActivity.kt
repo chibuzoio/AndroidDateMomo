@@ -320,15 +320,15 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_all_likers)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    allLikersInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(allLikersInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_all_likers)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        allLikersInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(allLikersInstance)
+
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_all_likers),
                         activityStateData = activityStateData)
@@ -800,15 +800,15 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_home_display)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_home_display)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_home_display),
                         activityStateData = activityStateData)
@@ -1002,15 +1002,15 @@ class UserProfileActivity : AppCompatActivity() {
                         scrollToPosition = 0,
                         userPictureResponses = userPictureResponses)
 
-                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                        getString(R.string.activity_image_display)) {
-                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                        imageDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                    }
-
-                    val activityStateData = mapper.writeValueAsString(imageDisplayInstance)
-
                     try {
+                        if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                            getString(R.string.activity_image_display)) {
+                            activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                            imageDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                        }
+
+                        val activityStateData = mapper.writeValueAsString(imageDisplayInstance)
+
                         activitySavedInstance = ActivitySavedInstance(
                             activity = getString(R.string.activity_image_display),
                             activityStateData = activityStateData)
@@ -1355,15 +1355,15 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_notification)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(notificationInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_notification)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(notificationInstance)
+
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_notification),
                         activityStateData = activityStateData)
@@ -1573,8 +1573,9 @@ class UserProfileActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                // This is not required here because messenger activity always
-                // needs to be refreshed when it's newly navigated to
+                try {
+                    // This is not required here because messenger activity always
+                    // needs to be refreshed when it's newly navigated to
 /*
                 if (activityInstanceModel.activityInstanceStack.peek().activity ==
                     getString(R.string.activity_messenger)) {
@@ -1583,9 +1584,8 @@ class UserProfileActivity : AppCompatActivity() {
                 }
 */
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
+                    val activityStateData = mapper.writeValueAsString(messengerInstance)
 
-                try {
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_messenger),
                         activityStateData = activityStateData)

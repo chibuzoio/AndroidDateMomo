@@ -442,8 +442,9 @@ class MessageActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                // This is not required here because messenger activity always
-                // needs to be refreshed when it's newly navigated to
+                try {
+                    // This is not required here because messenger activity always
+                    // needs to be refreshed when it's newly navigated to
 /*
                 if (activityInstanceModel.activityInstanceStack.peek().activity ==
                     getString(R.string.activity_messenger)) {
@@ -452,9 +453,8 @@ class MessageActivity : AppCompatActivity() {
                 }
 */
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
+                    val activityStateData = mapper.writeValueAsString(messengerInstance)
 
-                try {
                     updateMessageInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateMessageInstance

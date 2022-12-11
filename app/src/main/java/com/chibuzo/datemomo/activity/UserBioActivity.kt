@@ -876,15 +876,15 @@ class UserBioActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_home_display)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_home_display)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_home_display),
                         activityStateData = activityStateData)

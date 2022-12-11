@@ -460,15 +460,15 @@ class NotificationActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_home_display)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_home_display)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                     updateNotificationInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateMessengerInstance
@@ -545,8 +545,9 @@ class NotificationActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                // This is not required here because messenger activity always
-                // needs to be refreshed when it's newly navigated to
+                try {
+                    // This is not required here because messenger activity always
+                    // needs to be refreshed when it's newly navigated to
 /*
                 if (activityInstanceModel.activityInstanceStack.peek().activity ==
                     getString(R.string.activity_messenger)) {
@@ -555,9 +556,8 @@ class NotificationActivity : AppCompatActivity() {
                 }
 */
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
+                    val activityStateData = mapper.writeValueAsString(messengerInstance)
 
-                try {
                     updateNotificationInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateMessengerInstance

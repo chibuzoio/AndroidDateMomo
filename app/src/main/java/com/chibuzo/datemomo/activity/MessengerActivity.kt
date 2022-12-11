@@ -630,15 +630,15 @@ class MessengerActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_notification)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(notificationInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_notification)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(notificationInstance)
+
                     updateMessengerInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateAllLikersInstance
@@ -747,15 +747,15 @@ class MessengerActivity : AppCompatActivity() {
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
-                if (activityInstanceModel.activityInstanceStack.peek().activity ==
-                    getString(R.string.activity_home_display)) {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
-                }
-
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_home_display)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
+
                     updateMessengerInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateMessengerInstance
