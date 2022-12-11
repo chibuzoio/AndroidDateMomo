@@ -72,7 +72,10 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
         homeDisplayModel.binding.userImageContainer.setOnClickListener {
             homeDisplayModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_pictures)
-            val userPictureRequest = UserPictureRequest(this.messageRequest.receiverId)
+            val userPictureRequest = UserPictureRequest(
+                memberId = this.messageRequest.receiverId,
+                currentPosition = 0)
+
             Log.e(TAG, "ReceiverId value here is ${this.messageRequest.receiverId}")
             homeDisplayModel.homeDisplayActivity.fetchUserPictures(userPictureRequest)
         }
@@ -467,7 +470,7 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                var committedResponse: CommittedResponse
+                val committedResponse: CommittedResponse
 
                 try {
                     committedResponse = mapper.readValue(myResponse)

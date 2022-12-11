@@ -3,6 +3,7 @@ package com.chibuzo.datemomo.model.request
 import kotlinx.serialization.Serializable
 
 @Serializable
-class UserPictureRequest(var memberId: Int)
+class UserPictureRequest(var memberId: Int,
+                         var currentPosition: Int)
 
 

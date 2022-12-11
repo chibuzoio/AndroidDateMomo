@@ -15,23 +15,28 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.activity.UserExperienceActivity
 import com.chibuzo.datemomo.databinding.RecyclerMessengerBinding
-import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.MessengerModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.request.DeleteMessageRequest
 import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.request.UserBlockingRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.MessengerResponse
+import com.chibuzo.datemomo.model.response.UserExperienceResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class MessengerAdapter(private var messengerResponses: ArrayList<MessengerResponse>, private val messengerModel: MessengerModel) :
     RecyclerView.Adapter<MessengerAdapter.MyViewHolder>() {
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -145,29 +150,44 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
 
         messengerModel.binding.messengerReportUser.setOnClickListener {
             val mapper = jacksonObjectMapper()
-
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-            val activityStackModel: ActivityStackModel =
-                mapper.readValue(sharedPreferences.getString(holder.itemView.context.getString(R.string.activity_stack), "")!!)
+            val userExperienceResponse = UserExperienceResponse(
+                memberId = messengerResponses[position].chatmateId,
+                fullName = messengerResponses[position].fullName,
+                userName = messengerResponses[position].userName,
+                lastActiveTime = "",
+                profilePicture = messengerResponses[position].profilePicture,
+                userBlockedStatus = messengerResponses[position].userBlockedStatus)
 
-            if (activityStackModel.activityStack.peek() != holder.itemView.context.getString(R.string.activity_user_experience)) {
-                activityStackModel.activityStack.push(holder.itemView.context.getString(R.string.activity_user_experience))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(
-                    holder.itemView.context.getString(R.string.activity_stack),
-                    activityStackString
-                )
-                sharedPreferencesEditor.apply()
+            val activityStateData = mapper.writeValueAsString(userExperienceResponse)
+
+            val activityInstanceModel: ActivityInstanceModel =
+                mapper.readValue(sharedPreferences.getString(holder.itemView.context.getString(R.string.activity_instance_model), "")!!)
+
+            try {
+                activitySavedInstance = ActivitySavedInstance(
+                    activity = holder.itemView.context.getString(R.string.activity_user_experience),
+                    activityStateData = activityStateData)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != holder.itemView.context.getString(
+                        R.string.activity_user_experience
+                    )) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                } else {
+                    activityInstanceModel.activityInstanceStack.pop()
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                }
+
+                commitInstanceModel(holder.itemView.context, mapper, activityInstanceModel)
+            } catch (exception: EmptyStackException) {
+                exception.printStackTrace()
+                Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
             }
 
+            val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
             val intent = Intent(holder.itemView.context, UserExperienceActivity::class.java)
-            intent.putExtra("userBlockedStatus", messengerResponses[messengerModel.currentPosition].userBlockedStatus)
-            intent.putExtra("profilePicture", messengerResponses[messengerModel.currentPosition].profilePicture)
-            intent.putExtra("memberId", messengerResponses[messengerModel.currentPosition].chatmateId)
-            intent.putExtra("userName", messengerResponses[messengerModel.currentPosition].userName)
-            intent.putExtra("fullName", messengerResponses[messengerModel.currentPosition].fullName)
-            intent.putExtra("lastActiveTime", "")
+            intent.putExtra(holder.itemView.context.getString(R.string.activity_saved_instance), activitySavedInstanceString)
             holder.itemView.context.startActivity(intent)
         }
 
@@ -285,6 +305,17 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
                 }
             }
         })
+    }
+
+    private fun commitInstanceModel(context: Context, mapper: ObjectMapper,
+                                    activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            context.getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     private fun removeAt(position: Int): Array<MessengerResponse> {

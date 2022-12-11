@@ -958,7 +958,8 @@ class UserProfileActivity : AppCompatActivity() {
     fun fetchUserPictures() {
         val mapper = jacksonObjectMapper()
         val userPictureRequest = UserPictureRequest(
-            sharedPreferences.getInt(getString(R.string.member_id), 0)
+            memberId = sharedPreferences.getInt(getString(R.string.member_id), 0),
+            currentPosition = 0
         )
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -1032,14 +1033,20 @@ class UserProfileActivity : AppCompatActivity() {
 
                     Intent(this@UserProfileActivity, ImageDisplayActivity::class.java)
                 } else {
-                    val imageSliderInstance = ImageSliderInstance(
+                    var imageSliderInstance = ImageSliderInstance(
                         memberId = sharedPreferences.getInt(getString(R.string.member_id), 0),
                         currentPosition = 0,
                         userPictureResponses = userPictureResponses)
 
-                    val activityStateData = mapper.writeValueAsString(imageSliderInstance)
-
                     try {
+                        if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                            getString(R.string.activity_image_slider)) {
+                            activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                            imageSliderInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                        }
+
+                        val activityStateData = mapper.writeValueAsString(imageSliderInstance)
+
                         activitySavedInstance = ActivitySavedInstance(
                             activity = getString(R.string.activity_image_slider),
                             activityStateData = activityStateData)

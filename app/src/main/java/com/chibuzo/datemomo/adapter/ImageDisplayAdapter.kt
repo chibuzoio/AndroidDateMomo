@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.ImageDisplayActivity
 import com.chibuzo.datemomo.activity.ImageSliderActivity
 import com.chibuzo.datemomo.databinding.RecyclerImageDisplayBinding
 import com.chibuzo.datemomo.model.AllLikersModel
@@ -71,17 +72,35 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
 
         holder.binding.firstPictureView.setOnClickListener {
             currentPosition = position * 3
-            fetchUserPictures()
+
+            val userPictureRequest = UserPictureRequest(
+                memberId = allLikersModel.memberId,
+                currentPosition = currentPosition
+            )
+
+            (allLikersModel.appCompatActivity as ImageDisplayActivity).fetchUserPictures(userPictureRequest)
         }
 
         holder.binding.secondPictureView.setOnClickListener {
             currentPosition = (position * 3) + 1
-            fetchUserPictures()
+
+            val userPictureRequest = UserPictureRequest(
+                memberId = allLikersModel.memberId,
+                currentPosition = currentPosition
+            )
+
+            (allLikersModel.appCompatActivity as ImageDisplayActivity).fetchUserPictures(userPictureRequest)
         }
 
         holder.binding.thirdPictureView.setOnClickListener {
             currentPosition = (position * 3) + 2
-            fetchUserPictures()
+
+            val userPictureRequest = UserPictureRequest(
+                memberId = allLikersModel.memberId,
+                currentPosition = currentPosition
+            )
+
+            (allLikersModel.appCompatActivity as ImageDisplayActivity).fetchUserPictures(userPictureRequest)
         }
 
         try {
@@ -123,44 +142,6 @@ class ImageDisplayAdapter(private var pictureCompositeModels: ArrayList<PictureC
 
     class MyViewHolder(val binding: RecyclerImageDisplayBinding) :
         RecyclerView.ViewHolder(binding.root)
-
-    @Throws(IOException::class)
-    fun fetchUserPictures() {
-        val mapper = jacksonObjectMapper()
-        val userPictureRequest = UserPictureRequest(
-            allLikersModel.memberId
-        )
-
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-        val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
-        val requestBody: RequestBody = RequestBody.create(
-            MediaType.parse("application/json"),
-            jsonObjectString
-        )
-
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(context.getString(R.string.date_momo_api) +
-                    context.getString(R.string.api_user_picture))
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                call.cancel()
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                val myResponse: String = response.body()!!.string()
-                val intent = Intent(context, ImageSliderActivity::class.java)
-                intent.putExtra("currentPosition", currentPosition)
-                intent.putExtra("jsonResponse", myResponse)
-                context.startActivity(intent)
-            }
-        })
-    }
 
     companion object {
         const val TAG = "ImageDisplayAdapter"

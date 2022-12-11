@@ -981,17 +981,23 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val userPictureResponses: ArrayList<UserPictureResponse> = mapper.readValue(myResponse)
-                val imageSliderInstance = ImageSliderInstance(
+                var imageSliderInstance = ImageSliderInstance(
                     memberId = userPictureRequest.memberId,
-                    currentPosition = 0,
+                    currentPosition = userPictureRequest.currentPosition,
                     userPictureResponses = userPictureResponses)
-
-                val activityStateData = mapper.writeValueAsString(imageSliderInstance)
 
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
                 try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_image_slider)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        imageSliderInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(imageSliderInstance)
+
                     updateHomeDisplayInstance(activityInstanceModel)
 
                     // Always do this below the method above, updateHomeDisplayInstance

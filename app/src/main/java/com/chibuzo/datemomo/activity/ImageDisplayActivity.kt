@@ -23,8 +23,11 @@ import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.PictureCompositeModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.ImageDisplayInstance
+import com.chibuzo.datemomo.model.instance.ImageSliderInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
+import com.chibuzo.datemomo.model.request.UserPictureRequest
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
+import com.chibuzo.datemomo.model.response.UserPictureResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -177,6 +180,84 @@ class ImageDisplayActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         hideSystemUI()
+    }
+
+    @Throws(IOException::class)
+    fun fetchUserPictures(userPictureRequest: UserPictureRequest) {
+        val mapper = jacksonObjectMapper()
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_picture))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val userPictureResponses: ArrayList<UserPictureResponse> = mapper.readValue(myResponse)
+                val imageSliderInstance = ImageSliderInstance(
+                    memberId = userPictureRequest.memberId,
+                    currentPosition = userPictureRequest.currentPosition,
+                    userPictureResponses = userPictureResponses)
+
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    val activityStateData = mapper.writeValueAsString(imageSliderInstance)
+
+                    updateImageDisplayInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_image_slider),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_image_slider
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
+
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@ImageDisplayActivity, ImageSliderActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                startActivity(intent)
+            }
+        })
     }
 
     @Throws(IOException::class)

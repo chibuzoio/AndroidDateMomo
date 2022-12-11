@@ -2,6 +2,8 @@ package com.chibuzo.datemomo.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,18 +14,28 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.activity.ImageSliderActivity
 import com.chibuzo.datemomo.databinding.RecyclerPictureCollectionBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
 import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.PictureCollectionModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.ImageSliderInstance
 import com.chibuzo.datemomo.model.request.UserPictureRequest
+import com.chibuzo.datemomo.model.response.UserPictureResponse
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<PictureCollectionModel>,
                                private val floatingGalleryModel: FloatingGalleryModel) :
     RecyclerView.Adapter<PictureCollectionAdapter.MyViewHolder>() {
     private val buttonClickEffect = AlphaAnimation(1f, 0f)
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var activitySavedInstance: ActivitySavedInstance
+    private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = RecyclerPictureCollectionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -281,11 +293,12 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
     @Throws(IOException::class)
     fun fetchUserPictures(context: Context, currentPosition: Int) {
         val mapper = jacksonObjectMapper()
-        val userPictureRequest = UserPictureRequest(
-            floatingGalleryModel.profileOwnerId
-        )
-
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val userPictureRequest = UserPictureRequest(
+            memberId = floatingGalleryModel.profileOwnerId,
+            currentPosition = currentPosition
+        )
 
         val jsonObjectString = mapper.writeValueAsString(userPictureRequest)
         val requestBody: RequestBody = RequestBody.create(
@@ -295,8 +308,7 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
 
         val client = OkHttpClient()
         val request: Request = Request.Builder()
-            .url(context.getString(R.string.date_momo_api) +
-                    context.getString(R.string.api_user_picture))
+            .url(context.getString(R.string.date_momo_api) + context.getString(R.string.api_user_picture))
             .post(requestBody)
             .build()
 
@@ -308,12 +320,67 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
+                val userPictureResponses: java.util.ArrayList<UserPictureResponse> = mapper.readValue(myResponse)
+                var imageSliderInstance = ImageSliderInstance(
+                    memberId = userPictureRequest.memberId,
+                    currentPosition = userPictureRequest.currentPosition,
+                    userPictureResponses = userPictureResponses)
+
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(context.getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        context.getString(R.string.activity_image_slider)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        imageSliderInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
+
+                    val activityStateData = mapper.writeValueAsString(imageSliderInstance)
+
+                    // Always do this below the method above, updateHomeDisplayInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = context.getString(R.string.activity_image_slider),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != context.getString(
+                            R.string.activity_image_slider
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(context, mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
+
+                Log.e(TAG, "The number of activities on the stack here is ${activityInstanceModel.activityInstanceStack.size}")
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
                 val intent = Intent(context, ImageSliderActivity::class.java)
-                intent.putExtra("currentPosition", currentPosition)
-                intent.putExtra("jsonResponse", myResponse)
+                intent.putExtra(context.getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 context.startActivity(intent)
             }
         })
+    }
+
+    private fun commitInstanceModel(context: Context, mapper: ObjectMapper,
+                                    activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            context.getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
+    }
+
+    companion object {
+        const val TAG = "PictureCollAdapter"
     }
 }
 

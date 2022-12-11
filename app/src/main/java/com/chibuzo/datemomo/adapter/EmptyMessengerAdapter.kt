@@ -2,9 +2,7 @@ package com.chibuzo.datemomo.adapter
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import androidx.core.content.ContextCompat
@@ -22,11 +20,9 @@ import com.chibuzo.datemomo.model.request.MessageRequest
 import com.chibuzo.datemomo.model.request.PostMessageRequest
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
 import com.chibuzo.datemomo.model.response.MessageResponse
-import com.chibuzo.datemomo.model.response.PostMessageResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 

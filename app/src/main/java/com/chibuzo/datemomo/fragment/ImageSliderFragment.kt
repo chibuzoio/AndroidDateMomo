@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,19 +12,26 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.activity.NotificationActivity
 import com.chibuzo.datemomo.activity.UserProfileActivity
 import com.chibuzo.datemomo.databinding.FragmentImageSliderBinding
+import com.chibuzo.datemomo.model.ActivityInstanceModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.UserProfileInstance
 import com.chibuzo.datemomo.model.request.ChangeProfilePictureRequest
 import com.chibuzo.datemomo.model.request.DeletePictureRequest
 import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.PictureOwnerResponse
+import com.chibuzo.datemomo.model.response.UserLikerResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
+import java.util.*
 
 
 class ImageSliderFragment : Fragment() {
@@ -32,6 +40,7 @@ class ImageSliderFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var deletePictureRequest: DeletePictureRequest
     private lateinit var pictureOwnerResponse: PictureOwnerResponse
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
     private lateinit var changeProfilePictureRequest: ChangeProfilePictureRequest
 
@@ -255,7 +264,7 @@ class ImageSliderFragment : Fragment() {
             override fun onFailure(call: Call, e: IOException) {
                 call.cancel()
 
-                if (!Utility.isConnected(requireActivity().baseContext)) {
+                if (!Utility.isConnected(fragmentObject.requireContext())) {
                     displayDoubleButtonDialog()
                 } else if (e.message!!.contains("after")) {
                     displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
@@ -266,11 +275,50 @@ class ImageSliderFragment : Fragment() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val intent = Intent(requireActivity().baseContext, UserProfileActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
+                val userLikerResponses: ArrayList<UserLikerResponse> = mapper.readValue(myResponse)
+                val userProfileInstance = UserProfileInstance(userLikerResponses)
+
+                val activityStateData = mapper.writeValueAsString(userProfileInstance)
+
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                try {
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_user_profile),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_user_profile
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(fragmentObject.requireContext(), UserProfileActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
                 startActivity(intent)
             }
         })
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     fun displayDoubleButtonDialog() {
