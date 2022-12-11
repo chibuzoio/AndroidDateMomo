@@ -20,7 +20,6 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.AllLikersAdapter
 import com.chibuzo.datemomo.databinding.ActivityAllLikersBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.AllLikersInstance
@@ -246,7 +245,7 @@ class AllLikersActivity : AppCompatActivity() {
                     commitInstanceModel(mapper, activityInstanceModel)
                 } catch (exception: EmptyStackException) {
                     exception.printStackTrace()
-                    Log.e(AllLikedActivity.TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)

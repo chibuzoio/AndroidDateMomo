@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,7 @@ import com.chibuzo.datemomo.model.response.OuterHomeDisplayResponse
 import com.chibuzo.datemomo.model.response.UserBioResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
@@ -36,6 +38,7 @@ class UserBioActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserBioBinding
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var activitySavedInstance: ActivitySavedInstance
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -865,23 +868,41 @@ class UserBioActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                val activityInstanceStack = Stack<ActivitySavedInstance>()
                 val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
-
-                val homeDisplayInstance = HomeDisplayInstance(
+                var homeDisplayInstance = HomeDisplayInstance(
                     scrollToPosition = 0,
                     outerHomeDisplayResponse = outerHomeDisplayResponse)
 
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_home_display)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
                 val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
 
-                val activitySavedInstance = ActivitySavedInstance(
-                    activity = getString(R.string.activity_home_display),
-                    activityStateData = activityStateData)
+                try {
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_home_display),
+                        activityStateData = activityStateData)
 
-                activityInstanceStack.push(activitySavedInstance)
-                val activityInstanceModelString = mapper.writeValueAsString(ActivityInstanceModel(activityInstanceStack))
-                sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
-                sharedPreferencesEditor.apply()
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_home_display
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
 
                 val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
                 val intent = Intent(this@UserBioActivity, HomeDisplayActivity::class.java)
@@ -996,6 +1017,16 @@ class UserBioActivity : AppCompatActivity() {
             controller.hide(WindowInsetsCompat.Type.systemBars())
             controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
+    }
+
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
+        )
+        sharedPreferencesEditor.apply()
     }
 
     private fun showSystemUI() {

@@ -32,7 +32,6 @@ import com.chibuzo.datemomo.adapter.HomeDisplayAdapter
 import com.chibuzo.datemomo.control.AppBounceInterpolator
 import com.chibuzo.datemomo.databinding.ActivityHomeDisplayBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.FloatingGalleryModel
 import com.chibuzo.datemomo.model.HomeDisplayModel
 import com.chibuzo.datemomo.model.instance.*
@@ -1141,14 +1140,20 @@ class HomeDisplayActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val notificationResponses: ArrayList<NotificationResponse> = mapper.readValue(myResponse)
-                val notificationInstance = NotificationInstance(
+                var notificationInstance = NotificationInstance(
                     scrollToPosition = 0,
                     notificationResponses = notificationResponses)
 
-                val activityStateData = mapper.writeValueAsString(notificationInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_notification)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(notificationInstance)
 
                 try {
                     updateHomeDisplayInstance(activityInstanceModel)
@@ -1368,10 +1373,20 @@ class HomeDisplayActivity : AppCompatActivity() {
                     scrollToPosition = 0,
                     messengerResponses = messengerResponses)
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                // This is not required here because messenger activity always
+                // needs to be refreshed when it's newly navigated to
+/*
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_messenger)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    messengerInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+*/
+
+                val activityStateData = mapper.writeValueAsString(messengerInstance)
 
                 try {
                     updateHomeDisplayInstance(activityInstanceModel)

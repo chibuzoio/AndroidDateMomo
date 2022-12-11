@@ -22,7 +22,6 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.NotificationAdapter
 import com.chibuzo.datemomo.databinding.ActivityNotificationBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.instance.*
 import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
@@ -38,7 +37,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class NotificationActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -458,14 +456,20 @@ class NotificationActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
-                val homeDisplayInstance = HomeDisplayInstance(
+                var homeDisplayInstance = HomeDisplayInstance(
                     scrollToPosition = 0,
                     outerHomeDisplayResponse = outerHomeDisplayResponse)
 
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_home_display)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
 
                 try {
                     updateNotificationInstance(activityInstanceModel)
@@ -541,10 +545,20 @@ class NotificationActivity : AppCompatActivity() {
                     scrollToPosition = 0,
                     messengerResponses = messengerResponses)
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                // This is not required here because messenger activity always
+                // needs to be refreshed when it's newly navigated to
+/*
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_messenger)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    messengerInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+*/
+
+                val activityStateData = mapper.writeValueAsString(messengerInstance)
 
                 try {
                     updateNotificationInstance(activityInstanceModel)

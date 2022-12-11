@@ -465,14 +465,20 @@ class UserInformationActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val notificationResponses: java.util.ArrayList<NotificationResponse> = mapper.readValue(myResponse)
-                val notificationInstance = NotificationInstance(
+                var notificationInstance = NotificationInstance(
                     scrollToPosition = 0,
                     notificationResponses = notificationResponses)
 
-                val activityStateData = mapper.writeValueAsString(notificationInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_notification)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(notificationInstance)
 
                 try {
                     activitySavedInstance = ActivitySavedInstance(
@@ -735,14 +741,20 @@ class UserInformationActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
-                val homeDisplayInstance = HomeDisplayInstance(
+                var homeDisplayInstance = HomeDisplayInstance(
                     scrollToPosition = 0,
                     outerHomeDisplayResponse = outerHomeDisplayResponse)
 
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_home_display)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
 
                 try {
                     activitySavedInstance = ActivitySavedInstance(
@@ -811,10 +823,20 @@ class UserInformationActivity : AppCompatActivity() {
                     scrollToPosition = 0,
                     messengerResponses = messengerResponses)
 
-                val activityStateData = mapper.writeValueAsString(messengerInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                // This is not required here because messenger activity always
+                // needs to be refreshed when it's newly navigated to
+/*
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_messenger)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    messengerInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+*/
+
+                val activityStateData = mapper.writeValueAsString(messengerInstance)
 
                 try {
                     activitySavedInstance = ActivitySavedInstance(
@@ -971,9 +993,16 @@ class UserInformationActivity : AppCompatActivity() {
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
                 val intent = if (requestedActivity == getString(R.string.activity_image_display)) {
-                    val imageDisplayInstance = ImageDisplayInstance(
+                    var imageDisplayInstance = ImageDisplayInstance(
+                        memberId = homeDisplayResponse.memberId,
                         scrollToPosition = 0,
                         userPictureResponses = userPictureResponses)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                        getString(R.string.activity_image_display)) {
+                        activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                        imageDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                    }
 
                     val activityStateData = mapper.writeValueAsString(imageDisplayInstance)
 

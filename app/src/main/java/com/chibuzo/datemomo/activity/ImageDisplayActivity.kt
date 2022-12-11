@@ -19,11 +19,9 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.ImageDisplayAdapter
 import com.chibuzo.datemomo.databinding.ActivityImageDisplayBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.PictureCompositeModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
-import com.chibuzo.datemomo.model.instance.AllLikersInstance
 import com.chibuzo.datemomo.model.instance.ImageDisplayInstance
 import com.chibuzo.datemomo.model.request.UserInformationRequest
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
@@ -133,7 +131,7 @@ class ImageDisplayActivity : AppCompatActivity() {
             binding.imageDisplayRecyclerView.layoutManager = layoutManager
             binding.imageDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            val allLikersModel = AllLikersModel(bundle.getInt("memberId"),
+            val allLikersModel = AllLikersModel(imageDisplayInstance.memberId,
                 deviceWidth, "", this)
 
             val imageDisplayAdapter = ImageDisplayAdapter(pictureCompositeModelArray, allLikersModel)
@@ -185,7 +183,7 @@ class ImageDisplayActivity : AppCompatActivity() {
     fun fetchUserInformation() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val userInformationRequest = UserInformationRequest(bundle.getInt("memberId"))
+        val userInformationRequest = UserInformationRequest(imageDisplayInstance.memberId)
         val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -258,6 +256,7 @@ class ImageDisplayActivity : AppCompatActivity() {
             activityInstanceModel.activityInstanceStack.pop()
 
             val imageDisplayInstance = ImageDisplayInstance(
+                memberId = this.imageDisplayInstance.memberId,
                 scrollToPosition = scrollToPosition,
                 userPictureResponses = imageDisplayInstance.userPictureResponses)
 

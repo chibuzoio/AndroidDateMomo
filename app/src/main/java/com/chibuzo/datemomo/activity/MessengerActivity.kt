@@ -23,7 +23,6 @@ import com.chibuzo.datemomo.adapter.EmptyMessengerAdapter
 import com.chibuzo.datemomo.adapter.MessengerAdapter
 import com.chibuzo.datemomo.databinding.ActivityMessengerBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.AllLikersModel
 import com.chibuzo.datemomo.model.MessengerModel
 import com.chibuzo.datemomo.model.instance.*
@@ -37,7 +36,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MessengerActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -198,11 +196,8 @@ class MessengerActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 else -> {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
-                    val intent = Intent(this, HomeDisplayActivity::class.java)
-                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
-                    startActivity(intent)
+                    requestProcess = getString(R.string.request_fetch_matched_users)
+                    fetchMatchedUsers()
                 }
             }
         } catch (exception: EmptyStackException) {
@@ -628,14 +623,20 @@ class MessengerActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val notificationResponses: ArrayList<NotificationResponse> = mapper.readValue(myResponse)
-                val notificationInstance = NotificationInstance(
+                var notificationInstance = NotificationInstance(
                     scrollToPosition = 0,
                     notificationResponses = notificationResponses)
 
-                val activityStateData = mapper.writeValueAsString(notificationInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_notification)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    notificationInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(notificationInstance)
 
                 try {
                     updateMessengerInstance(activityInstanceModel)
@@ -739,14 +740,20 @@ class MessengerActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
                 val outerHomeDisplayResponse: OuterHomeDisplayResponse = mapper.readValue(myResponse)
-                val homeDisplayInstance = HomeDisplayInstance(
+                var homeDisplayInstance = HomeDisplayInstance(
                     scrollToPosition = 0,
                     outerHomeDisplayResponse = outerHomeDisplayResponse)
 
-                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
-
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_home_display)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    homeDisplayInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+
+                val activityStateData = mapper.writeValueAsString(homeDisplayInstance)
 
                 try {
                     updateMessengerInstance(activityInstanceModel)

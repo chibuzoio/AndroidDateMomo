@@ -24,13 +24,14 @@ import com.chibuzo.datemomo.R
 import com.chibuzo.datemomo.adapter.MessageAdapter
 import com.chibuzo.datemomo.databinding.ActivityMessageBinding
 import com.chibuzo.datemomo.model.ActivityInstanceModel
-import com.chibuzo.datemomo.model.ActivityStackModel
 import com.chibuzo.datemomo.model.MessageModel
 import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
 import com.chibuzo.datemomo.model.instance.MessageInstance
+import com.chibuzo.datemomo.model.instance.MessengerInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
+import com.chibuzo.datemomo.model.response.MessengerResponse
 import com.chibuzo.datemomo.model.response.UserExperienceResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -75,8 +76,6 @@ class MessageActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        userBlockedStatus = bundle.getInt("userBlockedStatus")
-
         messageModel = MessageModel(
             senderId = 0,
             receiverId = 0,
@@ -86,21 +85,11 @@ class MessageActivity : AppCompatActivity() {
             messageActivity = this
         )
 
-        if (userBlockedStatus > 0) {
-            binding.messageEditorLayout.visibility = View.GONE
-            binding.blockedUserNote.visibility = View.VISIBLE
-            binding.userBlockingText.text = "Unblock User"
-        } else {
-            binding.messageEditorLayout.visibility = View.VISIBLE
-            binding.blockedUserNote.visibility = View.GONE
-            binding.userBlockingText.text = "Block User"
-        }
-
         binding.messengerBlockUser.setOnClickListener {
             binding.messengerMenuLayout.visibility = View.GONE
 
-            val accusedUser = bundle.getString("fullName")!!.ifEmpty() {
-                bundle.getString("userName")!!.replaceFirstChar { it.uppercase() } }
+            val accusedUser = messageInstance.fullName.ifEmpty() {
+                messageInstance.userName.replaceFirstChar { it.uppercase() } }
 
             if (userBlockedStatus > 0) {
                 binding.doubleButtonDialog.dialogRetryButton.text = "Unblock"
@@ -135,12 +124,12 @@ class MessageActivity : AppCompatActivity() {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
             val userExperienceResponse = UserExperienceResponse(
-                memberId = bundle.getInt("receiverId"),
-                fullName = bundle.getString("fullName")!!,
-                userName = bundle.getString("userName")!!,
-                lastActiveTime = bundle.getString("lastActiveTime")!!,
-                profilePicture = bundle.getString("profilePicture")!!,
-                userBlockedStatus = userBlockedStatus)
+                memberId = messageInstance.receiverId,
+                fullName = messageInstance.fullName,
+                userName = messageInstance.userName,
+                lastActiveTime = messageInstance.lastActiveTime,
+                profilePicture = messageInstance.profilePicture,
+                userBlockedStatus = messageInstance.userBlockedStatus)
 
             val activityStateData = mapper.writeValueAsString(userExperienceResponse)
 
@@ -267,24 +256,24 @@ class MessageActivity : AppCompatActivity() {
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + bundle.getString("profilePicture"))
+                    + messageInstance.profilePicture)
             .transform(CircleCrop(), CenterCrop())
             .into(binding.emptyMessageProfilePicture)
 
-        binding.receiverUserName.text = bundle.getString("fullName")!!.ifEmpty {
-            bundle.getString("userName").toString().replaceFirstChar { it.uppercase() }
+        binding.receiverUserName.text = messageInstance.fullName.ifEmpty {
+            messageInstance.userName.replaceFirstChar { it.uppercase() }
         }
-        binding.lastActiveTime.text = bundle.getString("lastActiveTime")!!.ifEmpty {
+        binding.lastActiveTime.text = messageInstance.lastActiveTime.ifEmpty {
             "online"
         }
-        binding.userFullName.text = bundle.getString("fullName")!!.ifEmpty() {
-            bundle.getString("userName")!!.replaceFirstChar { it.uppercase() }
+        binding.userFullName.text = messageInstance.fullName.ifEmpty() {
+            messageInstance.userName.replaceFirstChar { it.uppercase() }
         }
 
         Glide.with(this)
             .load(getString(R.string.date_momo_api)
                     + getString(R.string.api_image)
-                    + bundle.getString("profilePicture"))
+                    + messageInstance.profilePicture)
             .transform(CenterCrop(), CircleCrop())
             .into(binding.receiverProfilePicture)
 
@@ -326,6 +315,17 @@ class MessageActivity : AppCompatActivity() {
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
             messageInstance = mapper.readValue(activitySavedInstance.activityStateData)
+            userBlockedStatus = messageInstance.userBlockedStatus
+
+            if (userBlockedStatus > 0) {
+                binding.messageEditorLayout.visibility = View.GONE
+                binding.blockedUserNote.visibility = View.VISIBLE
+                binding.userBlockingText.text = "Unblock User"
+            } else {
+                binding.messageEditorLayout.visibility = View.VISIBLE
+                binding.blockedUserNote.visibility = View.GONE
+                binding.userBlockingText.text = "Block User"
+            }
 
             if (messageInstance.messageResponses.isEmpty()) {
                 binding.welcomeMessageLayout.visibility = View.VISIBLE
@@ -337,8 +337,8 @@ class MessageActivity : AppCompatActivity() {
             binding.messageRecyclerView.layoutManager = layoutManager
             binding.messageRecyclerView.itemAnimator = DefaultItemAnimator()
 
-            messageModel = MessageModel(bundle.getInt("senderId"),
-                bundle.getInt("receiverId"), this,
+            messageModel = MessageModel(messageInstance.senderId,
+                messageInstance.receiverId, this,
                 0, binding, this)
 
             messageAdapter = MessageAdapter(messageInstance.messageResponses, messageModel)
@@ -383,11 +383,8 @@ class MessageActivity : AppCompatActivity() {
                     this.onBackPressed()
                 }
                 else -> {
-                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
-                    val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
-                    val intent = Intent(this, MessengerActivity::class.java)
-                    intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
-                    startActivity(intent)
+                    requestProcess = getString(R.string.request_fetch_user_messengers)
+                    fetchUserMessengers()
                 }
             }
         } catch (exception: EmptyStackException) {
@@ -404,11 +401,96 @@ class MessageActivity : AppCompatActivity() {
     }
 
     @Throws(IOException::class)
+    fun fetchUserMessengers() {
+        val mapper = jacksonObjectMapper()
+        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
+
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
+        val requestBody: RequestBody = RequestBody.create(
+            MediaType.parse("application/json"),
+            jsonObjectString
+        )
+
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messengers_data))
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+
+                if (!Utility.isConnected(baseContext)) {
+                    displayDoubleButtonDialog()
+                } else if (e.message!!.contains("after")) {
+                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
+                } else {
+                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                val messengerResponses: ArrayList<MessengerResponse> = mapper.readValue(myResponse)
+                val messengerInstance = MessengerInstance(
+                    scrollToPosition = 0,
+                    messengerResponses = messengerResponses)
+
+                val activityInstanceModel: ActivityInstanceModel =
+                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+                // This is not required here because messenger activity always
+                // needs to be refreshed when it's newly navigated to
+/*
+                if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                    getString(R.string.activity_messenger)) {
+                    activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                    messengerInstance = mapper.readValue(activitySavedInstance.activityStateData)
+                }
+*/
+
+                val activityStateData = mapper.writeValueAsString(messengerInstance)
+
+                try {
+                    updateMessageInstance(activityInstanceModel)
+
+                    // Always do this below the method above, updateMessageInstance
+                    activitySavedInstance = ActivitySavedInstance(
+                        activity = getString(R.string.activity_messenger),
+                        activityStateData = activityStateData)
+
+                    if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                            R.string.activity_messenger
+                        )) {
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    } else {
+                        activityInstanceModel.activityInstanceStack.pop()
+                        activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                    }
+
+                    commitInstanceModel(mapper, activityInstanceModel)
+                } catch (exception: EmptyStackException) {
+                    exception.printStackTrace()
+                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                }
+
+                val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+                val intent = Intent(this@MessageActivity, MessengerActivity::class.java)
+                intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+                startActivity(intent)
+            }
+        })
+    }
+
+    @Throws(IOException::class)
     fun blockAccusedUser() {
         val unixTime = System.currentTimeMillis() / 1000L
 
         val userBlockingRequest = UserBlockingRequest(
-            userAccusedId = bundle.getInt("receiverId"),
+            userAccusedId = messageInstance.receiverId,
             userBlockerId = sharedPreferences.getInt(getString(R.string.member_id), 0),
             userBlockedStatus = if (userBlockedStatus > 0) { 0 } else { 1 },
             userBlockedDate = unixTime.toString()
@@ -460,7 +542,7 @@ class MessageActivity : AppCompatActivity() {
     fun fetchUserInformation() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val userInformationRequest = UserInformationRequest(bundle.getInt("receiverId"))
+        val userInformationRequest = UserInformationRequest(messageInstance.receiverId)
         val jsonObjectString = mapper.writeValueAsString(userInformationRequest)
         val requestBody: RequestBody = RequestBody.create(
             MediaType.parse("application/json"),
@@ -530,8 +612,8 @@ class MessageActivity : AppCompatActivity() {
     fun checkUnseenMessages() {
         val mapper = jacksonObjectMapper()
         val checkMessageRequest = CheckMessageRequest(
-            senderId = bundle.getInt("senderId"),
-            receiverId = bundle.getInt("receiverId")
+            senderId = messageInstance.senderId,
+            receiverId = messageInstance.receiverId
         )
 
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -571,13 +653,13 @@ class MessageActivity : AppCompatActivity() {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
         val messageRequest = MessageRequest(
-            senderId = bundle.getInt("senderId"),
-            receiverId = bundle.getInt("receiverId"),
-            fullName = bundle.getString("fullName").toString(),
-            userName = bundle.getString("userName").toString(),
-            lastActiveTime = bundle.getString("lastActiveTime").toString(),
-            profilePicture = bundle.getString("profilePicture").toString(),
-            userBlockedStatus = 0
+            senderId = messageInstance.senderId,
+            receiverId = messageInstance.receiverId,
+            fullName = messageInstance.fullName,
+            userName = messageInstance.userName,
+            lastActiveTime = messageInstance.lastActiveTime,
+            profilePicture = messageInstance.profilePicture,
+            userBlockedStatus = messageInstance.userBlockedStatus
         )
 
         val jsonObjectString = mapper.writeValueAsString(messageRequest)
