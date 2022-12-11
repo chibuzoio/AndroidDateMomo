@@ -209,8 +209,6 @@ class MessengerActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
-
-        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Throws(IOException::class)

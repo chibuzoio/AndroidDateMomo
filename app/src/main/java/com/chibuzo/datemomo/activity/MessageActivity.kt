@@ -31,6 +31,7 @@ import com.chibuzo.datemomo.model.instance.MessageInstance
 import com.chibuzo.datemomo.model.request.*
 import com.chibuzo.datemomo.model.response.CommittedResponse
 import com.chibuzo.datemomo.model.response.HomeDisplayResponse
+import com.chibuzo.datemomo.model.response.UserExperienceResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -131,31 +132,44 @@ class MessageActivity : AppCompatActivity() {
 
         binding.messengerReportUser.setOnClickListener {
             val mapper = jacksonObjectMapper()
-
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-            val activityStackModel: ActivityStackModel =
-                mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+            val userExperienceResponse = UserExperienceResponse(
+                memberId = bundle.getInt("receiverId"),
+                fullName = bundle.getString("fullName")!!,
+                userName = bundle.getString("userName")!!,
+                lastActiveTime = bundle.getString("lastActiveTime")!!,
+                profilePicture = bundle.getString("profilePicture")!!,
+                userBlockedStatus = userBlockedStatus)
 
-            if (activityStackModel.activityStack.peek() != getString(R.string.activity_user_experience)) {
-                activityStackModel.activityStack.push(getString(R.string.activity_user_experience))
-                val activityStackString = mapper.writeValueAsString(activityStackModel)
-                sharedPreferencesEditor.putString(
-                    getString(R.string.activity_stack),
-                    activityStackString
-                )
-                sharedPreferencesEditor.apply()
+            val activityStateData = mapper.writeValueAsString(userExperienceResponse)
+
+            val activityInstanceModel: ActivityInstanceModel =
+                mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+            try {
+                activitySavedInstance = ActivitySavedInstance(
+                    activity = getString(R.string.activity_user_experience),
+                    activityStateData = activityStateData)
+
+                if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                        R.string.activity_user_experience
+                    )) {
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                } else {
+                    activityInstanceModel.activityInstanceStack.pop()
+                    activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+                }
+
+                commitInstanceModel(mapper, activityInstanceModel)
+            } catch (exception: EmptyStackException) {
+                exception.printStackTrace()
+                Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
             }
 
-            Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-            val intent = Intent(this, UserExperienceActivity::class.java)
-            intent.putExtra("profilePicture", bundle.getString("profilePicture"))
-            intent.putExtra("lastActiveTime", bundle.getString("lastActiveTime"))
-            intent.putExtra("userName", bundle.getString("userName"))
-            intent.putExtra("fullName", bundle.getString("fullName"))
-            intent.putExtra("memberId", bundle.getInt("receiverId"))
-            intent.putExtra("userBlockedStatus", userBlockedStatus)
+            val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+            val intent = Intent(this@MessageActivity, UserExperienceActivity::class.java)
+            intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
             startActivity(intent)
         }
 
@@ -380,8 +394,6 @@ class MessageActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
-
-        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     private fun triggerRequestProcess() {

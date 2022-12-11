@@ -13,31 +13,41 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.adapter.AllLikersAdapter
 import com.chibuzo.datemomo.databinding.ActivityUserExperienceBinding
-import com.chibuzo.datemomo.model.ActivityStackModel
+import com.chibuzo.datemomo.model.ActivityInstanceModel
+import com.chibuzo.datemomo.model.AllLikersModel
+import com.chibuzo.datemomo.model.instance.ActivitySavedInstance
+import com.chibuzo.datemomo.model.instance.MessageInstance
 import com.chibuzo.datemomo.model.request.MessageRequest
-import com.chibuzo.datemomo.model.request.OuterHomeDisplayRequest
-import com.chibuzo.datemomo.model.request.UserLikerRequest
 import com.chibuzo.datemomo.model.request.UserReportRequest
 import com.chibuzo.datemomo.model.response.CommittedResponse
+import com.chibuzo.datemomo.model.response.MessageResponse
+import com.chibuzo.datemomo.model.response.UserExperienceResponse
 import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class UserExperienceActivity : AppCompatActivity() {
     private lateinit var bundle: Bundle
     private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
+    private lateinit var messageRequest: MessageRequest
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var viewRootHeightArray: MutableSet<Int>
     private lateinit var binding: ActivityUserExperienceBinding
+    private lateinit var activitySavedInstance: ActivitySavedInstance
+    private lateinit var userExperienceResponse: UserExperienceResponse
     private var userReportingMessages: ArrayList<String> = arrayListOf()
     private lateinit var sharedPreferencesEditor: SharedPreferences.Editor
 
@@ -183,8 +193,18 @@ class UserExperienceActivity : AppCompatActivity() {
             }
         })
 
-        val userFullName = bundle.getString("fullName")!!.ifEmpty {
-            bundle.getString("userName")!!.replaceFirstChar { it.uppercase() }
+        try {
+            val mapper = jacksonObjectMapper()
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            userExperienceResponse = mapper.readValue(activitySavedInstance.activityStateData)
+        } catch (exception: IOException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Error message from here is ${exception.message}")
+        }
+
+        val userFullName = userExperienceResponse.fullName.ifEmpty {
+            userExperienceResponse.userName.replaceFirstChar { it.uppercase() }
         }
 
         binding.abusiveCheckbox.text = getString(R.string.report_abusive_words, userFullName)
@@ -204,39 +224,26 @@ class UserExperienceActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val activityStackModel: ActivityStackModel =
-            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
-            when (activityStackModel.activityStack.peek()) {
+            when (activityInstanceModel.activityInstanceStack.peek().activity) {
                 getString(R.string.activity_user_experience) -> {
-                    activityStackModel.activityStack.pop()
+                    activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()
                 }
-                getString(R.string.activity_messenger) -> {
-                    requestProcess = getString(R.string.request_fetch_user_messengers)
-                    fetchUserMessengers()
-                }
-                getString(R.string.activity_message) -> {
-                    requestProcess = getString(R.string.request_fetch_user_messages)
-                    fetchUserMessages()
-                }
-                else -> {
-                    requestProcess = getString(R.string.request_fetch_matched_users)
-                    fetchMatchedUsers()
-                }
+                else -> this.onBackPressed()
             }
         } catch (exception: EmptyStackException) {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
-
-        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Throws(IOException::class)
@@ -244,7 +251,7 @@ class UserExperienceActivity : AppCompatActivity() {
         val mapper = jacksonObjectMapper()
 
         val userReportRequest = UserReportRequest(
-            bundle.getInt("memberId"),
+            userExperienceResponse.memberId,
             sharedPreferences.getInt(getString(R.string.member_id), 0),
             mapper.writeValueAsString(userReportingMessages)
         )
@@ -292,235 +299,19 @@ class UserExperienceActivity : AppCompatActivity() {
         })
     }
 
-    @Throws(IOException::class)
-    fun fetchUserMessages() {
-        val messageRequest = MessageRequest(
-            sharedPreferences.getInt(getString(R.string.member_id), 0),
-            bundle.getInt("memberId"),
-            bundle.getString("fullName")!!,
-            bundle.getString("userName")!!.replaceFirstChar { it.uppercase() },
-            bundle.getString("lastActiveTime")!!,
-            bundle.getString("profilePicture")!!,
-            bundle.getInt("userBlockedStatus"))
-
-        val mapper = jacksonObjectMapper()
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val jsonObjectString = mapper.writeValueAsString(messageRequest)
-        val requestBody: RequestBody = RequestBody.create(
-            MediaType.parse("application/json"),
-            jsonObjectString
+    private fun commitInstanceModel(mapper: ObjectMapper, activityInstanceModel: ActivityInstanceModel) {
+        val activityInstanceModelString =
+            mapper.writeValueAsString(activityInstanceModel)
+        sharedPreferencesEditor.putString(
+            getString(R.string.activity_instance_model),
+            activityInstanceModelString
         )
-
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messages_data))
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                call.cancel()
-
-                runOnUiThread {
-
-                }
-
-                if (!Utility.isConnected(baseContext)) {
-                    displayDoubleButtonDialog()
-                } else if (e.message!!.contains("after")) {
-                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
-                } else {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val myResponse: String = response.body()!!.string()
-
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_message)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_message))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
-                }
-
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, MessageActivity::class.java)
-                intent.putExtra("userBlockedStatus", messageRequest.userBlockedStatus)
-                intent.putExtra("profilePicture", messageRequest.profilePicture)
-                intent.putExtra("lastActiveTime", messageRequest.lastActiveTime)
-                intent.putExtra("receiverId", messageRequest.receiverId)
-                intent.putExtra("userName", messageRequest.userName)
-                intent.putExtra("senderId", messageRequest.senderId)
-                intent.putExtra("fullName", messageRequest.fullName)
-                intent.putExtra("jsonResponse", myResponse)
-                startActivity(intent)
-            }
-        })
-    }
-
-    @Throws(IOException::class)
-    fun fetchUserMessengers() {
-        val mapper = jacksonObjectMapper()
-        val userLikerRequest = UserLikerRequest(sharedPreferences.getInt(getString(R.string.member_id), 0))
-
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-        val jsonObjectString = mapper.writeValueAsString(userLikerRequest)
-        val requestBody: RequestBody = RequestBody.create(
-            MediaType.parse("application/json"),
-            jsonObjectString
-        )
-
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + getString(R.string.api_user_messengers_data))
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                call.cancel()
-
-                if (!Utility.isConnected(baseContext)) {
-                    displayDoubleButtonDialog()
-                } else if (e.message!!.contains("after")) {
-                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
-                } else {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val myResponse: String = response.body()!!.string()
-
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_messenger)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_messenger))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
-                }
-
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, MessengerActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
-                startActivity(intent)
-            }
-        })
-    }
-
-    @Throws(IOException::class)
-    fun fetchMatchedUsers() {
-        val mapper = jacksonObjectMapper()
-        val homeDisplayRequest = OuterHomeDisplayRequest(
-            sharedPreferences.getInt(getString(R.string.member_id), 0),
-            sharedPreferences.getInt(getString(R.string.age), 0),
-            sharedPreferences.getString(getString(R.string.sex), "")!!,
-            sharedPreferences.getString(getString(R.string.registration_date), "")!!,
-            sharedPreferences.getInt(getString(R.string.bisexual_category), 0),
-            sharedPreferences.getInt(getString(R.string.gay_category), 0),
-            sharedPreferences.getInt(getString(R.string.lesbian_category), 0),
-            sharedPreferences.getInt(getString(R.string.straight_category), 0),
-            sharedPreferences.getInt(getString(R.string.sugar_daddy_category), 0),
-            sharedPreferences.getInt(getString(R.string.sugar_mommy_category), 0),
-            sharedPreferences.getInt(getString(R.string.toy_boy_category), 0),
-            sharedPreferences.getInt(getString(R.string.toy_girl_category), 0),
-            sharedPreferences.getInt(getString(R.string.bisexual_interest), 0),
-            sharedPreferences.getInt(getString(R.string.gay_interest), 0),
-            sharedPreferences.getInt(getString(R.string.lesbian_interest), 0),
-            sharedPreferences.getInt(getString(R.string.straight_interest), 0),
-            sharedPreferences.getInt(getString(R.string.friendship_interest), 0),
-            sharedPreferences.getInt(getString(R.string.sugar_daddy_interest), 0),
-            sharedPreferences.getInt(getString(R.string.sugar_mommy_interest), 0),
-            sharedPreferences.getInt(getString(R.string.relationship_interest), 0),
-            sharedPreferences.getInt(getString(R.string.toy_boy_interest), 0),
-            sharedPreferences.getInt(getString(R.string.toy_girl_interest), 0),
-            sharedPreferences.getInt(getString(R.string.sixty_nine_experience), 0),
-            sharedPreferences.getInt(getString(R.string.anal_sex_experience), 0),
-            sharedPreferences.getInt(getString(R.string.given_head_experience), 0),
-            sharedPreferences.getInt(getString(R.string.missionary_experience), 0),
-            sharedPreferences.getInt(getString(R.string.one_night_stand_experience), 0),
-            sharedPreferences.getInt(getString(R.string.orgy_experience), 0),
-            sharedPreferences.getInt(getString(R.string.pool_sex_experience), 0),
-            sharedPreferences.getInt(getString(R.string.received_head_experience), 0),
-            sharedPreferences.getInt(getString(R.string.car_sex_experience), 0),
-            sharedPreferences.getInt(getString(R.string.public_sex_experience), 0),
-            sharedPreferences.getInt(getString(R.string.camera_sex_experience), 0),
-            sharedPreferences.getInt(getString(R.string.threesome_experience), 0),
-            sharedPreferences.getInt(getString(R.string.sex_toy_experience), 0),
-            sharedPreferences.getInt(getString(R.string.video_sex_experience), 0))
-
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-
-        val jsonObjectString = mapper.writeValueAsString(homeDisplayRequest)
-        val requestBody: RequestBody = RequestBody.create(
-            MediaType.parse("application/json"),
-            jsonObjectString
-        )
-
-        val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(getString(R.string.date_momo_api) + getString(R.string.api_matched_user_data))
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                call.cancel()
-
-                if (!Utility.isConnected(baseContext)) {
-                    displayDoubleButtonDialog()
-                } else if (e.message!!.contains("after")) {
-                    displaySingleButtonDialog(getString(R.string.poor_internet_title), getString(R.string.poor_internet_message))
-                } else {
-                    displaySingleButtonDialog(getString(R.string.server_error_title), getString(R.string.server_error_message))
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val myResponse: String = response.body()!!.string()
-
-                val activityStackModel: ActivityStackModel =
-                    mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
-
-                if (activityStackModel.activityStack.peek() != getString(R.string.activity_home_display)) {
-                    activityStackModel.activityStack.push(getString(R.string.activity_home_display))
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(
-                        getString(R.string.activity_stack),
-                        activityStackString
-                    )
-                    sharedPreferencesEditor.apply()
-                }
-
-                Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
-
-                val intent = Intent(baseContext, HomeDisplayActivity::class.java)
-                intent.putExtra("jsonResponse", myResponse)
-                startActivity(intent)
-            }
-        })
+        sharedPreferencesEditor.apply()
     }
 
     private fun triggerRequestProcess() {
         when (requestProcess) {
-            getString(R.string.request_fetch_user_messengers) -> fetchUserMessengers()
-            getString(R.string.request_fetch_user_messages) -> fetchUserMessages()
-            getString(R.string.request_fetch_matched_users) -> fetchMatchedUsers()
+
         }
     }
 

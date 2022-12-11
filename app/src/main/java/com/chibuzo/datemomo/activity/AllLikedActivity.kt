@@ -148,8 +148,8 @@ class AllLikedActivity : AppCompatActivity() {
                 getString(R.string.activity_all_liked) -> {
                     activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityInstanceModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()
@@ -165,8 +165,6 @@ class AllLikedActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(AllLikersActivity.TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
-
-        Log.e(AllLikersActivity.TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     @Throws(IOException::class)

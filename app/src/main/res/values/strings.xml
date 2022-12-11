@@ -84,6 +84,8 @@
     <string name="report_committed_message">Your report against %1$s has been sent to DateMomo. Thank you for contacting DateMomo. We will do our best to serve you better!</string>
 
     <string name="request_register_user">registerUser</string>
+    <string name="request_fetch_all_liked">fetchAllLiked</string>
+    <string name="request_fetch_all_likers">fetchAllLikers</string>
     <string name="request_fetch_liked_users">fetchLikedUsers</string>
     <string name="request_fetch_user_likers">fetchUserLikers</string>
     <string name="request_post_user_picture">postUserPicture</string>
@@ -170,7 +172,6 @@
     <string name="phone_number">phoneNumber</string>
     <string name="email_address">emailAddress</string>
     <string name="authenticated">authenticated</string>
-    <string name="activity_stack">activityStack</string>
     <string name="orgy_experience">orgyExperience</string>
     <string name="profile_picture">profilePicture</string>
     <string name="toy_boy_category">toyBoyCategory</string>

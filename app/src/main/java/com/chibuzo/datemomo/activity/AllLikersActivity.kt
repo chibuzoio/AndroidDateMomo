@@ -158,16 +158,16 @@ class AllLikersActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        val activityStackModel: ActivityStackModel =
-            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_stack), "")!!)
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
 
         try {
-            when (activityStackModel.activityStack.peek()) {
+            when (activityInstanceModel.activityInstanceStack.peek().activity) {
                 getString(R.string.activity_all_likers) -> {
-                    activityStackModel.activityStack.pop()
+                    activityInstanceModel.activityInstanceStack.pop()
 
-                    val activityStackString = mapper.writeValueAsString(activityStackModel)
-                    sharedPreferencesEditor.putString(getString(R.string.activity_stack), activityStackString)
+                    val activityInstanceModelString = mapper.writeValueAsString(activityInstanceModel)
+                    sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
                     sharedPreferencesEditor.apply()
 
                     this.onBackPressed()
@@ -179,8 +179,6 @@ class AllLikersActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
-
-        Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(getString(R.string.activity_stack), "")}")
     }
 
     private fun triggerRequestProcess() {

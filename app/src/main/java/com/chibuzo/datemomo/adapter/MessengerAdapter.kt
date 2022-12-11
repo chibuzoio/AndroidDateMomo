@@ -161,8 +161,6 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
                 sharedPreferencesEditor.apply()
             }
 
-            Log.e(TAG, "The value of activityStackModel here is ${sharedPreferences.getString(holder.itemView.context.getString(R.string.activity_stack), "")}")
-
             val intent = Intent(holder.itemView.context, UserExperienceActivity::class.java)
             intent.putExtra("userBlockedStatus", messengerResponses[messengerModel.currentPosition].userBlockedStatus)
             intent.putExtra("profilePicture", messengerResponses[messengerModel.currentPosition].profilePicture)
