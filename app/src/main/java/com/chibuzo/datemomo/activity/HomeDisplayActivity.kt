@@ -1,6 +1,7 @@
 package com.chibuzo.datemomo.activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -9,11 +10,13 @@ import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.location.Address
 import android.location.Geocoder
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -52,6 +55,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class HomeDisplayActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
@@ -123,6 +127,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         redrawBottomMenuIcons(getString(R.string.clicked_home_menu))
 
         checkMessageUpdate()
+        setUserCurrentLocation()
         checkNotificationUpdate()
 
         binding.userGay.blueLabelText.text = "Gay"
@@ -305,67 +310,14 @@ class HomeDisplayActivity : AppCompatActivity() {
             fetchLikedUsers()
         }
 
-        if (LocationTracker(this).canGetLocation) {
-            // Initialize location here and send it to the server if the user hasn't updated his
-            // location for the first time. But, if the gotten location is different from the
-            // user's saved location, request the user to update his location
+        if ((sharedPreferences.getString(getString(R.string.current_location), "") == "") ||
+            (sharedPreferences.getString(getString(R.string.updated_location), "") == "")) {
+            val currentUnixTime = System.currentTimeMillis() / 1000L
+            val oldLocationSettingTime =
+                sharedPreferences.getLong(getString(R.string.last_location_setting_timestamp), 0)
 
-            val latitude = LocationTracker(this).getLatitude()
-            val longitude = LocationTracker(this).getLongitude()
-
-            val addresses: List<Address>
-            val geocoder = Geocoder(this, Locale.getDefault())
-
-            try {
-                addresses = geocoder.getFromLocation(
-                    latitude,
-                    longitude,
-                    1
-                ) as List<Address> // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-
-                val address: String =
-                    addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-
-                val city = addresses[0].locality
-                val state = addresses[0].adminArea
-                val country = addresses[0].countryName
-                val postalCode = addresses[0].postalCode
-                val knownName = addresses[0].featureName
-
-                userUpdatedLocation = if (!city.isNullOrEmpty()) {
-                    city
-                } else if (!state.isNullOrEmpty()) {
-                    state
-                } else {
-                    country
-                }
-
-                if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
-                    sharedPreferencesEditor.putString(getString(R.string.current_location), userUpdatedLocation)
-                    sharedPreferencesEditor.apply()
-
-                    requestProcess = getString(R.string.request_update_current_location)
-                    updateCurrentLocation()
-                } else {
-                    sharedPreferencesEditor.putString(getString(R.string.updated_location), userUpdatedLocation)
-                    sharedPreferencesEditor.apply()
-
-                    // notify user of location change here
-                }
-            } catch (exception: Exception) {
-                exception.printStackTrace()
-
-                when (exception) {
-                    is IOException -> {
-                        Log.e(TAG, "IOException was caught, with message = ${exception.message}")
-                    }
-                    is IndexOutOfBoundsException -> {
-                        Log.e(TAG, "IndexOutOfBoundsException was caught, with message = ${exception.message}")
-                    }
-                    else -> {
-                        Log.e(TAG, "Error message from line 382 here is ${exception.message}")
-                    }
-                }
+            if ((currentUnixTime - oldLocationSettingTime) > 86400000) {
+                Handler(Looper.getMainLooper()).postDelayed({ locationStatusCheck() }, 5000)
             }
         }
 
@@ -451,6 +403,7 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         super.onScrolled(recyclerView, dx, dy)
+                        hideSystemUI()
 
                         if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
                             requestProcess = getString(R.string.request_fetch_more_matched_users)
@@ -477,6 +430,20 @@ class HomeDisplayActivity : AppCompatActivity() {
 //            Log.e(TAG, "User was truly authenticated!!!!!!!!!!!!")
 //            establishSystemSocket()
         }
+
+        if (sharedPreferences.getBoolean(getString(R.string.opened_location_activity), false)) {
+            val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+
+            if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                val currentUnixTime = System.currentTimeMillis() / 1000L
+                sharedPreferencesEditor.putLong(getString(R.string.last_location_setting_timestamp), currentUnixTime)
+                sharedPreferencesEditor.apply()
+                setUserCurrentLocation()
+            }
+
+            sharedPreferencesEditor.putBoolean(getString(R.string.opened_location_activity), false)
+            sharedPreferencesEditor.apply()
+        }
     }
 
     override fun onStop() {
@@ -486,6 +453,8 @@ class HomeDisplayActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        hideSystemUI()
+
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
             binding.userGay.blueLabelLayout.visibility = View.GONE
@@ -1591,6 +1560,96 @@ class HomeDisplayActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+    }
+
+    private fun setUserCurrentLocation() {
+        if (LocationTracker(this).canGetLocation) {
+            // Initialize location here and send it to the server if the user hasn't updated his
+            // location for the first time. But, if the gotten location is different from the
+            // user's saved location, request the user to update his location
+
+            val latitude = LocationTracker(this).getLatitude()
+            val longitude = LocationTracker(this).getLongitude()
+
+            val addresses: List<Address>
+            val geocoder = Geocoder(this, Locale.getDefault())
+
+            try {
+                addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    1
+                ) as List<Address> // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
+                val address: String =
+                    addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+
+                val city = addresses[0].locality
+                val state = addresses[0].adminArea
+                val country = addresses[0].countryName
+                val postalCode = addresses[0].postalCode
+                val knownName = addresses[0].featureName
+
+                userUpdatedLocation = if (!city.isNullOrEmpty()) {
+                    city
+                } else if (!state.isNullOrEmpty()) {
+                    state
+                } else {
+                    country
+                }
+
+                if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty()) {
+                    sharedPreferencesEditor.putString(getString(R.string.current_location), userUpdatedLocation)
+                    sharedPreferencesEditor.apply()
+
+                    requestProcess = getString(R.string.request_update_current_location)
+                    updateCurrentLocation()
+                } else {
+                    sharedPreferencesEditor.putString(getString(R.string.updated_location), userUpdatedLocation)
+                    sharedPreferencesEditor.apply()
+
+                    // notify user of location change here
+                }
+            } catch (exception: Exception) {
+                exception.printStackTrace()
+
+                when (exception) {
+                    is IOException -> {
+                        Log.e(TAG, "IOException was caught, with message = ${exception.message}")
+                    }
+                    is IndexOutOfBoundsException -> {
+                        Log.e(TAG, "IndexOutOfBoundsException was caught, with message = ${exception.message}")
+                    }
+                    else -> {
+                        Log.e(TAG, "Error message from line 382 here is ${exception.message}")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun locationStatusCheck() {
+        val manager = getSystemService(LOCATION_SERVICE) as LocationManager
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps()
+        }
+    }
+
+    private fun buildAlertMessageNoGps() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setMessage("Turn on your GPS so as to effectively use DateMomo application")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { _, _ ->
+                sharedPreferencesEditor.putBoolean(getString(R.string.opened_location_activity), true)
+                sharedPreferencesEditor.apply()
+
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.cancel()
+            }
+        val alert: AlertDialog = builder.create()
+        alert.show()
     }
 
     private fun updateHomeDisplayInstance(activityInstanceModel: ActivityInstanceModel) {

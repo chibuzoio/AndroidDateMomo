@@ -207,8 +207,10 @@
     <string name="activity_instance_model">activityInstanceModel</string>
     <string name="activity_saved_instance">activitySavedInstance</string>
     <string name="notification_table_name">notificationTableName</string>
+    <string name="opened_location_activity">openedLocationActivity</string>
     <string name="received_head_experience">receivedHeadExperience</string>
     <string name="one_night_stand_experience">oneNightStandExperience</string>
+    <string name="last_location_setting_timestamp">lastLocationSettingTimestamp</string>
     <string name="user_information_layout_visible">isUserInformationLayoutVisible</string>
 </resources>
 
