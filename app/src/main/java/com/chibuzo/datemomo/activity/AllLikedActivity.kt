@@ -112,9 +112,14 @@ class AllLikedActivity : AppCompatActivity() {
 
         try {
             val mapper = jacksonObjectMapper()
+            Log.e(TAG, "Execution passed through 1")
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            Log.e(TAG, "Execution passed through 2")
             activitySavedInstance = mapper.readValue(bundle.getString(getString(R.string.activity_saved_instance))!!)
+            Log.e(TAG, "Execution passed through 3")
+            Log.e(TAG, "The value of this here is ${activitySavedInstance.activityStateData}")
             allLikedInstance = mapper.readValue(activitySavedInstance.activityStateData)
+            Log.e(TAG, "Execution passed through 4")
 
             val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
             binding.allLikedRecyclerView.layoutManager = layoutManager
@@ -129,7 +134,7 @@ class AllLikedActivity : AppCompatActivity() {
             binding.allLikedRecyclerView.layoutManager!!.scrollToPosition(allLikedInstance.scrollToPosition)
         } catch (exception: IOException) {
             exception.printStackTrace()
-            Log.e(AllLikersActivity.TAG, "Error message from here is ${exception.message}")
+            Log.e(TAG, "Error message from here is ${exception.message}")
         }
     }
 

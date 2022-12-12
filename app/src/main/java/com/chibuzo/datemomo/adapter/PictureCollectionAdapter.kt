@@ -43,6 +43,11 @@ class PictureCollectionAdapter(private val pictureCollectionModels: ArrayList<Pi
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        sharedPreferences =
+            holder.itemView.context.getSharedPreferences(holder
+                .itemView.context.getString(R.string.shared_preferences), Context.MODE_PRIVATE)
+        sharedPreferencesEditor = sharedPreferences.edit()
+
         holder.binding.singlePictureOuterLayout.singlePictureView.layoutParams.width = floatingGalleryModel.floatingLayoutWidth
         holder.binding.singlePictureOuterLayout.singlePictureView.layoutParams.height = floatingGalleryModel.tripleBottomBigPictureHeight
         holder.binding.singlePictureOuterLayout.singlePictureLayout.layoutParams.width = floatingGalleryModel.floatingLayoutWidth

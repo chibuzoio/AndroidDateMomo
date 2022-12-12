@@ -249,34 +249,6 @@ class MessageActivity : AppCompatActivity() {
 
         }
 
-        Glide.with(this)
-            .asGif()
-            .load(R.drawable.anime_waving_hand)
-            .into(binding.wavingHandSenderAnime)
-
-        Glide.with(this)
-            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
-                    + messageInstance.profilePicture)
-            .transform(CircleCrop(), CenterCrop())
-            .into(binding.emptyMessageProfilePicture)
-
-        binding.receiverUserName.text = messageInstance.fullName.ifEmpty {
-            messageInstance.userName.replaceFirstChar { it.uppercase() }
-        }
-        binding.lastActiveTime.text = messageInstance.lastActiveTime.ifEmpty {
-            "online"
-        }
-        binding.userFullName.text = messageInstance.fullName.ifEmpty() {
-            messageInstance.userName.replaceFirstChar { it.uppercase() }
-        }
-
-        Glide.with(this)
-            .load(getString(R.string.date_momo_api)
-                    + getString(R.string.api_image)
-                    + messageInstance.profilePicture)
-            .transform(CenterCrop(), CircleCrop())
-            .into(binding.receiverProfilePicture)
-
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             viewRootHeightArray.add(binding.root.height)
 
@@ -349,6 +321,34 @@ class MessageActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")
         }
+
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.anime_waving_hand)
+            .into(binding.wavingHandSenderAnime)
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api) + getString(R.string.api_image)
+                    + messageInstance.profilePicture)
+            .transform(CircleCrop(), CenterCrop())
+            .into(binding.emptyMessageProfilePicture)
+
+        binding.receiverUserName.text = messageInstance.fullName.ifEmpty {
+            messageInstance.userName.replaceFirstChar { it.uppercase() }
+        }
+        binding.lastActiveTime.text = messageInstance.lastActiveTime.ifEmpty {
+            "online"
+        }
+        binding.userFullName.text = messageInstance.fullName.ifEmpty() {
+            messageInstance.userName.replaceFirstChar { it.uppercase() }
+        }
+
+        Glide.with(this)
+            .load(getString(R.string.date_momo_api)
+                    + getString(R.string.api_image)
+                    + messageInstance.profilePicture)
+            .transform(CenterCrop(), CircleCrop())
+            .into(binding.receiverProfilePicture)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

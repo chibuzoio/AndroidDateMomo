@@ -512,8 +512,43 @@ class UserInformationActivity : AppCompatActivity() {
     fun fetchAllLiked() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        var allLikedInstance = AllLikedInstance(
+            scrollToPosition = 0,
+            userLikerResponses = arrayListOf())
+
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+        try {
+            if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                getString(R.string.activity_all_liked)) {
+                activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                allLikedInstance = mapper.readValue(activitySavedInstance.activityStateData)
+            }
+
+            val activityStateData = mapper.writeValueAsString(allLikedInstance)
+
+            activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_all_liked),
+                activityStateData = activityStateData)
+
+            if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                    R.string.activity_all_liked
+                )) {
+                activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+            } else {
+                activityInstanceModel.activityInstanceStack.pop()
+                activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+            }
+
+            commitInstanceModel(mapper, activityInstanceModel)
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+        }
+
         val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
-        val intent = Intent(this@UserInformationActivity, AllLikedActivity::class.java)
+        val intent = Intent(this, AllLikedActivity::class.java)
         intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
         startActivity(intent)
     }
@@ -522,8 +557,44 @@ class UserInformationActivity : AppCompatActivity() {
     fun fetchAllLikers() {
         val mapper = jacksonObjectMapper()
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+        var allLikersInstance = AllLikersInstance(
+            scrollToPosition = 0,
+            userLikerResponses = arrayListOf())
+
+        val activityInstanceModel: ActivityInstanceModel =
+            mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
+
+        try {
+            if (activityInstanceModel.activityInstanceStack.peek().activity ==
+                getString(R.string.activity_all_likers)) {
+                activitySavedInstance = activityInstanceModel.activityInstanceStack.peek()
+                allLikersInstance = mapper.readValue(activitySavedInstance.activityStateData)
+            }
+
+            val activityStateData = mapper.writeValueAsString(allLikersInstance)
+
+            activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_all_likers),
+                activityStateData = activityStateData)
+
+            if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
+                    R.string.activity_all_likers
+                )) {
+                activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+            } else {
+                activityInstanceModel.activityInstanceStack.pop()
+                activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
+            }
+
+            commitInstanceModel(mapper, activityInstanceModel)
+        } catch (exception: EmptyStackException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+        }
+
         val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
-        val intent = Intent(this@UserInformationActivity, AllLikersActivity::class.java)
+        val intent = Intent(this, AllLikersActivity::class.java)
         intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
         startActivity(intent)
     }
