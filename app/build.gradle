@@ -26,7 +26,7 @@ android {
         applicationId "com.chibuzo.datemomo"
         minSdk 21
         targetSdk 33
-        versionCode 18
+        versionCode 19
         versionName "1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

@@ -430,20 +430,6 @@ class HomeDisplayActivity : AppCompatActivity() {
 //            Log.e(TAG, "User was truly authenticated!!!!!!!!!!!!")
 //            establishSystemSocket()
         }
-
-        if (sharedPreferences.getBoolean(getString(R.string.opened_location_activity), false)) {
-            val manager = getSystemService(LOCATION_SERVICE) as LocationManager
-
-            if (manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                val currentUnixTime = System.currentTimeMillis() / 1000L
-                sharedPreferencesEditor.putLong(getString(R.string.last_location_setting_timestamp), currentUnixTime)
-                sharedPreferencesEditor.apply()
-                setUserCurrentLocation()
-            }
-
-            sharedPreferencesEditor.putBoolean(getString(R.string.opened_location_activity), false)
-            sharedPreferencesEditor.apply()
-        }
     }
 
     override fun onStop() {
@@ -1631,6 +1617,10 @@ class HomeDisplayActivity : AppCompatActivity() {
     private fun locationStatusCheck() {
         val manager = getSystemService(LOCATION_SERVICE) as LocationManager
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            val currentUnixTime = System.currentTimeMillis() / 1000L
+            sharedPreferencesEditor.putLong(getString(R.string.last_location_setting_timestamp), currentUnixTime)
+            sharedPreferencesEditor.apply()
+//            setUserCurrentLocation() // Do this after accepting to grant permission to location service
             buildAlertMessageNoGps()
         }
     }
@@ -1640,9 +1630,6 @@ class HomeDisplayActivity : AppCompatActivity() {
         builder.setMessage("Turn on your GPS so as to effectively use DateMomo application")
             .setCancelable(false)
             .setPositiveButton("Yes") { _, _ ->
-                sharedPreferencesEditor.putBoolean(getString(R.string.opened_location_activity), true)
-                sharedPreferencesEditor.apply()
-
                 startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             }
             .setNegativeButton("No") { dialog, _ ->
