@@ -310,13 +310,14 @@ class HomeDisplayActivity : AppCompatActivity() {
             fetchLikedUsers()
         }
 
-        if ((sharedPreferences.getString(getString(R.string.current_location), "") == "") ||
-            (sharedPreferences.getString(getString(R.string.updated_location), "") == "")) {
+        if (sharedPreferences.getString(getString(R.string.current_location), "").isNullOrEmpty() ||
+            sharedPreferences.getString(getString(R.string.updated_location), "").isNullOrEmpty()) {
             val currentUnixTime = System.currentTimeMillis() / 1000L
             val oldLocationSettingTime =
                 sharedPreferences.getLong(getString(R.string.last_location_setting_timestamp), 0)
+            val timeDifference = currentUnixTime - oldLocationSettingTime
 
-            if ((currentUnixTime - oldLocationSettingTime) > 86400000) {
+            if (timeDifference > 86400000L) {
                 Handler(Looper.getMainLooper()).postDelayed({ locationStatusCheck() }, 5000)
             }
         }
@@ -387,6 +388,8 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                         when (newState) {
                             RecyclerView.SCROLL_STATE_DRAGGING -> {
+                                hideSystemUI()
+
                                 if (canSlideDownFloatingButton) {
                                     binding.floatingPictureUploader.startAnimation(
                                         slideDownAnimation
@@ -403,7 +406,6 @@ class HomeDisplayActivity : AppCompatActivity() {
 
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         super.onScrolled(recyclerView, dx, dy)
-                        hideSystemUI()
 
                         if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
                             requestProcess = getString(R.string.request_fetch_more_matched_users)
@@ -439,8 +441,6 @@ class HomeDisplayActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        hideSystemUI()
-
         if (binding.userInformationLayout.isVisible) {
             binding.userInformationLayout.visibility = View.GONE
             binding.userGay.blueLabelLayout.visibility = View.GONE
@@ -1620,7 +1620,6 @@ class HomeDisplayActivity : AppCompatActivity() {
             val currentUnixTime = System.currentTimeMillis() / 1000L
             sharedPreferencesEditor.putLong(getString(R.string.last_location_setting_timestamp), currentUnixTime)
             sharedPreferencesEditor.apply()
-//            setUserCurrentLocation() // Do this after accepting to grant permission to location service
             buildAlertMessageNoGps()
         }
     }

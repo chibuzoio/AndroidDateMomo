@@ -99,6 +99,10 @@ class UserInformationActivity : AppCompatActivity() {
             homeDisplayResponse.profilePicture,
             homeDisplayResponse.userBlockedStatus)
 
+        binding.userInformationScroller.viewTreeObserver.addOnScrollChangedListener {
+            hideSystemUI()
+        }
+
         binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {
             binding.userMessageButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
             requestProcess = getString(R.string.request_fetch_user_messages)

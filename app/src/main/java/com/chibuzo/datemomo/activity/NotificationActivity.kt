@@ -182,6 +182,17 @@ class NotificationActivity : AppCompatActivity() {
             } else {
                 binding.emptyNotificationDialog.dialogActivityLayout.visibility = View.VISIBLE
             }
+
+            binding.notificationRecyclerView.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    when(newState) {
+                        RecyclerView.SCROLL_STATE_DRAGGING -> { hideSystemUI() }
+                    }
+                }
+            })
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")

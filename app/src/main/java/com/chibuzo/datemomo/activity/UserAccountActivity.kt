@@ -87,6 +87,10 @@ class UserAccountActivity : AppCompatActivity() {
         checkMessageUpdate()
         checkNotificationUpdate()
 
+        binding.userAccountScroller.viewTreeObserver.addOnScrollChangedListener {
+            hideSystemUI()
+        }
+
         binding.fourthLikedFrameLayout.setOnClickListener {
             if (userAccountInstance.userLikerResponses.size > 4) {
                 val mapper = jacksonObjectMapper()

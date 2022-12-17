@@ -317,6 +317,17 @@ class MessageActivity : AppCompatActivity() {
             binding.messageRecyclerView.adapter = messageAdapter
 
             (binding.messageRecyclerView.layoutManager as LinearLayoutManager).scrollToPosition(messageInstance.messageResponses.size - 1)
+
+            binding.messageRecyclerView.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    when(newState) {
+                        RecyclerView.SCROLL_STATE_DRAGGING -> { hideSystemUI() }
+                    }
+                }
+            })
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")

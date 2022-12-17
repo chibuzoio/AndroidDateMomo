@@ -166,6 +166,17 @@ class MessengerActivity : AppCompatActivity() {
 
                 fetchDateMomoUsers()
             }
+
+            binding.messengerRecyclerView.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    when(newState) {
+                        RecyclerView.SCROLL_STATE_DRAGGING -> { hideSystemUI() }
+                    }
+                }
+            })
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(HomeDisplayActivity.TAG, "Error message from here is ${exception.message}")

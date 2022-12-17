@@ -42,6 +42,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
+
 class ProfileEditorActivity : AppCompatActivity() {
     private var photoFile: File? = null
     private val PICK_IMAGE_REQUEST = 200
@@ -151,6 +152,10 @@ class ProfileEditorActivity : AppCompatActivity() {
                     + sharedPreferences.getString(getString(R.string.profile_picture), ""))
             .transform(CircleCrop(), CenterCrop())
             .into(binding.accountProfilePicture)
+
+        binding.profileEditorScroller.viewTreeObserver.addOnScrollChangedListener {
+            hideSystemUI()
+        }
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {
             viewRootHeightArray.add(binding.root.height)

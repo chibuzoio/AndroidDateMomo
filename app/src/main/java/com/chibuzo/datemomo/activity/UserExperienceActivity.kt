@@ -63,6 +63,10 @@ class UserExperienceActivity : AppCompatActivity() {
 
         binding.userReportingError.text = "You have not selected any report yet!"
 
+        binding.userExperienceScroller.viewTreeObserver.addOnScrollChangedListener {
+            hideSystemUI()
+        }
+
         binding.submitReportButton.blueButtonLayout.setOnClickListener {
             binding.submitReportButton.blueButtonLayout.startAnimation(buttonClickEffect)
 

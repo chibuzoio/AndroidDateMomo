@@ -285,6 +285,10 @@ class UserProfileActivity : AppCompatActivity() {
         binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
 
+        binding.userProfileScroller.viewTreeObserver.addOnScrollChangedListener {
+            hideSystemUI()
+        }
+
         binding.profileEditorButton.iconHollowButtonLayout.setOnClickListener {
             binding.profileEditorButton.iconHollowButtonLayout.startAnimation(buttonClickEffect)
 

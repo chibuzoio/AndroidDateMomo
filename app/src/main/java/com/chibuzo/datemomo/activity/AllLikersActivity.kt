@@ -147,6 +147,17 @@ class AllLikersActivity : AppCompatActivity() {
             val allLikersAdapter = AllLikersAdapter(allLikersInstance.userLikerResponses, allLikersModel)
             binding.allLikersRecyclerView.adapter = allLikersAdapter
             binding.allLikersRecyclerView.layoutManager!!.scrollToPosition(allLikersInstance.scrollToPosition)
+
+            binding.allLikersRecyclerView.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+
+                    when(newState) {
+                        RecyclerView.SCROLL_STATE_DRAGGING -> { hideSystemUI() }
+                    }
+                }
+            })
         } catch (exception: IOException) {
             exception.printStackTrace()
             Log.e(TAG, "Error message from here is ${exception.message}")

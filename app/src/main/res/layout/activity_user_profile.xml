@@ -15,6 +15,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:id="@+id/userProfileScroller"
             android:layout_marginBottom="54dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
