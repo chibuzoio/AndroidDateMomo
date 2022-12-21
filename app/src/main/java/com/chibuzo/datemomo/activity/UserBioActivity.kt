@@ -891,11 +891,13 @@ class UserBioActivity : AppCompatActivity() {
 
                     activitySavedInstance = ActivitySavedInstance(
                         activity = getString(R.string.activity_home_display),
-                        activityStateData = activityStateData)
+                        activityStateData = activityStateData
+                    )
 
                     if (activityInstanceModel.activityInstanceStack.peek().activity != getString(
                             R.string.activity_home_display
-                        )) {
+                        )
+                    ) {
                         activityInstanceModel.activityInstanceStack.push(activitySavedInstance)
                     } else {
                         activityInstanceModel.activityInstanceStack.pop()
@@ -905,7 +907,10 @@ class UserBioActivity : AppCompatActivity() {
                     commitInstanceModel(mapper, activityInstanceModel)
                 } catch (exception: EmptyStackException) {
                     exception.printStackTrace()
-                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
+                    Log.e(
+                        TAG,
+                        "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}"
+                    )
                 }
 
                 val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)

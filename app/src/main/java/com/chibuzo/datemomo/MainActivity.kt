@@ -116,8 +116,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     sharedPreferences.getString(getString(R.string.user_level), "")
                         .equals(getString(R.string.level_select_sexuality_interest)) -> {
-                        val intent = Intent(baseContext, UserBioActivity::class.java)
-                        startActivity(intent)
+                        gotoUserBioActivity()
                     }
                     sharedPreferences.getString(getString(R.string.user_level), "")
                         .equals(getString(R.string.level_display_matched_users)) -> {
@@ -1175,8 +1174,7 @@ class MainActivity : AppCompatActivity() {
                         binding.pictureUploadProgress.visibility = View.GONE
                     }
 
-                    val intent = Intent(baseContext, UserBioActivity::class.java)
-                    startActivity(intent)
+                    gotoUserBioActivity()
                 }
             }
         })
@@ -1345,8 +1343,7 @@ class MainActivity : AppCompatActivity() {
                                 binding.registrationLayout.visibility = View.GONE
                             }
                             getString(R.string.level_select_sexuality_interest) -> {
-                                val intent = Intent(baseContext, UserBioActivity::class.java)
-                                startActivity(intent)
+                                gotoUserBioActivity()
                             }
                             getString(R.string.level_display_matched_users) -> {
                                 requestProcess = getString(R.string.request_fetch_matched_users)
@@ -1472,6 +1469,32 @@ class MainActivity : AppCompatActivity() {
                 fetchUserNames()
             }
         })
+    }
+
+    fun gotoUserBioActivity() {
+        try {
+            val mapper = jacksonObjectMapper()
+            val activityInstanceStack = Stack<ActivitySavedInstance>()
+
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+            val activitySavedInstance = ActivitySavedInstance(
+                activity = getString(R.string.activity_user_bio),
+                activityStateData = "")
+
+            activityInstanceStack.push(activitySavedInstance)
+            val activityInstanceModelString = mapper.writeValueAsString(ActivityInstanceModel(activityInstanceStack))
+            sharedPreferencesEditor.putString(getString(R.string.activity_instance_model), activityInstanceModelString)
+            sharedPreferencesEditor.apply()
+
+            val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
+            val intent = Intent(this@MainActivity, UserBioActivity::class.java)
+            intent.putExtra(getString(R.string.activity_saved_instance), activitySavedInstanceString)
+            startActivity(intent)
+        } catch (exception: IOException) {
+            exception.printStackTrace()
+            Log.e(TAG, "Error message from line 1496 here is ${exception.message}")
+        }
     }
 
     private fun hideSystemUI() {
