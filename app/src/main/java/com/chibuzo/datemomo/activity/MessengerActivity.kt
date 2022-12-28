@@ -361,6 +361,14 @@ class MessengerActivity : AppCompatActivity() {
 
                     binding.emptyMessengerRecyclerView.addOnScrollListener(object :
                         RecyclerView.OnScrollListener() {
+                        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                            super.onScrollStateChanged(recyclerView, newState)
+
+                            when(newState) {
+                                RecyclerView.SCROLL_STATE_DRAGGING -> { hideSystemUI() }
+                            }
+                        }
+
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
 
