@@ -74,7 +74,7 @@ class UserExperienceActivity : AppCompatActivity() {
                 }
             }
 
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         binding.submitReportButton.blueButtonLayout.setOnClickListener {

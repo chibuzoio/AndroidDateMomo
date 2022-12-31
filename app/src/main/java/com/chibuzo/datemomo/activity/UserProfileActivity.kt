@@ -297,7 +297,7 @@ class UserProfileActivity : AppCompatActivity() {
                 }
             }
 
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         binding.profileEditorButton.iconHollowButtonLayout.setOnClickListener {

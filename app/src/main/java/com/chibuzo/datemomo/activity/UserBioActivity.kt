@@ -65,7 +65,7 @@ class UserBioActivity : AppCompatActivity() {
                 }
             }
 
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {

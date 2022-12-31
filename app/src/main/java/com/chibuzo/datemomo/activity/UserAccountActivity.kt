@@ -99,7 +99,7 @@ class UserAccountActivity : AppCompatActivity() {
                 }
             }
 
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         binding.fourthLikedFrameLayout.setOnClickListener {

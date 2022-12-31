@@ -164,7 +164,7 @@ class ProfileEditorActivity : AppCompatActivity() {
                 }
             }
 
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {

@@ -110,7 +110,7 @@ class UserInformationActivity : AppCompatActivity() {
                 }
             }
 
-            return@setOnTouchListener true
+            return@setOnTouchListener false
         }
 
         binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {
