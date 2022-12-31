@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -153,8 +154,17 @@ class ProfileEditorActivity : AppCompatActivity() {
             .transform(CircleCrop(), CenterCrop())
             .into(binding.accountProfilePicture)
 
-        binding.profileEditorScroller.viewTreeObserver.addOnScrollChangedListener {
-            hideSystemUI()
+        binding.profileEditorScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    hideSystemUI()
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    hideSystemUI()
+                }
+            }
+
+            return@setOnTouchListener true
         }
 
         binding.root.viewTreeObserver.addOnGlobalLayoutListener {

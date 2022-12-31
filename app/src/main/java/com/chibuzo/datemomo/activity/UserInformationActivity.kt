@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -99,8 +100,17 @@ class UserInformationActivity : AppCompatActivity() {
             homeDisplayResponse.profilePicture,
             homeDisplayResponse.userBlockedStatus)
 
-        binding.userInformationScroller.viewTreeObserver.addOnScrollChangedListener {
-            hideSystemUI()
+        binding.userInformationScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    hideSystemUI()
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    hideSystemUI()
+                }
+            }
+
+            return@setOnTouchListener true
         }
 
         binding.userMessageButton.iconHollowButtonLayout.setOnClickListener {

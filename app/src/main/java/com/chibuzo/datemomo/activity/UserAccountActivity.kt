@@ -7,8 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -87,8 +89,17 @@ class UserAccountActivity : AppCompatActivity() {
         checkMessageUpdate()
         checkNotificationUpdate()
 
-        binding.userAccountScroller.viewTreeObserver.addOnScrollChangedListener {
-            hideSystemUI()
+        binding.userAccountScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    hideSystemUI()
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    hideSystemUI()
+                }
+            }
+
+            return@setOnTouchListener true
         }
 
         binding.fourthLikedFrameLayout.setOnClickListener {

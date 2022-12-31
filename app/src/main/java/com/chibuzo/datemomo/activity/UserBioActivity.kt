@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -54,8 +55,17 @@ class UserBioActivity : AppCompatActivity() {
             getSharedPreferences(getString(R.string.shared_preferences), Context.MODE_PRIVATE)
         sharedPreferencesEditor = sharedPreferences.edit()
 
-        binding.userBioScroller.viewTreeObserver.addOnScrollChangedListener {
-            hideSystemUI()
+        binding.userBioScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    hideSystemUI()
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    hideSystemUI()
+                }
+            }
+
+            return@setOnTouchListener true
         }
 
         binding.singleButtonDialog.dialogRetryButton.setOnClickListener {

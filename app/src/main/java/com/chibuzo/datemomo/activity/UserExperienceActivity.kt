@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.appcompat.app.AppCompatActivity
@@ -63,8 +64,17 @@ class UserExperienceActivity : AppCompatActivity() {
 
         binding.userReportingError.text = "You have not selected any report yet!"
 
-        binding.userExperienceScroller.viewTreeObserver.addOnScrollChangedListener {
-            hideSystemUI()
+        binding.userExperienceScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    hideSystemUI()
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    hideSystemUI()
+                }
+            }
+
+            return@setOnTouchListener true
         }
 
         binding.submitReportButton.blueButtonLayout.setOnClickListener {

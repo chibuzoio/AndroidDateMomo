@@ -15,8 +15,10 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -285,8 +287,17 @@ class UserProfileActivity : AppCompatActivity() {
         binding.fourthLikerUsername.layoutParams.height = eachUsernameHeight
         binding.secondLikerUsername.layoutParams.height = eachUsernameHeight
 
-        binding.userProfileScroller.viewTreeObserver.addOnScrollChangedListener {
-            hideSystemUI()
+        binding.userProfileScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_UP -> {
+                    hideSystemUI()
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    hideSystemUI()
+                }
+            }
+
+            return@setOnTouchListener true
         }
 
         binding.profileEditorButton.iconHollowButtonLayout.setOnClickListener {
