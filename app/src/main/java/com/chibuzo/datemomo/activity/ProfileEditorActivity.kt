@@ -38,6 +38,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceContour
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceLandmark
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -976,7 +980,52 @@ class ProfileEditorActivity : AppCompatActivity() {
         }
 
         if (theBitmap != null) {
-            updateProfilePicture()
+            // Make the image pass through face detection ML algorithm to confirm
+            // that it's truly a human picture before calling updateProfilePicture() method
+            val inputImage = InputImage.fromBitmap(theBitmap!!, 0)
+            val detector = FaceDetection.getClient()
+            detector.process(inputImage)
+                .addOnSuccessListener { faces ->
+                    if (faces.size > 0) {
+                        // Post picture to the server
+                        updateProfilePicture()
+                    }
+
+                    for (face in faces) {
+                        val bounds = face.boundingBox
+                        val rotY = face.headEulerAngleY // Head is rotated to the right rotY degrees
+                        val rotZ = face.headEulerAngleZ // Head is tilted sideways rotZ degrees
+
+                        // If landmark detection was enabled (mouth, ears, eyes, cheeks, and
+                        // nose available):
+                        val leftEar = face.getLandmark(FaceLandmark.LEFT_EAR)
+                        leftEar?.let {
+                            val leftEarPos = leftEar.position
+                        }
+
+                        // If contour detection was enabled:
+                        val leftEyeContour = face.getContour(FaceContour.LEFT_EYE)?.points
+                        val upperLipBottomContour = face.getContour(FaceContour.UPPER_LIP_BOTTOM)?.points
+
+                        // If classification was enabled:
+                        if (face.smilingProbability != null) {
+                            val smileProb = face.smilingProbability
+                        }
+                        if (face.rightEyeOpenProbability != null) {
+                            val rightEyeOpenProb = face.rightEyeOpenProbability
+                        }
+
+                        // If face tracking was enabled:
+                        if (face.trackingId != null) {
+                            val id = face.trackingId
+                        }
+                    }
+                }
+                .addOnFailureListener { error ->
+                    // Report to the user to chose another picture or retake the picture
+                    error.printStackTrace()
+                    Log.e(HomeDisplayActivity.TAG, "Error from processing real profile picture is ${error.message}")
+                }
         }
     }
 
