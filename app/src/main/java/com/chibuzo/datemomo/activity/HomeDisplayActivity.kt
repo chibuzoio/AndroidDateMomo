@@ -246,8 +246,13 @@ class HomeDisplayActivity : AppCompatActivity() {
                     "preferences to see users with preferences that are related to yours"
 
         Glide.with(this)
+            .load(R.drawable.infinite_loader)
+            .into(binding.infiniteProgressDialog.infiniteProgressImage)
+        Glide.with(this)
             .load(R.drawable.icon_timeline)
             .into(binding.emptyTimelineDialog.dialogActivityImage)
+
+        binding.infiniteProgressDialog.infiniteProgressTitle.text = getString(R.string.profile_picture_processing)
 
         binding.emptyTimelineDialog.dialogActivityButton.blueButtonLayout.setOnClickListener {
             binding.emptyTimelineDialog.dialogActivityButton.blueButtonLayout.startAnimation(buttonClickEffect)
@@ -256,32 +261,48 @@ class HomeDisplayActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+        binding.infiniteProgressDialog.infiniteProgressLayout.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
-            triggerRequestProcess()
+        }
+
+        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+            if (binding.singleButtonDialog.dialogRetryButton.text == "Retry") {
+                triggerRequestProcess()
+            }
         }
 
         binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
 
         binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
 
             if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
                 triggerRequestProcess()
+            } else {
+                pickImageFromGallery()
             }
         }
 
         binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
 
         binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
@@ -489,6 +510,8 @@ class HomeDisplayActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        displayInfiniteProgressDialog(getString(R.string.profile_picture_processing))
+
         if (requestCode == CAPTURE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             theBitmap = BitmapFactory.decodeFile(photoFile!!.absolutePath)
         } else if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
@@ -507,9 +530,14 @@ class HomeDisplayActivity : AppCompatActivity() {
             val detector = FaceDetection.getClient()
             detector.process(inputImage)
                 .addOnSuccessListener { faces ->
+                    binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+                    binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+
                     if (faces.size > 0) {
-                        // Post picture to the server
                         updateProfilePicture()
+                        displaySingleButtonDialog("Profile Picture Uploaded!", "The picture you are trying to upload is a real picture and it was successfully uploaded!", "Ok")
+                    } else {
+                        displayDoubleButtonDialog("Profile Picture Rejected!", "There is no face in the picture you are trying to upload. Picture was rejected! Try uploading another one.")
                     }
 
                     for (face in faces) {
@@ -543,9 +571,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener { error ->
+                    binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+                    binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
                     // Report to the user to chose another picture or retake the picture
                     error.printStackTrace()
-                    Log.e(TAG, "Error from processing real profile picture is ${error.message}")
+                    displayDoubleButtonDialog("Profile Picture Error!", "There was an error in trying to process your profile picture. Please, try again!")
                 }
         }
     }
@@ -1797,20 +1828,44 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
     }
 
+    fun displayInfiniteProgressDialog(title: String) {
+        runOnUiThread {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.VISIBLE
+            binding.infiniteProgressDialog.infiniteProgressTitle.text = title
+        }
+    }
+
+    fun displayDoubleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Choose Picture"
+            binding.doubleButtonDialog.doubleButtonTitle.text = title
+            binding.doubleButtonDialog.doubleButtonMessage.text = message
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
     fun displayDoubleButtonDialog() {
         runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Retry"
             binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
         }
     }
 
-    fun displaySingleButtonDialog(title: String, message: String) {
+    fun displaySingleButtonDialog(title: String, message: String, buttonTitle: String) {
         runOnUiThread {
-            binding.singleButtonDialog.singleButtonTitle.text = title
-            binding.singleButtonDialog.singleButtonMessage.text = message
             binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+            binding.singleButtonDialog.dialogRetryButton.text = buttonTitle
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonTitle.text = title
         }
+    }
+
+    fun displaySingleButtonDialog(title: String, message: String) {
+        displaySingleButtonDialog(title, message, "Retry")
     }
 
     private class EchoWebSocketListener : WebSocketListener() {

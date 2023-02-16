@@ -364,7 +364,6 @@ class UserProfileActivity : AppCompatActivity() {
                     commitInstanceModel(mapper, activityInstanceModel)
                 } catch (exception: EmptyStackException) {
                     exception.printStackTrace()
-                    Log.e(TAG, "Exception from trying to peek and pop activityInstanceStack here is ${exception.message}")
                 }
 
                 val activitySavedInstanceString = mapper.writeValueAsString(activitySavedInstance)
@@ -408,32 +407,48 @@ class UserProfileActivity : AppCompatActivity() {
             fetchUserInformation()
         }
 
-        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+        binding.infiniteProgressDialog.infiniteProgressLayout.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
-            triggerRequestProcess()
+        }
+
+        binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+            if (binding.singleButtonDialog.dialogRetryButton.text == "Retry") {
+                triggerRequestProcess()
+            }
         }
 
         binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
 
         binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
 
             if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
                 triggerRequestProcess()
+            } else {
+                pickImageFromGallery()
             }
         }
 
         binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
 
         binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
             binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
         }
@@ -714,6 +729,8 @@ class UserProfileActivity : AppCompatActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        displayInfiniteProgressDialog(getString(R.string.profile_picture_processing))
 
         if (requestCode == CAPTURE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             theBitmap = BitmapFactory.decodeFile(photoFile!!.absolutePath)
@@ -1772,11 +1789,39 @@ class UserProfileActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
     }
 
+    fun displayInfiniteProgressDialog(title: String) {
+        runOnUiThread {
+            binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.VISIBLE
+            binding.infiniteProgressDialog.infiniteProgressTitle.text = title
+        }
+    }
+
+    fun displayDoubleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Choose Picture"
+            binding.doubleButtonDialog.doubleButtonTitle.text = title
+            binding.doubleButtonDialog.doubleButtonMessage.text = message
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
     fun displayDoubleButtonDialog() {
         runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Retry"
             binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
+    fun displaySingleButtonDialog(title: String, message: String, buttonTitle: String) {
+        runOnUiThread {
+            binding.singleButtonDialog.singleButtonLayout.visibility = View.VISIBLE
+            binding.singleButtonDialog.dialogRetryButton.text = buttonTitle
+            binding.singleButtonDialog.singleButtonMessage.text = message
+            binding.singleButtonDialog.singleButtonTitle.text = title
         }
     }
 
