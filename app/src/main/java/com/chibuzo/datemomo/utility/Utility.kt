@@ -8,15 +8,37 @@ import android.os.Build
 import android.util.Base64
 import android.util.DisplayMetrics
 import com.chibuzo.datemomo.R
+import com.chibuzo.datemomo.model.response.MessengerResponse
 import java.io.ByteArrayOutputStream
 import java.io.UnsupportedEncodingException
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 
 class Utility {
 
     companion object {
+
+        fun checkNullInMessenger(messengerResponses: ArrayList<MessengerResponse>):
+                ArrayList<MessengerResponse> {
+            val nullIndices = arrayListOf<Int>()
+
+            for (index in messengerResponses.indices) {
+                if (messengerResponses[index].userName === null
+                    || messengerResponses[index].fullName === null
+                    || messengerResponses[index].userStatus === null
+                ) {
+                    nullIndices.add(index);
+                }
+            }
+
+            for (index in nullIndices.indices) {
+                messengerResponses.removeAt(nullIndices[index])
+            }
+
+            return messengerResponses
+        }
 
         fun selectChosenSticker(context: Context, sticker: String): Int {
             when (sticker) {

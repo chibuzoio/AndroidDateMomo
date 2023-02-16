@@ -70,7 +70,7 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             .into(holder.binding.messengerProfilePicture)
 
         holder.binding.userFullName.text = if (messengerResponses[position].fullName == "") {
-            messengerResponses[position].userName.replaceFirstChar { it.uppercase() }
+            messengerResponses[position].userName!!.replaceFirstChar { it.uppercase() }
         } else { messengerResponses[position].fullName }
 
         val decodedLastMessage = Utility.decodeEmoji(messengerResponses[position].lastMessage).toString()
@@ -91,11 +91,11 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             holder.binding.lastMessageImage.visibility = View.GONE
         }
 
-        holder.binding.messageStatusTime.text = Utility.getTimeDifference(messengerResponses[position].lastMessageDate.toLong())
+        holder.binding.messageStatusTime.text = Utility.getTimeDifference(messengerResponses[position].lastMessageDate!!.toLong())
         holder.binding.messageStatusCounter.text = messengerResponses[position].unreadMessageCount.toString()
 
         holder.binding.messageStatusCounter.visibility =
-            if (messengerResponses[position].unreadMessageCount > 0) { View.VISIBLE } else { View.INVISIBLE }
+            if (messengerResponses[position].unreadMessageCount!! > 0) { View.VISIBLE } else { View.INVISIBLE }
 
         holder.binding.messengerPropertyLayout.setOnLongClickListener {
             messengerModel.binding.messengerMenuLayout.visibility = View.VISIBLE
@@ -117,10 +117,10 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
         messengerModel.binding.messengerBlockUser.setOnClickListener {
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
 
-            val accusedUser = messengerResponses[messengerModel.currentPosition].fullName.ifEmpty() {
-                messengerResponses[messengerModel.currentPosition].userName.replaceFirstChar { it.uppercase() } }
+            val accusedUser = messengerResponses[messengerModel.currentPosition].fullName!!.ifEmpty() {
+                messengerResponses[messengerModel.currentPosition].userName!!.replaceFirstChar { it.uppercase() } }
 
-            if (messengerResponses[messengerModel.currentPosition].userBlockedStatus > 0) {
+            if (messengerResponses[messengerModel.currentPosition].userBlockedStatus!! > 0) {
                 messengerModel.binding.doubleButtonDialog.dialogRetryButton.text = "Unblock"
                 messengerModel.binding.doubleButtonDialog.dialogCancelButton.text = "Cancel"
                 messengerModel.binding.doubleButtonDialog.doubleButtonMessage.text =
@@ -153,12 +153,12 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
             val userExperienceResponse = UserExperienceResponse(
-                memberId = messengerResponses[position].chatmateId,
-                fullName = messengerResponses[position].fullName,
-                userName = messengerResponses[position].userName,
+                memberId = messengerResponses[position].chatmateId!!,
+                fullName = messengerResponses[position].fullName!!,
+                userName = messengerResponses[position].userName!!,
                 lastActiveTime = "",
-                profilePicture = messengerResponses[position].profilePicture,
-                userBlockedStatus = messengerResponses[position].userBlockedStatus)
+                profilePicture = messengerResponses[position].profilePicture!!,
+                userBlockedStatus = messengerResponses[position].userBlockedStatus!!)
 
             val activityStateData = mapper.writeValueAsString(userExperienceResponse)
 
@@ -204,7 +204,7 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
 
             val deleteMessageRequest = DeleteMessageRequest(
                 sharedPreferences.getInt(holder.itemView.context.getString(R.string.member_id), 0),
-                messengerResponses[messengerModel.currentPosition].messageTableName)
+                messengerResponses[messengerModel.currentPosition].messageTableName!!)
             messengerModel.messengerActivity.deleteMessengerMessages(deleteMessageRequest)
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
             messengerResponses.removeAt(messengerModel.currentPosition)
@@ -213,15 +213,15 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
         }
 
         messengerModel.binding.userInfoMenu.setOnClickListener {
-            messengerModel.messengerActivity.fetchUserInformation(messengerResponses[messengerModel.currentPosition].chatmateId)
+            messengerModel.messengerActivity.fetchUserInformation(messengerResponses[messengerModel.currentPosition].chatmateId!!)
             messengerModel.requestProcess = holder.itemView.context.getString(R.string.request_fetch_user_information)
             messengerModel.binding.messengerMenuLayout.visibility = View.GONE
         }
 
         messengerModel.binding.deleteChatsMenu.setOnClickListener {
             messengerModel.binding.confirmMessengerDelete.doubleButtonMessage.text =
-                if (messengerResponses[messengerModel.currentPosition].fullName.isEmpty()) {
-                    "Delete chats with ${messengerResponses[messengerModel.currentPosition].userName.replaceFirstChar { it.uppercase() }}?"
+                if (messengerResponses[messengerModel.currentPosition].fullName!!.isEmpty()) {
+                    "Delete chats with ${messengerResponses[messengerModel.currentPosition].userName!!.replaceFirstChar { it.uppercase() }}?"
                 } else { "Delete chats with ${messengerResponses[messengerModel.currentPosition].fullName}?" }
 
             messengerModel.binding.confirmMessengerDelete.doubleButtonLayout.visibility = View.VISIBLE
@@ -242,12 +242,12 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
 
             val messageRequest = MessageRequest(
                 sharedPreferences.getInt("memberId", 0),
-                messengerResponses[position].chatmateId,
-                messengerResponses[position].fullName,
-                messengerResponses[position].userName,
+                messengerResponses[position].chatmateId!!,
+                messengerResponses[position].fullName!!,
+                messengerResponses[position].userName!!,
                 "",
-                messengerResponses[position].profilePicture,
-                messengerResponses[position].userBlockedStatus
+                messengerResponses[position].profilePicture!!,
+                messengerResponses[position].userBlockedStatus!!
             )
 
             messengerModel.messengerActivity.fetchUserMessages(messageRequest)
@@ -266,9 +266,9 @@ class MessengerAdapter(private var messengerResponses: ArrayList<MessengerRespon
         val unixTime = System.currentTimeMillis() / 1000L
 
         val userBlockingRequest = UserBlockingRequest(
-            userAccusedId = messengerResponses[messengerModel.currentPosition].chatmateId,
+            userAccusedId = messengerResponses[messengerModel.currentPosition].chatmateId!!,
             userBlockerId = sharedPreferences.getInt(context.getString(R.string.member_id), 0),
-            userBlockedStatus = if (messengerResponses[messengerModel.currentPosition].userBlockedStatus > 0) { 0 } else { 1 },
+            userBlockedStatus = if (messengerResponses[messengerModel.currentPosition].userBlockedStatus!! > 0) { 0 } else { 1 },
             userBlockedDate = unixTime.toString()
         )
 

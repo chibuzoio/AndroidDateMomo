@@ -1590,7 +1590,7 @@ class UserProfileActivity : AppCompatActivity() {
                 val messengerResponses: ArrayList<MessengerResponse> = mapper.readValue(myResponse)
                 val messengerInstance = MessengerInstance(
                     scrollToPosition = 0,
-                    messengerResponses = messengerResponses)
+                    messengerResponses = Utility.checkNullInMessenger(messengerResponses))
 
                 val activityInstanceModel: ActivityInstanceModel =
                     mapper.readValue(sharedPreferences.getString(getString(R.string.activity_instance_model), "")!!)
