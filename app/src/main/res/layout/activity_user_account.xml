@@ -295,6 +295,10 @@
                     layout="@layout/include_menu_layout"/>
 
                 <include
+                    android:id="@+id/privacyPolicyMenu"
+                    layout="@layout/include_menu_layout"/>
+
+                <include
                     android:id="@+id/logoutMenu"
                     layout="@layout/include_menu_layout"/>
 
@@ -312,6 +316,10 @@
         <include
             android:id="@+id/bottomNavigationLayout"
             layout="@layout/include_bottom_navigation_layout"/>
+
+        <include
+            android:id="@+id/applicationMessageLayout"
+            layout="@layout/include_application_message"/>
 
         <include
             android:id="@+id/doubleButtonDialog"

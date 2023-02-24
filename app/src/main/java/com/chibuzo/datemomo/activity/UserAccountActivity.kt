@@ -13,6 +13,7 @@ import android.view.animation.AlphaAnimation
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -43,8 +44,10 @@ class UserAccountActivity : AppCompatActivity() {
     private var deviceWidth: Int = 0
     private var deviceHeight: Int = 0
     private lateinit var bundle: Bundle
+    private var privacyPolicy: String = ""
     private var requestProcess: String = ""
     private var dialogDisplayType: String = ""
+    private var termsAndConditions: String = ""
     private lateinit var buttonClickEffect: AlphaAnimation
     private lateinit var binding: ActivityUserAccountBinding
     private lateinit var sharedPreferences: SharedPreferences
@@ -87,7 +90,9 @@ class UserAccountActivity : AppCompatActivity() {
         redrawBottomMenuIcons(getString(R.string.clicked_generic_menu))
 
         checkMessageUpdate()
+        fetchPrivacyPolicy()
         checkNotificationUpdate()
+        fetchTermsAndConditions()
 
         binding.userAccountScroller.setOnTouchListener{ _: View, motionEvent: MotionEvent ->
             when (motionEvent.action) {
@@ -100,6 +105,12 @@ class UserAccountActivity : AppCompatActivity() {
             }
 
             return@setOnTouchListener false
+        }
+
+        binding.applicationMessageLayout.doneReadingButton.blueButtonText.text = "Done";
+
+        binding.applicationMessageLayout.doneReadingButton.blueButtonLayout.setOnClickListener {
+            binding.applicationMessageLayout.applicationMessageLayout.visibility = View.GONE
         }
 
         binding.fourthLikedFrameLayout.setOnClickListener {
@@ -336,9 +347,15 @@ class UserAccountActivity : AppCompatActivity() {
         }
 
         binding.termsAndConditionsMenu.genericIconMenuLayout.setOnClickListener {
-            // Implement a terms and conditions layout or activity for documenting the
-            // terms and conditions users most abide by in the course of using the application
+            binding.applicationMessageLayout.applicationMessageLayout.visibility = View.VISIBLE
+            binding.applicationMessageLayout.applicationMessageText.text =
+                HtmlCompat.fromHtml(termsAndConditions, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        }
 
+        binding.privacyPolicyMenu.genericIconMenuLayout.setOnClickListener {
+            binding.applicationMessageLayout.applicationMessageLayout.visibility = View.VISIBLE
+            binding.applicationMessageLayout.applicationMessageText.text =
+                HtmlCompat.fromHtml(privacyPolicy, HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
 
         binding.userImpactCounter.text =
@@ -347,6 +364,7 @@ class UserAccountActivity : AppCompatActivity() {
         binding.logoutMenu.genericIconMenuText.text = getString(R.string.menu_logout)
         binding.suggestionMenu.genericIconMenuText.text = getString(R.string.menu_suggestion)
         binding.referFriendMenu.genericIconMenuText.text = getString(R.string.menu_refer_friend)
+        binding.privacyPolicyMenu.genericIconMenuText.text = getString(R.string.menu_privacy_policy)
         binding.helpAndSupportMenu.genericIconMenuText.text = getString(R.string.menu_help_and_support)
         binding.termsAndConditionsMenu.genericIconMenuText.text = getString(R.string.menu_terms_and_conditions)
 
@@ -363,6 +381,10 @@ class UserAccountActivity : AppCompatActivity() {
         Glide.with(this)
             .load(ContextCompat.getDrawable(this, R.drawable.icon_terms_and_conditions))
             .into(binding.termsAndConditionsMenu.genericIconMenuIcon)
+
+        Glide.with(this)
+            .load(ContextCompat.getDrawable(this, R.drawable.icon_privacy_policy))
+            .into(binding.privacyPolicyMenu.genericIconMenuIcon)
 
         Glide.with(this)
             .load(ContextCompat.getDrawable(this, R.drawable.icon_help_and_support))
@@ -411,6 +433,48 @@ class UserAccountActivity : AppCompatActivity() {
             exception.printStackTrace()
             Log.e(TAG, "Exception from trying to peek activityStack here is ${exception.message}")
         }
+    }
+
+    @Throws(IOException::class)
+    private fun fetchPrivacyPolicy() {
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_privacy_policy))
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+                Log.e(MainActivity.TAG, "Call to the server failed with the following message ${e.message}")
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                privacyPolicy = myResponse
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    private fun fetchTermsAndConditions() {
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_terms_and_conditions))
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+                Log.e(MainActivity.TAG, "Call to the server failed with the following message ${e.message}")
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                termsAndConditions = myResponse
+            }
+        })
     }
 
     @Throws(IOException::class)

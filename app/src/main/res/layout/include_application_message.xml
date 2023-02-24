@@ -24,20 +24,34 @@
 
             <TextView
                 android:id="@+id/applicationMessageText"
+                android:textSize="14sp"
                 android:textColor="@color/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
         </ScrollView>
 
-        <include
-            android:id="@+id/doneReadingButton"
-            android:layout_gravity="end"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="20dp"
-            layout="@layout/include_blue_button"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"/>
+
+            <include
+                android:id="@+id/doneReadingButton"
+                android:layout_weight="1"
+                android:layout_marginTop="11dp"
+                android:layout_marginBottom="7dp"
+                layout="@layout/include_blue_button"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -116,6 +116,7 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_suggestion">Suggestion</string>
     <string name="menu_refer_friend">Refer A Friend</string>
+    <string name="menu_privacy_policy">Privacy Policy</string>
     <string name="menu_help_and_support">Help And Support</string>
     <string name="menu_terms_and_conditions">Terms And Conditions</string>
 

@@ -267,8 +267,8 @@ class MainActivity : AppCompatActivity() {
             // By creating account, you agree to our Terms and Conditions, and Privacy Policy.
 
             val spannableText = SpannableStringBuilder(getString(R.string.terms_conditions_label))
-            spannableText.setSpan(termsConditionSpan, 40, 60, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannableText.setSpan(privacyPolicySpan, 66, 78, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannableText.setSpan(termsConditionSpan, 38, 58, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannableText.setSpan(privacyPolicySpan, 64, 78, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             binding.termsAndConditionsLabel.setText(spannableText, TextView.BufferType.SPANNABLE)
             binding.termsAndConditionsLabel.movementMethod = LinkMovementMethod.getInstance()
 
@@ -1053,7 +1053,6 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                Log.e(TAG, "Response from fetching privay policy here is $myResponse")
                 privacyPolicy = myResponse
             }
         })
@@ -1075,7 +1074,6 @@ class MainActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val myResponse: String = response.body()!!.string()
-                Log.e(TAG, "Response from fetching terms and conditions here is $myResponse")
                 termsAndConditions = myResponse
             }
         })
