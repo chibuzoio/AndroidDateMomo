@@ -1,0 +1,55 @@
+<h2>Privacy Policy for DateMomo Dating Application</h2>
+
+At DateMomo application, we are committed to protecting your privacy and ensuring that your personal information is safe and secure. This Privacy Policy describes how we collect, use, and protect your personal information when you use our application.
+
+<h3>Information We Collect</h3>
+
+We collect the following information from our users:
+
+<b>Personal Information:</b> This includes your name, email address, phone number, and age.
+
+<b>Profile Information:</b> This includes the information you provide in your profile, such as your bio, profile picture, location, gender, sexuality, interests and experiences.
+
+<b>Communications:</b> This includes any messages you send or receive within the application, as well as any feedback or support requests.
+
+<b>Usage Data:</b> This includes information about how you use our application, such as the pages you visit, the features you use, and the time you spend on the application.
+
+<b>Device Information:</b> This includes information about your device, such as your device type, operating system, and IP address.
+
+<h3>How We Use Your Information</h3>
+
+We use your personal information to provide you with a personalized experience on our mobile application. We may use your information to match you with potential partners, suggest compatible profiles, and send you notifications and alerts about your account. We may also use your information to improve our services, analyze usage patterns, and prevent fraud and abuse.
+
+<h3>How We Share Your Information</h3>
+
+We may share your information with third parties in the following situations:
+
+<b>With your consent:</b> We may share your information with third parties if you give us your consent to do so.
+
+<b>With service providers:</b> We may share your information with third-party service providers that help us operate our application, such as hosting providers, payment processors, and customer support providers.
+
+<b>In response to legal requests:</b> We may share your information in response to legal requests, such as subpoenas or court orders.
+
+<b>In the event of a merger or acquisition:</b> We may share your information in connection with a merger, acquisition, or sale of our company.
+
+<h3>How We Protect Your Information</h3>
+
+We take the security of your information seriously and use reasonable measures to protect your information from unauthorized access, disclosure, alteration, or destruction.
+
+However, no method of transmission over the internet, or method of electronic storage is 100% secure. Therefore, while we strive to use commercially acceptable means to protect your personal information, we cannot guarantee its absolute security.
+
+<h3>Your Rights</h3>
+
+You have the right to access, update, and delete your personal information that we collect and store. You can also request that we stop using your information for certain purposes, such as marketing or analytics and can also opt out of receiving promotional communications from us by adjusting your notification settings.
+
+<h3>Children's Privacy</h3>
+
+The application is not intended for use by children under 18 years of age, and we do not knowingly collect personal information from children. If we become aware that we have collected personal information from a child, we will delete it immediately.
+
+<h3>Changes to This Privacy Policy</h3>
+
+We reserve the right to change this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of any material changes to this Privacy Policy by posting a notice on our application or sending you an email.
+
+By using the application, you agree to the terms of this Policy and our collection, use, and sharing of your personal information as described herein. If you do not agree with any part of this Policy, please do not use the application.
+
+

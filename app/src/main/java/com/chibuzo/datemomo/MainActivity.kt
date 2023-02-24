@@ -12,18 +12,20 @@ import android.graphics.ImageDecoder
 import android.graphics.drawable.Drawable
 import android.os.*
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.InputType
-import android.text.TextWatcher
+import android.text.*
+import android.text.method.LinkMovementMethod
 import android.text.method.PasswordTransformationMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.text.HtmlCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -69,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     private var loginUserNameValid = false
     private var loginPassword: String = ""
     private var loginUserName: String = ""
+    private var privacyPolicy: String = ""
     private val CAPTURE_IMAGE_REQUEST = 100
     private var requestProcess: String = ""
     private var leastRootViewHeight: Int = 0
@@ -76,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     private var registerUserNameValid = false
     private var registerPassword: String = ""
     private var registerUserName: String = ""
+    private var termsAndConditions: String = ""
     private var mCurrentPhotoPath: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var buttonClickEffect: AlphaAnimation
@@ -98,6 +102,8 @@ class MainActivity : AppCompatActivity() {
         hideSystemUI()
 
         fetchUserNames()
+        fetchPrivacyPolicy()
+        fetchTermsAndConditions()
 
         viewRootHeightArray = mutableSetOf()
 
@@ -223,6 +229,48 @@ class MainActivity : AppCompatActivity() {
                 })
             }
 */
+
+            binding.applicationMessageLayout.doneReadingButton.blueButtonText.text = "Done";
+
+            binding.applicationMessageLayout.doneReadingButton.blueButtonLayout.setOnClickListener {
+                binding.applicationMessageLayout.applicationMessageLayout.visibility = View.GONE
+            }
+
+            val termsConditionSpan = object : ClickableSpan() {
+                override fun onClick(view: View) {
+                    binding.applicationMessageLayout.applicationMessageLayout.visibility = View.VISIBLE
+                    binding.applicationMessageLayout.applicationMessageText.text =
+                        HtmlCompat.fromHtml(termsAndConditions, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+
+                override fun updateDrawState(drawState: TextPaint) {
+                    super.updateDrawState(drawState)
+                    drawState.isUnderlineText = true
+                    drawState.color = ContextCompat.getColor(this@MainActivity, R.color.blue)
+                }
+            }
+
+            val privacyPolicySpan = object : ClickableSpan() {
+                override fun onClick(view: View) {
+                    binding.applicationMessageLayout.applicationMessageLayout.visibility = View.VISIBLE
+                    binding.applicationMessageLayout.applicationMessageText.text =
+                        HtmlCompat.fromHtml(privacyPolicy, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+
+                override fun updateDrawState(drawState: TextPaint) {
+                    super.updateDrawState(drawState)
+                    drawState.isUnderlineText = true
+                    drawState.color = ContextCompat.getColor(this@MainActivity, R.color.blue)
+                }
+            }
+
+            // By creating account, you agree to our Terms and Conditions, and Privacy Policy.
+
+            val spannableText = SpannableStringBuilder(getString(R.string.terms_conditions_label))
+            spannableText.setSpan(termsConditionSpan, 40, 60, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannableText.setSpan(privacyPolicySpan, 66, 78, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            binding.termsAndConditionsLabel.setText(spannableText, TextView.BufferType.SPANNABLE)
+            binding.termsAndConditionsLabel.movementMethod = LinkMovementMethod.getInstance()
 
             binding.poorInternetDialog.dialogActivityButton.blueButtonLayout.setOnClickListener {
                 requestProcess = getString(R.string.request_fetch_matched_users)
@@ -987,6 +1035,50 @@ class MainActivity : AppCompatActivity() {
 
             binding.userNameInputError.text = errorType
         }
+    }
+
+    @Throws(IOException::class)
+    private fun fetchPrivacyPolicy() {
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_privacy_policy))
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+                Log.e(TAG, "Call to the server failed with the following message ${e.message}")
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                Log.e(TAG, "Response from fetching privay policy here is $myResponse")
+                privacyPolicy = myResponse
+            }
+        })
+    }
+
+    @Throws(IOException::class)
+    private fun fetchTermsAndConditions() {
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(getString(R.string.date_momo_api) + getString(R.string.api_terms_and_conditions))
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                call.cancel()
+                Log.e(TAG, "Call to the server failed with the following message ${e.message}")
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                val myResponse: String = response.body()!!.string()
+                Log.e(TAG, "Response from fetching terms and conditions here is $myResponse")
+                termsAndConditions = myResponse
+            }
+        })
     }
 
     @Throws(IOException::class)

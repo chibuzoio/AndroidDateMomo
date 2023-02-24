@@ -188,6 +188,14 @@
                         android:layout_height="wrap_content"
                         android:layout_width="match_parent"/>
 
+                    <TextView
+                        android:id="@+id/termsAndConditionsLabel"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:textColor="@color/edit_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
             </ScrollView>
@@ -368,6 +376,10 @@
                 android:layout_height="wrap_content" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <include
+            android:id="@+id/applicationMessageLayout"
+            layout="@layout/include_application_message"/>
 
         <include
             android:id="@+id/doubleButtonDialog"

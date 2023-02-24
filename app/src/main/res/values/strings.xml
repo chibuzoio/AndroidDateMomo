@@ -82,6 +82,7 @@
     <string name="user_category_error">Choose at least one of the options in the categories</string>
     <string name="network_error_message">Check your internet connection or connect your device to a WiFi network</string>
     <string name="server_error_message">An error occurred at the server. You might want to retry or report the problem</string>
+    <string name="terms_conditions_label">By creating account, you agree to our Terms and Conditions, and Privacy Policy.</string>
     <string name="poor_internet_message">Your device is experiencing poor internet connection. Check your network or connect to a WiFi network</string>
     <string name="report_committed_message">Your report against %1$s has been sent to DateMomo. Thank you for contacting DateMomo. We will do our best to serve you better!</string>
 
@@ -138,6 +139,7 @@
     <string name="api_register_member">service/registermember.php</string>
     <string name="api_update_location">service/updatelocation.php</string>
     <string name="api_user_biometrics">service/userbiometrics.php</string>
+    <string name="api_privacy_policy">documents/privacy_policy.txt</string>
     <string name="api_liked_users_data">service/likedusersdata.php</string>
     <string name="api_user_likers_data">service/userlikersdata.php</string>
     <string name="api_update_sexuality">service/updatesexuality.php</string>
@@ -153,6 +155,7 @@
     <string name="api_user_messengers_data">service/usermessengersdata.php</string>
     <string name="api_commit_report_message">service/commitreportmessage.php</string>
     <string name="api_more_matched_user_data">service/morematcheduserdata.php</string>
+    <string name="api_terms_and_conditions">documents/terms_and_conditions.txt</string>
     <string name="api_change_profile_picture">service/changeprofilepicture.php</string>
     <string name="api_delete_profile_picture">service/deleteprofilepicture.php</string>
     <string name="api_delete_messenger_messages">service/deletemessengermessages.php</string>
