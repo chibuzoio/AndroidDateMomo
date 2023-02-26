@@ -1828,7 +1828,7 @@ class HomeDisplayActivity : AppCompatActivity() {
         }
     }
 
-    fun displayInfiniteProgressDialog(title: String) {
+    private fun displayInfiniteProgressDialog(title: String) {
         runOnUiThread {
             binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.VISIBLE
             binding.infiniteProgressDialog.infiniteProgressTitle.text = title

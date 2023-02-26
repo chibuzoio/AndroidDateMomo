@@ -406,6 +406,10 @@
             layout="@layout/include_application_message"/>
 
         <include
+            android:id="@+id/infiniteProgressDialog"
+            layout="@layout/include_infinite_progress_dialog"/>
+
+        <include
             android:id="@+id/doubleButtonDialog"
             layout="@layout/include_double_button_dialog"/>
 

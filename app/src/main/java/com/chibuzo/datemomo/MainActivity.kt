@@ -52,6 +52,10 @@ import com.chibuzo.datemomo.utility.Utility
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceContour
+import com.google.mlkit.vision.face.FaceDetection
+import com.google.mlkit.vision.face.FaceLandmark
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -145,6 +149,11 @@ class MainActivity : AppCompatActivity() {
             binding.poorInternetDialog.dialogActivityButton.blueButtonText.text = "Retry"
             binding.poorInternetDialog.dialogActivityText.text =
                 "Check your internet connectivity or connect to a WiFi network!"
+            binding.infiniteProgressDialog.infiniteProgressTitle.text = getString(R.string.profile_picture_processing)
+
+            Glide.with(this)
+                .load(R.drawable.infinite_loader)
+                .into(binding.infiniteProgressDialog.infiniteProgressImage)
 
             Glide.with(this)
                 .load(R.drawable.icon_poor_connectivity)
@@ -267,8 +276,16 @@ class MainActivity : AppCompatActivity() {
             // By creating account, you agree to our Terms and Conditions, and Privacy Policy.
 
             val spannableText = SpannableStringBuilder(getString(R.string.terms_conditions_label))
-            spannableText.setSpan(termsConditionSpan, 38, 58, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannableText.setSpan(privacyPolicySpan, 64, 78, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannableText.setSpan(termsConditionSpan, spannableText.indexOf("Terms and Conditions"),
+                spannableText.indexOf("Terms and Conditions") + "Terms and Conditions".length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannableText.setSpan(privacyPolicySpan, spannableText.indexOf("Privacy Policy"),
+                spannableText.indexOf("Privacy Policy") + "Privacy Policy".length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+//            spannableText.setSpan(termsConditionSpan, 38, 58, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//            spannableText.setSpan(privacyPolicySpan, 64, 78, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
             binding.termsAndConditionsLabel.setText(spannableText, TextView.BufferType.SPANNABLE)
             binding.termsAndConditionsLabel.movementMethod = LinkMovementMethod.getInstance()
 
@@ -306,28 +323,40 @@ class MainActivity : AppCompatActivity() {
                 clearAllFieldFocus()
             }
 
+            binding.infiniteProgressDialog.infiniteProgressLayout.setOnClickListener {
+                binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+                binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+            }
+
             binding.singleButtonDialog.dialogRetryButton.setOnClickListener {
+                binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
                 triggerRequestProcess()
             }
 
             binding.singleButtonDialog.singleButtonLayout.setOnClickListener {
+                binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
                 hideAllProgressIcon()
             }
 
             binding.doubleButtonDialog.dialogRetryButton.setOnClickListener {
+                binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
 
                 if (binding.doubleButtonDialog.dialogRetryButton.text == "Retry") {
                     triggerRequestProcess()
+                } else if (binding.doubleButtonDialog.dialogRetryButton.text == "Choose Picture") {
+                    pickImageFromGallery()
                 }
             }
 
             binding.doubleButtonDialog.dialogCancelButton.setOnClickListener {
+                binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
 
@@ -337,6 +366,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             binding.doubleButtonDialog.doubleButtonLayout.setOnClickListener {
+                binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
                 binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
                 binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
                 hideAllProgressIcon()
@@ -871,6 +901,87 @@ class MainActivity : AppCompatActivity() {
             } else{
                 MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
             }
+        }
+
+        // DO IT HERE
+        // If theBitmap is valid post it to the server. Else, nullify it and reset
+        // image with placeholder, using glide
+
+        if (theBitmap != null) {
+            val inputImage = InputImage.fromBitmap(theBitmap!!, 0)
+            val detector = FaceDetection.getClient()
+            detector.process(inputImage)
+                .addOnSuccessListener { faces ->
+                    binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+                    binding.doubleButtonDialog.doubleButtonLayout.visibility = View.GONE
+                    binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+                    if (faces.size > 0) {
+//                        displaySingleButtonDialog("Profile Picture Uploaded!", "The picture you are trying to upload is a real picture and it was successfully uploaded!", "Ok")
+                    } else {
+                        theBitmap = null
+
+                        displayDoubleButtonDialog("Profile Picture Rejected!", "There is no face in the picture you are trying to upload. Picture was rejected! Try uploading another one.")
+
+                        Glide.with(this)
+                            .load(
+                                ContextCompat.getDrawable(
+                                    this,
+                                    R.drawable.placeholder
+                                )
+                            )
+                            .transform(FitCenter(), RoundedCorners(33))
+                            .into(binding.pictureUploadImage)
+                    }
+
+                    for (face in faces) {
+                        val bounds = face.boundingBox
+                        val rotY = face.headEulerAngleY // Head is rotated to the right rotY degrees
+                        val rotZ = face.headEulerAngleZ // Head is tilted sideways rotZ degrees
+
+                        // If landmark detection was enabled (mouth, ears, eyes, cheeks, and
+                        // nose available):
+                        val leftEar = face.getLandmark(FaceLandmark.LEFT_EAR)
+                        leftEar?.let {
+                            val leftEarPos = leftEar.position
+                        }
+
+                        // If contour detection was enabled:
+                        val leftEyeContour = face.getContour(FaceContour.LEFT_EYE)?.points
+                        val upperLipBottomContour = face.getContour(FaceContour.UPPER_LIP_BOTTOM)?.points
+
+                        // If classification was enabled:
+                        if (face.smilingProbability != null) {
+                            val smileProb = face.smilingProbability
+                        }
+                        if (face.rightEyeOpenProbability != null) {
+                            val rightEyeOpenProb = face.rightEyeOpenProbability
+                        }
+
+                        // If face tracking was enabled:
+                        if (face.trackingId != null) {
+                            val id = face.trackingId
+                        }
+                    }
+                }
+                .addOnFailureListener { error ->
+                    binding.infiniteProgressDialog.infiniteProgressLayout.visibility = View.GONE
+                    binding.singleButtonDialog.singleButtonLayout.visibility = View.GONE
+
+                    Glide.with(this)
+                        .load(
+                            ContextCompat.getDrawable(
+                                this,
+                                R.drawable.placeholder
+                            )
+                        )
+                        .transform(FitCenter(), RoundedCorners(33))
+                        .into(binding.pictureUploadImage)
+
+                    // Report to the user to chose another picture or retake the picture
+                    error.printStackTrace()
+                    displayDoubleButtonDialog("Profile Picture Error!", "There was an error in trying to process your profile picture. Please, try again!")
+                }
         }
     }
 
@@ -1600,11 +1711,23 @@ class MainActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, binding.root).show(WindowInsetsCompat.Type.systemBars())
     }
 
+    fun displayDoubleButtonDialog(title: String, message: String) {
+        runOnUiThread {
+            binding.doubleButtonDialog.dialogRetryButton.text = "Choose Picture"
+            binding.doubleButtonDialog.doubleButtonTitle.text = title
+            binding.doubleButtonDialog.doubleButtonMessage.text = message
+            binding.doubleButtonDialog.dialogRetryButton.setTextColor(ContextCompat.getColor(this, R.color.blue))
+            binding.doubleButtonDialog.dialogCancelButton.setTextColor(ContextCompat.getColor(this, R.color.red))
+            binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+        }
+    }
+
     fun displayDoubleButtonDialog() {
         runOnUiThread {
             binding.doubleButtonDialog.doubleButtonMessage.text = getString(R.string.network_error_message)
             binding.doubleButtonDialog.doubleButtonTitle.text = getString(R.string.network_error_title)
             binding.doubleButtonDialog.doubleButtonLayout.visibility = View.VISIBLE
+            binding.doubleButtonDialog.dialogRetryButton.text = "Retry"
             binding.pictureUploadProgress.visibility = View.GONE
         }
     }
