@@ -11,7 +11,6 @@ import android.graphics.ImageDecoder
 import android.location.Address
 import android.location.Geocoder
 import android.location.LocationManager
-import android.media.FaceDetector
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -21,6 +20,7 @@ import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -365,6 +366,12 @@ class HomeDisplayActivity : AppCompatActivity() {
                 binding.homeDisplayRecyclerView.layoutManager = layoutManager
                 binding.homeDisplayRecyclerView.itemAnimator = DefaultItemAnimator()
 
+                val dividerItemDecoration = DividerItemDecoration(
+                    binding.homeDisplayRecyclerView.context, layoutManager.orientation)
+                dividerItemDecoration.setDrawable(ContextCompat.getDrawable(
+                    binding.homeDisplayRecyclerView.context, R.drawable.divider)!!)
+                binding.homeDisplayRecyclerView.addItemDecoration(dividerItemDecoration)
+
                 val floatingLayoutWidth = deviceWidth - (binding.floatingInformationLayout.marginLeft +
                         binding.floatingInformationLayout.marginRight)
                 val leftRightPictureWidthHeight = ((40 / 100F) * floatingLayoutWidth.toFloat()).toInt()
@@ -405,6 +412,10 @@ class HomeDisplayActivity : AppCompatActivity() {
                     )
                 binding.homeDisplayRecyclerView.adapter = homeDisplayAdapter
 
+                val homeDisplayRecyclerLayoutParam = binding.homeDisplayRecyclerView.layoutParams as ViewGroup.MarginLayoutParams
+                homeDisplayRecyclerLayoutParam.topMargin = 25;
+                binding.homeDisplayRecyclerView.layoutParams = homeDisplayRecyclerLayoutParam
+
                 binding.homeDisplayRecyclerView.layoutManager!!.scrollToPosition(homeDisplayInstance.scrollToPosition)
 
                 binding.homeDisplayRecyclerView.addOnScrollListener(object :
@@ -433,6 +444,16 @@ class HomeDisplayActivity : AppCompatActivity() {
                     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                         super.onScrolled(recyclerView, dx, dy)
 
+                        // Scroll top reach
+                        if (!binding.homeDisplayRecyclerView.canScrollVertically(-1)) {
+                            homeDisplayRecyclerLayoutParam.topMargin = 25;
+                            binding.homeDisplayRecyclerView.layoutParams = homeDisplayRecyclerLayoutParam
+                        } else {
+                            homeDisplayRecyclerLayoutParam.topMargin = 0;
+                            binding.homeDisplayRecyclerView.layoutParams = homeDisplayRecyclerLayoutParam
+                        }
+
+                        // Scroll bottom reached
                         if (!binding.homeDisplayRecyclerView.canScrollVertically(1)) {
                             requestProcess = getString(R.string.request_fetch_more_matched_users)
                             fetchMoreMatchedUsers()

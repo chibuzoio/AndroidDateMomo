@@ -116,12 +116,6 @@ class HomeDisplayAdapter(private val homeDisplayResponses: ArrayList<HomeDisplay
             .into(holder.binding.userImage);
 */
 
-        if (position == (itemCount - 1)) {
-            val userDisplayLayoutParam = holder.binding.userDisplayLayout.layoutParams as ViewGroup.MarginLayoutParams
-            userDisplayLayoutParam.bottomMargin = 25;
-            holder.binding.userDisplayLayout.layoutParams = userDisplayLayoutParam
-        }
-
         if (homeDisplayResponses[position].liked) {
             holder.binding.loveUserIcon.setImageDrawable(
                 ContextCompat.getDrawable(

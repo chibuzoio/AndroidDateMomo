@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:elevation="11dp"
     android:orientation="vertical"
-    android:layout_marginTop="11dp"
     android:id="@+id/userDisplayLayout"
     android:layout_marginHorizontal="11dp"
     android:background="@drawable/home_card_view"
